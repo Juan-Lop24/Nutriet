@@ -1,0 +1,609 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configura tu Dieta — NUTRIET</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --pink:#E8175D;--pink-h:#c41250;--pink-soft:#fce4ef;--pink-mid:#f5a8c8;
+            --cream:#FAF5EF;--cream2:#f3ece2;--text:#1C1C1E;--muted:#7a6f6a;
+            --border:#eeddd4;--white:#ffffff;--success:#28a745;--error-bg:#fff0f4;
+            --r-lg:18px;--r-md:12px;--r-sm:8px;
+        }
+        html{scroll-behavior:smooth}
+        body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;
+             background-image:radial-gradient(var(--border) 1px,transparent 1px);background-size:28px 28px}
+
+        /* NAV */
+        .nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.92);backdrop-filter:blur(12px);
+             border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;height:58px}
+        .nav-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.45rem;color:var(--pink);
+                  letter-spacing:-0.03em;text-decoration:none}
+
+        /* HERO */
+        .hero{padding:54px 24px 32px;text-align:center}
+        .hero-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 16px;border-radius:50px;
+                    background:var(--pink-soft);border:1px solid var(--pink-mid);font-size:.75rem;font-weight:700;
+                    color:var(--pink);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px}
+        .hero h1{font-family:"Syne",sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;
+                 color:var(--text);line-height:1.1;margin-bottom:10px}
+        .hero h1 span{color:var(--pink)}
+        .hero p{color:var(--muted);font-size:1rem;line-height:1.65;max-width:450px;margin:0 auto}
+
+        /* PROGRESS */
+        .progress-wrap{max-width:680px;margin:0 auto 28px;padding:0 24px}
+        .progress-header{display:flex;justify-content:space-between;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:7px}
+        .pb-bg{height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+        .pb-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pink),#ff6b9d);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+        /* FORM OUTER */
+        .form-outer{max-width:680px;margin:0 auto;padding:0 24px 64px}
+
+        /* SECTION CARDS */
+        .sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);
+            overflow:hidden;margin-bottom:18px;box-shadow:0 2px 20px rgba(232,23,93,.07);
+            transition:box-shadow .3s}
+        .sc:focus-within{box-shadow:0 4px 32px rgba(232,23,93,.14)}
+        .sc-head{display:flex;align-items:center;gap:14px;padding:20px 28px 0}
+        .sc-icon{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--pink) 0%,#ff6b9d 100%);
+                 display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;
+                 box-shadow:0 4px 12px rgba(232,23,93,.3)}
+        .sc-titles h2{font-family:"Syne",sans-serif;font-size:.98rem;font-weight:800;color:var(--text)}
+        .sc-titles p{font-size:.78rem;color:var(--muted);margin-top:2px}
+        .sc-body{padding:20px 28px 26px}
+
+        /* FIELD ROWS */
+        .frow{display:grid;gap:14px}
+        .frow.c2{grid-template-columns:1fr 1fr}
+        .frow.c3{grid-template-columns:1fr 1fr 1fr}
+        @media(max-width:520px){.frow.c2,.frow.c3{grid-template-columns:1fr}}
+        .fg{display:flex;flex-direction:column;gap:6px}
+
+        /* LABELS */
+        .fl{font-size:.82rem;font-weight:600;color:var(--text);display:flex;align-items:center;gap:5px}
+        .fl .req{color:var(--pink)}
+
+        /* INPUTS */
+        .fi{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--r-sm);
+            font-family:"DM Sans",sans-serif;font-size:.94rem;color:var(--text);background:var(--cream);
+            transition:border-color .2s,box-shadow .2s,background .2s;-webkit-appearance:none;appearance:none}
+        .fi:focus{outline:none;border-color:var(--pink);box-shadow:0 0 0 3px rgba(232,23,93,.13);background:var(--white)}
+        .fi.ok{border-color:var(--success)}
+        .fi.bad{border-color:var(--pink);background:var(--error-bg)}
+        select.fi{cursor:pointer}
+        textarea.fi{resize:vertical;min-height:86px;line-height:1.5}
+
+        /* UNIT WRAP */
+        .uw{position:relative;display:flex;align-items:center}
+        .uw .fi{padding-right:46px}
+        .unit{position:absolute;right:14px;font-size:.8rem;font-weight:700;color:var(--muted);pointer-events:none}
+
+        /* ERRORS */
+        .ferr{font-size:.77rem;color:var(--pink);font-weight:500;display:none;align-items:center;gap:4px}
+        .ferr.show{display:flex}
+        .ferr::before{content:"⚠";font-size:.7rem}
+        .dj-err{background:var(--error-bg);border:1.5px solid var(--pink-mid);border-radius:var(--r-md);
+                padding:14px 18px;margin-bottom:18px}
+        .dj-err p{font-size:.85rem;font-weight:700;color:var(--pink);margin-bottom:6px}
+        .dj-err ul{padding-left:18px}
+        .dj-err li{font-size:.82rem;color:#8b0034;margin-bottom:2px}
+
+        /* SEXO TOGGLE */
+        .sexo-t{display:flex;gap:10px}
+        .sexo-t input{display:none}
+        .sexo-t label{flex:1;text-align:center;cursor:pointer;padding:12px 8px;border:1.5px solid var(--border);
+                      border-radius:var(--r-sm);font-size:.87rem;font-weight:600;color:var(--muted);
+                      background:var(--cream);transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px}
+        .sexo-t label .ico{font-size:1.5rem}
+        .sexo-t input:checked+label{border-color:var(--pink);background:var(--pink-soft);color:var(--pink);
+                                     box-shadow:0 0 0 3px rgba(232,23,93,.12)}
+
+        /* OBJETIVO CARDS */
+        .obj-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+        @media(max-width:460px){.obj-g{grid-template-columns:1fr}}
+        .obj-g input{display:none}
+        .oc{cursor:pointer;border:1.5px solid var(--border);border-radius:var(--r-md);padding:14px 10px;
+            text-align:center;background:var(--cream);transition:all .2s}
+        .oc .oc-i{font-size:1.6rem;margin-bottom:5px}
+        .oc .oc-t{font-size:.82rem;font-weight:700;color:var(--text)}
+        .oc .oc-s{font-size:.71rem;color:var(--muted);margin-top:2px}
+        .obj-g input:checked+.oc{border-color:var(--pink);background:var(--pink-soft);box-shadow:0 0 0 3px rgba(232,23,93,.12)}
+        .obj-g input:checked+.oc .oc-t{color:var(--pink)}
+        .obj-hint{font-size:.79rem;color:var(--muted);margin-top:8px;padding:9px 13px;background:var(--cream2);
+                  border-radius:var(--r-sm);border-left:3px solid var(--pink-mid);display:none}
+        .obj-hint.show{display:block}
+
+        /* ACTIVIDAD */
+        .act-l{display:flex;flex-direction:column;gap:8px}
+        .act-l input{display:none}
+        .ai{cursor:pointer;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:11px 16px;
+            display:flex;align-items:center;gap:12px;background:var(--cream);transition:all .2s}
+        .ai-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:all .2s}
+        .ai-text{font-size:.86rem;font-weight:500;color:var(--muted)}
+        .act-l input:checked+.ai{border-color:var(--pink);background:var(--pink-soft)}
+        .act-l input:checked+.ai .ai-dot{background:var(--pink);border-color:var(--pink);box-shadow:0 0 0 3px rgba(232,23,93,.2)}
+        .act-l input:checked+.ai .ai-text{color:var(--pink);font-weight:600}
+
+        /* COMIDAS */
+        .com-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+        .com-g input{display:none}
+        .com-l{cursor:pointer;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;
+               display:flex;align-items:center;gap:9px;background:var(--cream);transition:all .2s;
+               font-size:.86rem;font-weight:500;color:var(--muted)}
+        .chk{width:17px;height:17px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;
+             display:flex;align-items:center;justify-content:center;background:white;transition:all .2s}
+        .chk svg{display:none}
+        .com-g input:checked+.com-l{border-color:var(--pink);background:var(--pink-soft);color:var(--pink)}
+        .com-g input:checked+.com-l .chk{background:var(--pink);border-color:var(--pink)}
+        .com-g input:checked+.com-l .chk svg{display:block}
+
+        /* DIETA/CONDICION PILLS */
+        .dp,.cond-g{display:flex;gap:8px;flex-wrap:wrap}
+        .dp input,.cond-g input{display:none}
+        .dp-l{cursor:pointer;padding:9px 17px;border:1.5px solid var(--border);border-radius:50px;
+              font-size:.83rem;font-weight:600;color:var(--muted);background:var(--cream);transition:all .2s}
+        .dp input:checked+.dp-l,.cond-g input:checked+.dp-l{border-color:var(--pink);background:var(--pink-soft);color:var(--pink)}
+
+        /* SLIDER */
+        .sl-display{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .sl-num{font-family:"Syne",sans-serif;font-size:1.6rem;font-weight:800;color:var(--pink)}
+        .sl-unit{font-size:.82rem;font-weight:500;color:var(--muted)}
+        input[type="range"].rng{-webkit-appearance:none;appearance:none;width:100%;height:6px;
+                                border-radius:99px;background:var(--border);outline:none;cursor:pointer}
+        input[type="range"].rng::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+            border-radius:50%;background:var(--pink);border:3px solid white;
+            box-shadow:0 2px 8px rgba(232,23,93,.4);cursor:pointer;transition:transform .15s}
+        input[type="range"].rng::-webkit-slider-thumb:hover{transform:scale(1.15)}
+        input[type="range"].rng::-moz-range-thumb{width:22px;height:22px;border-radius:50%;
+            background:var(--pink);border:3px solid white;box-shadow:0 2px 8px rgba(232,23,93,.4);cursor:pointer}
+
+        /* SUBMIT */
+        .btn-gen{width:100%;padding:16px 24px;background:linear-gradient(135deg,var(--pink) 0%,#ff5a8a 100%);
+                 color:white;border:none;border-radius:var(--r-md);font-family:"Syne",sans-serif;
+                 font-size:1.05rem;font-weight:800;cursor:pointer;letter-spacing:.02em;
+                 display:flex;align-items:center;justify-content:center;gap:10px;transition:all .25s;
+                 box-shadow:0 4px 20px rgba(232,23,93,.38)}
+        .btn-gen:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(232,23,93,.48)}
+        .btn-gen:active{transform:translateY(0)}
+        .btn-gen:disabled{opacity:.65;cursor:not-allowed;transform:none}
+
+        /* OVERLAY */
+        #overlay{position:fixed;inset:0;z-index:9999;background:rgba(250,245,239,.97);
+                 backdrop-filter:blur(8px);display:none;flex-direction:column;
+                 align-items:center;justify-content:center;gap:22px}
+        #overlay.show{display:flex}
+        .ov-wrap{position:relative;width:90px;height:90px;display:flex;align-items:center;justify-content:center}
+        .ovr{position:absolute;inset:0;border:5px solid var(--pink-soft);border-top:5px solid var(--pink);
+             border-radius:50%;animation:spin .95s linear infinite}
+        .ovr2{position:absolute;inset:13px;border:3px solid transparent;
+              border-bottom:3px solid rgba(232,23,93,.3);border-radius:50%;animation:spin 1.6s linear infinite reverse}
+        .ov-e{font-size:2rem;animation:pulse 2s ease-in-out infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes pulse{0%,100%{transform:scale(.9);opacity:.8}50%{transform:scale(1.1);opacity:1}}
+        .ov-title{font-family:"Syne",sans-serif;font-size:1.4rem;font-weight:800;color:var(--text);text-align:center;line-height:1.2}
+        .ov-sub{color:var(--muted);font-size:.9rem;text-align:center}
+        .ov-dots{display:flex;gap:8px}
+        .ov-dots span{width:9px;height:9px;background:var(--pink);border-radius:50%;animation:bnc 1.2s ease-in-out infinite}
+        .ov-dots span:nth-child(2){animation-delay:.2s}
+        .ov-dots span:nth-child(3){animation-delay:.4s}
+        @keyframes bnc{0%,80%,100%{transform:scale(.65);opacity:.45}40%{transform:scale(1.2);opacity:1}}
+        .ov-steps{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
+        .ovst{display:flex;align-items:center;gap:5px;font-size:.79rem;color:rgba(122,111,106,.45)}
+        .ovst .sd{width:6px;height:6px;border-radius:50%;background:var(--pink);opacity:.2}
+        .ovst.on{color:var(--muted)}
+        .ovst.on .sd{opacity:1;animation:blk .9s ease infinite}
+        @keyframes blk{0%,100%{opacity:1}50%{opacity:.2}}
+    </style>
+</head>
+<body>
+
+<!-- OVERLAY -->
+<div id="overlay">
+    <div class="ov-wrap">
+        <div class="ovr"></div><div class="ovr2"></div>
+        <div class="ov-e">🥗</div>
+    </div>
+    <div class="ov-title">Generando tu dieta<br>personalizada…</div>
+    <div class="ov-dots"><span></span><span></span><span></span></div>
+    <div class="ov-sub">La IA está analizando tu perfil nutricional</div>
+    <div class="ov-steps">
+        <div class="ovst on"><div class="sd"></div>Calculando macros</div>
+        <div class="ovst"><div class="sd"></div>Generando plan</div>
+        <div class="ovst"><div class="sd"></div>Finalizando</div>
+    </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav"><a class="nav-logo" href="#">NUTRIET</a></nav>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-badge">✦ Inteligencia Artificial</div>
+    <h1>Tu plan nutricional<br><span>100% personalizado</span></h1>
+    <p>Cuéntanos sobre ti y te generaremos una dieta diseñada exactamente para tus metas.</p>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+    <div class="progress-header">
+        <span id="pLabel">Completado: 0%</span>
+        <span id="pStep">Sección 1 de 3</span>
+    </div>
+    <div class="pb-bg"><div class="pb-fill" id="pFill"></div></div>
+</div>
+
+<!-- FORM -->
+<div class="form-outer">
+
+    {% if form.non_field_errors %}
+    <div class="dj-err">
+        <p>⚠ Por favor corrige estos errores:</p>
+        <ul>{% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if messages %}
+    <div class="dj-err">{% for m in messages %}<p>{{ m }}</p>{% endfor %}</div>
+    {% endif %}
+
+    <form id="mainForm" method="POST" novalidate>
+        {% csrf_token %}
+
+        <!-- ── SECCIÓN 1: DATOS PERSONALES ── -->
+        <div class="sc" data-sec="1">
+            <div class="sc-head">
+                <div class="sc-icon">👤</div>
+                <div class="sc-titles">
+                    <h2>Datos Personales</h2>
+                    <p>Sexo, edad, peso y altura son clave para el cálculo nutricional</p>
+                </div>
+            </div>
+            <div class="sc-body">
+
+                <!-- SEXO -->
+                <div class="fg" style="margin-bottom:16px">
+                    <label class="fl">Sexo <span class="req">*</span></label>
+                    <div class="sexo-t">
+                        {% for val, display in form.sexo.field.choices %}
+                        <input type="radio" name="sexo" id="s_{{ val }}" value="{{ val }}"
+                               {% if form.sexo.value == val %}checked{% endif %}>
+                        <label for="s_{{ val }}">
+                            <span class="ico">{% if val == "M" %}♂{% else %}♀{% endif %}</span>
+                            {{ display }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.sexo.errors %}<div class="ferr show">{{ form.sexo.errors.0 }}</div>
+                    {% else %}<div class="ferr" id="err_sexo">Selecciona tu sexo.</div>{% endif %}
+                </div>
+
+                <!-- EDAD / PESO / ALTURA -->
+                <div class="frow c3">
+                    <div class="fg">
+                        <label class="fl" for="id_edad">Edad <span class="req">*</span></label>
+                        <div class="uw">
+                            <input type="number" name="edad" id="id_edad"
+                                   class="fi{% if form.edad.errors %} bad{% endif %}"
+                                   value="{{ form.edad.value|default:'' }}"
+                                   placeholder="25" min="10" max="100">
+                            <span class="unit">años</span>
+                        </div>
+                        {% if form.edad.errors %}<div class="ferr show">{{ form.edad.errors.0 }}</div>
+                        {% else %}<div class="ferr" id="err_edad"></div>{% endif %}
+                    </div>
+                    <div class="fg">
+                        <label class="fl" for="id_peso">Peso actual <span class="req">*</span></label>
+                        <div class="uw">
+                            <input type="number" name="peso" id="id_peso"
+                                   class="fi{% if form.peso.errors %} bad{% endif %}"
+                                   value="{{ form.peso.value|default:'' }}"
+                                   placeholder="70" step="0.1" min="20" max="300">
+                            <span class="unit">kg</span>
+                        </div>
+                        {% if form.peso.errors %}<div class="ferr show">{{ form.peso.errors.0 }}</div>
+                        {% else %}<div class="ferr" id="err_peso"></div>{% endif %}
+                    </div>
+                    <div class="fg">
+                        <label class="fl" for="id_altura">Altura <span class="req">*</span></label>
+                        <div class="uw">
+                            <input type="number" name="altura" id="id_altura"
+                                   class="fi{% if form.altura.errors %} bad{% endif %}"
+                                   value="{{ form.altura.value|default:'' }}"
+                                   placeholder="170" step="0.1" min="100" max="250">
+                            <span class="unit">cm</span>
+                        </div>
+                        {% if form.altura.errors %}<div class="ferr show">{{ form.altura.errors.0 }}</div>
+                        {% else %}<div class="ferr" id="err_altura"></div>{% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── SECCIÓN 2: OBJETIVO ── -->
+        <div class="sc" data-sec="2">
+            <div class="sc-head">
+                <div class="sc-icon">🎯</div>
+                <div class="sc-titles">
+                    <h2>Tu Objetivo</h2>
+                    <p>¿Qué quieres lograr y en cuánto tiempo?</p>
+                </div>
+            </div>
+            <div class="sc-body">
+
+                <!-- OBJETIVO CARDS -->
+                <div class="fg" style="margin-bottom:16px">
+                    <label class="fl">Objetivo principal <span class="req">*</span></label>
+                    <div class="obj-g">
+                        {% for val, display in form.objetivo.field.choices %}
+                        <input type="radio" name="objetivo" id="o_{{ val }}" value="{{ val }}"
+                               {% if form.objetivo.value == val %}checked{% endif %}>
+                        <label for="o_{{ val }}" class="oc">
+                            <div class="oc-i">
+                                {% if val == "Aumentar" %}💪{% elif val == "Reducir" %}🔥{% else %}⚖️{% endif %}
+                            </div>
+                            <div class="oc-t">{{ display }}</div>
+                            <div class="oc-s">
+                                {% if val == "Aumentar" %}Masa muscular{% elif val == "Reducir" %}Quemar grasa{% else %}Equilibrio{% endif %}
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    <div class="obj-hint" id="obj-hint"></div>
+                    {% if form.objetivo.errors %}<div class="ferr show">{{ form.objetivo.errors.0 }}</div>
+                    {% else %}<div class="ferr" id="err_obj"></div>{% endif %}
+                </div>
+
+                <!-- PESO OBJETIVO -->
+                <div class="fg" style="margin-bottom:16px">
+                    <label class="fl" for="id_peso_objetivo">Peso deseado <span class="req">*</span></label>
+                    <div class="uw" style="max-width:200px">
+                        <input type="number" name="peso_objetivo" id="id_peso_objetivo"
+                               class="fi{% if form.peso_objetivo.errors %} bad{% endif %}"
+                               value="{{ form.peso_objetivo.value|default:'' }}"
+                               placeholder="65" step="0.1" min="20" max="300">
+                        <span class="unit">kg</span>
+                    </div>
+                    {% if form.peso_objetivo.errors %}<div class="ferr show">{{ form.peso_objetivo.errors.0 }}</div>
+                    {% else %}<div class="ferr" id="err_pobj"></div>{% endif %}
+                </div>
+
+                <!-- PLAZO SLIDER -->
+                <div class="fg">
+                    <label class="fl">Tiempo para alcanzar el objetivo <span class="req">*</span></label>
+                    <div class="sl-display">
+                        <div><span class="sl-num" id="slNum">{{ form.plazo_meses.value|default:"3" }}</span><span class="sl-unit"> meses</span></div>
+                        <span class="sl-unit" id="slApprox"></span>
+                    </div>
+                    <input type="range" name="plazo_meses" id="id_plazo_meses" class="rng"
+                           value="{{ form.plazo_meses.value|default:'3' }}" min="1" max="24" step="1">
+                    <div style="display:flex;justify-content:space-between;margin-top:5px">
+                        <span style="font-size:.71rem;color:var(--muted)">1 mes</span>
+                        <span style="font-size:.71rem;color:var(--muted)">2 años</span>
+                    </div>
+                    {% if form.plazo_meses.errors %}<div class="ferr show">{{ form.plazo_meses.errors.0 }}</div>{% endif %}
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ── SECCIÓN 3: HÁBITOS ── -->
+        <div class="sc" data-sec="3">
+            <div class="sc-head">
+                <div class="sc-icon">🍽️</div>
+                <div class="sc-titles">
+                    <h2>Hábitos y Estilo</h2>
+                    <p>Actividad física, tipo de alimentación y preferencias</p>
+                </div>
+            </div>
+            <div class="sc-body">
+
+                <!-- ACTIVIDAD -->
+                <div class="fg" style="margin-bottom:16px">
+                    <label class="fl">Nivel de actividad física <span class="req">*</span></label>
+                    <div class="act-l">
+                        {% for val, display in form.nivel_actividad.field.choices %}
+                        <input type="radio" name="nivel_actividad" id="a_{{ val }}" value="{{ val }}"
+                               {% if form.nivel_actividad.value == val %}checked{% endif %}>
+                        <label for="a_{{ val }}" class="ai">
+                            <div class="ai-dot"></div>
+                            <div class="ai-text">{{ display }}</div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% if form.nivel_actividad.errors %}<div class="ferr show">{{ form.nivel_actividad.errors.0 }}</div>
+                    {% else %}<div class="ferr" id="err_act"></div>{% endif %}
+                </div>
+
+                <!-- COMIDAS -->
+                <div class="fg" style="margin-bottom:16px">
+                    <label class="fl">Comidas que realizas al día</label>
+                    <div class="com-g">
+                        {% for val, display in form.comidas_preferidas.field.choices %}
+                        <div>
+                            <input type="checkbox" name="comidas_preferidas" id="c_{{ val }}" value="{{ val }}"
+                                   {% if val in form.comidas_preferidas.value %}checked{% endif %}>
+                            <label for="c_{{ val }}" class="com-l">
+                                <span class="chk">
+                                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                        <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                                {% if val == "desayuno" %}🌅{% elif val == "almuerzo" %}☀️{% elif val == "cena" %}🌙{% else %}🍎{% endif %}
+                                {{ display }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- CONDICIÓN MÉDICA / ALERGIA -->
+                <div class="fg" style="margin-bottom:16px">
+                    <label class="fl" for="id_condicion_medica">
+                        Condición médica o alergia
+                        <span style="font-weight:400;color:var(--muted);font-size:.76rem">(opcional)</span>
+                    </label>
+                    <p style="font-size:.8rem;color:var(--muted);margin-bottom:8px">
+                        Si tienes una condición, excluiremos automáticamente los ingredientes no recomendados de tus recetas.
+                    </p>
+                    <div class="cond-g">
+                        {% for val, display in form.condicion_medica.field.choices %}
+                        <input type="radio" name="condicion_medica" id="cm_{{ val|default:'ninguna' }}" value="{{ val }}"
+                               {% if form.condicion_medica.value == val %}checked{% endif %}>
+                        <label for="cm_{{ val|default:'ninguna' }}" class="dp-l">{{ display }}</label>
+                        {% endfor %}
+                    </div>
+                    {% if form.condicion_medica.errors %}<div class="ferr show">{{ form.condicion_medica.errors.0 }}</div>{% endif %}
+                </div>
+
+                <!-- INGREDIENTES A EXCLUIR -->
+                <div class="fg">
+                    <label class="fl" for="id_ingredientes_excluidos">
+                        Ingredientes que NO quieres en tus recetas
+                        <span style="font-weight:400;color:var(--muted);font-size:.76rem">(opcional)</span>
+                    </label>
+                    <p style="font-size:.8rem;color:var(--muted);margin-bottom:8px">
+                        Escribe los ingredientes que no te gustan o no puedes comer por cualquier razón, separados por coma.
+                        <br><strong>Ej:</strong> arroz, pollo, frijol, leche
+                    </p>
+                    <textarea name="ingredientes_excluidos" id="id_ingredientes_excluidos"
+                              class="fi" placeholder="Ej: arroz, leche, carne roja, mariscos…">{{ form.ingredientes_excluidos.value|default:"" }}</textarea>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button type="submit" class="btn-gen" id="btnSub">
+            <span>✦</span><span>Generar mi Dieta Personalizada</span>
+        </button>
+
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+    // ── PROGRESS ──
+    const pFill=document.getElementById("pFill"),pLabel=document.getElementById("pLabel"),pStep=document.getElementById("pStep");
+    function calcProg(){
+        const checks=[
+            !!document.querySelector("[name=sexo]:checked"),
+            !!document.getElementById("id_edad").value,
+            !!document.getElementById("id_peso").value,
+            !!document.getElementById("id_altura").value,
+            !!document.querySelector("[name=objetivo]:checked"),
+            !!document.getElementById("id_peso_objetivo").value,
+            !!document.querySelector("[name=nivel_actividad]:checked"),
+        ];
+        const filled=checks.filter(Boolean).length;
+        const pct=Math.round(filled/7*100);
+        pFill.style.width=pct+"%";
+        pLabel.textContent="Completado: "+pct+"%";
+        const sec=filled<=3?1:filled<=6?2:3;
+        pStep.textContent="Sección "+sec+" de 3";
+    }
+    document.getElementById("mainForm").addEventListener("change",calcProg);
+    document.getElementById("mainForm").addEventListener("input",calcProg);
+    calcProg();
+
+    // ── SLIDER ──
+    const sl=document.getElementById("id_plazo_meses"),slNum=document.getElementById("slNum"),slAp=document.getElementById("slApprox");
+    function upSlider(){
+        const v=parseInt(sl.value);
+        slNum.textContent=v;
+        slAp.textContent=v>=12?"("+(v/12).toFixed(v%12===0?0:1)+" año"+(v>=24?"s":"")+")" :"";
+        const p=((v-1)/23)*100;
+        sl.style.background="linear-gradient(90deg,#E8175D "+p+"%,#eeddd4 "+p+"%)";
+    }
+    sl.addEventListener("input",upSlider);
+    upSlider();
+
+    // ── OBJETIVO HINT ──
+    const hint=document.getElementById("obj-hint");
+    const hintMap={"Aumentar":"💪 Para ganar músculo, el peso objetivo debe ser mayor al actual.","Reducir":"🔥 Para reducir grasa, el peso objetivo debe ser menor al actual.","Mantener":"⚖️ Para mantener peso, el objetivo debe ser muy cercano al actual (±2 kg)."};
+    document.querySelectorAll("[name=objetivo]").forEach(r=>r.addEventListener("change",()=>{
+        hint.textContent=hintMap[r.value]||"";
+        hint.classList.toggle("show",!!hintMap[r.value]);
+        valPObj();
+    }));
+
+    // ── VALIDACIONES ──
+    const rules={id_edad:{min:10,max:100,msg:"Edad entre 10 y 100 años."},id_peso:{min:20,max:300,msg:"Peso entre 20 y 300 kg."},
+                 id_altura:{min:100,max:250,msg:"Altura entre 100 y 250 cm."},id_peso_objetivo:{min:20,max:300,msg:"Peso deseado entre 20 y 300 kg."}};
+    const errMap={id_edad:"err_edad",id_peso:"err_peso",id_altura:"err_altura",id_peso_objetivo:"err_pobj"};
+
+    function showE(el,msg){el.classList.add("bad");el.classList.remove("ok");const d=document.getElementById(errMap[el.id]);if(d){d.textContent=msg;d.classList.add("show")}}
+    function showO(el){el.classList.remove("bad");el.classList.add("ok");const d=document.getElementById(errMap[el.id]);if(d)d.classList.remove("show")}
+    function clr(el){el.classList.remove("bad","ok");const d=document.getElementById(errMap[el.id]);if(d)d.classList.remove("show")}
+
+    function valNum(el){
+        if(!el.value){clr(el);return null}
+        const r=rules[el.id];if(!r)return true;
+        const v=parseFloat(el.value);
+        if(isNaN(v)||v<r.min||v>r.max){showE(el,r.msg);return false}
+        showO(el);return true;
+    }
+
+    function valPObj(){
+        const p=parseFloat(document.getElementById("id_peso").value);
+        const poEl=document.getElementById("id_peso_objetivo");
+        const po=parseFloat(poEl.value);
+        const obj=document.querySelector("[name=objetivo]:checked");
+        if(!poEl.value)return;
+        if(isNaN(p)){valNum(poEl);return}
+        if(obj){
+            if(obj.value==="Reducir"&&po>=p){showE(poEl,"Para reducir grasa, el peso objetivo debe ser menor al actual.");return}
+            if(obj.value==="Aumentar"&&po<=p){showE(poEl,"Para aumentar masa, el peso objetivo debe ser mayor al actual.");return}
+            if(obj.value==="Mantener"&&Math.abs(po-p)>2){showE(poEl,"Para mantener peso, el objetivo debe ser muy cercano al actual (±2 kg).");return}
+        }
+        valNum(poEl);
+    }
+
+    Object.keys(rules).forEach(id=>{
+        const el=document.getElementById(id);if(!el)return;
+        el.addEventListener("input",()=>{valNum(el);if(id==="id_peso"||id==="id_peso_objetivo")valPObj()});
+        el.addEventListener("blur",()=>{valNum(el);valPObj()});
+    });
+    document.querySelectorAll("[name=objetivo]").forEach(r=>r.addEventListener("change",valPObj));
+
+    // ── SUBMIT ──
+    const form=document.getElementById("mainForm"),overlay=document.getElementById("overlay");
+    const steps=overlay.querySelectorAll(".ovst");let si=0;
+
+    function valAll(){
+        let ok=true;
+        if(!document.querySelector("[name=sexo]:checked")){document.getElementById("err_sexo").classList.add("show");ok=false}
+        Object.keys(rules).forEach(id=>{const el=document.getElementById(id);if(el&&valNum(el)===false)ok=false});
+        valPObj();if(document.getElementById("id_peso_objetivo").classList.contains("bad"))ok=false;
+        if(!document.querySelector("[name=objetivo]:checked")){document.getElementById("err_obj").classList.add("show");ok=false}
+        if(!document.querySelector("[name=nivel_actividad]:checked")){document.getElementById("err_act").classList.add("show");ok=false}
+        return ok;
+    }
+
+    form.addEventListener("submit",e=>{
+        if(!valAll()){
+            e.preventDefault();
+            const first=form.querySelector(".bad,.ferr.show");
+            if(first)first.scrollIntoView({behavior:"smooth",block:"center"});
+            return;
+        }
+        overlay.classList.add("show");
+        document.body.style.overflow="hidden";
+        document.getElementById("btnSub").disabled=true;
+        setInterval(()=>{steps.forEach(s=>s.classList.remove("on"));si=(si+1)%steps.length;steps[si].classList.add("on")},700);
+    });
+
+    // Quitar errores al interactuar
+    ["sexo","objetivo","nivel_actividad"].forEach(name=>{
+        const errId={sexo:"err_sexo",objetivo:"err_obj",nivel_actividad:"err_act"}[name];
+        document.querySelectorAll("[name="+name+"]").forEach(r=>r.addEventListener("change",()=>document.getElementById(errId).classList.remove("show")));
+    });
+});
+</script>
+</body>
+</html>

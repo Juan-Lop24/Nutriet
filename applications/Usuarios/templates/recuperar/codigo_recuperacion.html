@@ -1,0 +1,667 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Código de Recuperación - Nutriet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #fef4f5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      width: 100%;
+      max-width: 1200px;
+      background: white;
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+    }
+
+    .form-section {
+      flex: 1;
+      padding: 60px 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .volver {
+      background: linear-gradient(135deg, #ff1660 0%, #e91e63 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 30px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 22, 96, 0.3);
+    }
+
+    .volver:hover {
+      transform: translateX(-5px);
+      box-shadow: 0 6px 20px rgba(255, 22, 96, 0.4);
+    }
+
+    .volver::before {
+      content: '←';
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #ff1660;
+      margin-bottom: 15px;
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 600;
+      margin-bottom: 12px;
+      margin-top: 15px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .code-input-wrapper {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    #code {
+      width: 100%;
+      padding: 18px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: 8px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: #fafafa;
+      font-family: 'Courier New', monospace;
+    }
+
+    #code:focus {
+      outline: none;
+      border-color: #ff1660;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(255, 22, 96, 0.1);
+      transform: scale(1.02);
+    }
+
+    #code:hover {
+      border-color: #ff1660;
+      background: white;
+    }
+
+    #code::placeholder {
+      font-size: 24px;
+      letter-spacing: 6px;
+      color: #ccc;
+    }
+
+    .code-hint {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #999;
+      pointer-events: none;
+    }
+
+    .verificar-btn {
+      background: linear-gradient(135deg, #ffd54f 0%, #ffca28 100%);
+      color: #000;
+      font-weight: 600;
+      font-size: 16px;
+      border: none;
+      padding: 16px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 202, 40, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .verificar-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 202, 40, 0.4);
+      background: linear-gradient(135deg, #ffca28 0%, #ffd54f 100%);
+    }
+
+    .verificar-btn:active {
+      transform: translateY(0);
+    }
+
+    .verificar-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .info-box {
+      background: #f0f7ff;
+      border-left: 4px solid #2196f3;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .info-box-icon {
+      color: #2196f3;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .info-box-text {
+      color: #555;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .resend-section {
+      margin-top: 25px;
+      text-align: center;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .resend-text {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .resend-btn {
+      background: transparent;
+      color: #ff1660;
+      border: 2px solid #ff1660;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .resend-btn:hover {
+      background: #ff1660;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255, 22, 96, 0.3);
+    }
+
+    .timer {
+      display: inline-block;
+      color: #ff1660;
+      font-weight: 600;
+      margin-left: 5px;
+    }
+
+    /* Logo Section */
+    .logo-section {
+      flex: 1;
+      background: linear-gradient(135deg, #ff1660 0%, #ff6b9d 50%, #ffb366 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-section::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      top: -100px;
+      right: -100px;
+    }
+
+    .logo-section::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 50%;
+      bottom: -50px;
+      left: -50px;
+    }
+
+    .logo-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 30px;
+      padding: 60px 40px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      z-index: 1;
+      transition: transform 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo-card:hover {
+      transform: scale(1.05);
+    }
+
+    .logo-image {
+      width: 400px;
+      height: 400px;
+      margin-bottom: 25px;
+      animation: float 3s ease-in-out infinite;
+      border-radius: 10%;
+
+    }
+
+    .brand-name {
+      font-size: 32px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .brand-tagline {
+      font-size: 14px;
+      color: #666;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Animations */
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .form-section > * {
+      animation: fadeIn 0.6s ease-out backwards;
+    }
+
+    .form-section > *:nth-child(1) { animation-delay: 0.1s; }
+    .form-section > *:nth-child(2) { animation-delay: 0.2s; }
+    .form-section > *:nth-child(3) { animation-delay: 0.3s; }
+    .form-section > *:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Responsive Design */
+    @media (max-width: 968px) {
+      .container {
+        flex-direction: column;
+      }
+
+      .logo-section {
+        order: -1;
+        padding: 40px;
+        min-height: 300px;
+      }
+
+      .form-section {
+        padding: 40px 30px;
+      }
+
+      h2 {
+        font-size: 28px;
+      }
+
+      .logo-card {
+        padding: 40px 30px;
+      }
+
+      #code {
+        font-size: 24px;
+        letter-spacing: 6px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-section {
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .volver {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+
+      #code {
+        font-size: 20px;
+        letter-spacing: 4px;
+        padding: 15px;
+      }
+    }
+
+    /* Loading animation */
+    .loading {
+      pointer-events: none;
+      opacity: 0.6;
+      position: relative;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #000;
+      border-top-color: transparent;
+      border-radius: 50%;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    /* Character counter */
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+
+    .char-counter.complete {
+      color: #4caf50;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Form Section -->
+    <div class="form-section">
+      <a href="{% url 'recuperar' %}" style="text-decoration: none;">
+        <button class="volver">volver</button>
+      </a>
+
+      <h2>Código de Recuperación</h2>
+      <p class="subtitle">Ingresa el código de 6 dígitos que se envió a tu correo electrónico. Revisa también tu carpeta de spam.</p>
+
+      <form method="POST" action="{% url 'verify_code' %}" id="verificationForm">
+        {% csrf_token %}
+        
+        <label for="code">Código de verificación</label>
+        <div class="code-input-wrapper">
+          <input 
+            type="text" 
+            name="code" 
+            id="code" 
+            placeholder="000000" 
+            maxlength="6" 
+            required 
+            pattern="[0-9]{6}"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+          />
+        </div>
+        <div class="char-counter" id="charCounter">0 / 6 dígitos</div>
+
+        <button type="submit" class="verificar-btn" id="submitBtn" disabled>
+          Verificar código
+        </button>
+      </form>
+
+      <div class="info-box">
+        <div class="info-box-icon">ℹ️</div>
+        <div class="info-box-text">
+          El código es válido por 15 minutos. Si no lo recibes, verifica tu carpeta de spam o solicita un nuevo código.
+        </div>
+      </div>
+
+      <div class="resend-section">
+        <p class="resend-text">¿No recibiste el código?</p>
+        <button class="resend-btn" id="resendBtn" onclick="resendCode()">
+          Reenviar código <span class="timer" id="timer"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Logo Section -->
+     <div class="logo-section">
+        <img src="{% static 'images/logo.png' %}" alt="Nutriet logo" class="logo-image">
+        <div class="brand-text">
+        </div>
+      </div>
+  </div>
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script>
+    const codeInput = document.getElementById('code');
+    const submitBtn = document.getElementById('submitBtn');
+    const charCounter = document.getElementById('charCounter');
+    const form = document.getElementById('verificationForm');
+    const resendBtn = document.getElementById('resendBtn');
+    const timerDisplay = document.getElementById('timer');
+
+    let resendTimeout = null;
+    let countdown = 60;
+
+    // Auto-focus on code input
+    window.addEventListener('load', () => {
+      codeInput.focus();
+    });
+
+    // Only allow numbers
+    codeInput.addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      
+      const length = this.value.length;
+      charCounter.textContent = `${length} / 6 dígitos`;
+      
+      // Enable button only when 6 digits are entered
+      if (length === 6) {
+        submitBtn.disabled = false;
+        charCounter.classList.add('complete');
+        this.style.borderColor = '#4caf50';
+      } else {
+        submitBtn.disabled = true;
+        charCounter.classList.remove('complete');
+        this.style.borderColor = '#e0e0e0';
+      }
+    });
+
+    // Auto-submit when 6 digits are entered (optional)
+    codeInput.addEventListener('input', function() {
+      if (this.value.length === 6) {
+        setTimeout(() => {
+          // You can uncomment this to auto-submit
+          // form.submit();
+        }, 500);
+      }
+    });
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+      submitBtn.classList.add('loading');
+      submitBtn.textContent = 'Verificando...';
+    });
+
+    // Resend code function
+    function resendCode() {
+      if (resendBtn.disabled) return;
+
+      Swal.fire({
+        title: '¿Reenviar código?',
+        text: 'Se enviará un nuevo código de verificación a tu correo',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#ff1660',
+        cancelButtonColor: '#999',
+        confirmButtonText: 'Sí, reenviar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Here you would call your backend to resend the code
+          // For now, we'll just show a success message
+          Swal.fire({
+            icon: 'success',
+            title: '¡Código reenviado!',
+            text: 'Revisa tu correo electrónico',
+            confirmButtonColor: '#ff1660',
+            timer: 2000,
+            timerProgressBar: true
+          });
+          
+          startResendTimer();
+        }
+      });
+    }
+
+    // Timer for resend button
+    function startResendTimer() {
+      resendBtn.disabled = true;
+      resendBtn.style.opacity = '0.5';
+      countdown = 60;
+      
+      resendTimeout = setInterval(() => {
+        countdown--;
+        timerDisplay.textContent = `(${countdown}s)`;
+        
+        if (countdown <= 0) {
+          clearInterval(resendTimeout);
+          resendBtn.disabled = false;
+          resendBtn.style.opacity = '1';
+          timerDisplay.textContent = '';
+        }
+      }, 1000);
+    }
+
+    // Input animation
+    codeInput.addEventListener('focus', function() {
+      this.parentElement.style.transform = 'scale(1.02)';
+    });
+
+    codeInput.addEventListener('blur', function() {
+      this.parentElement.style.transform = 'scale(1)';
+    });
+
+    // Paste handler for code
+    codeInput.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+      const numbers = pastedText.replace(/[^0-9]/g, '').slice(0, 6);
+      this.value = numbers;
+      this.dispatchEvent(new Event('input'));
+    });
+
+    // Display Django messages
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+          Swal.fire({
+            icon: 'success',
+            title: '¡Código Verificado!',
+            text: "{{ message }}",
+            confirmButtonColor: '#ff1660',
+            timer: 2000,
+            timerProgressBar: true
+          }).then(() => {
+            // Redirect or continue
+          });
+        {% elif message.tags == 'error' %}
+          Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: "{{ message }}",
+            confirmButtonColor: '#ff1660',
+            confirmButtonText: 'Intentar de nuevo'
+          }).then(() => {
+            submitBtn.classList.remove('loading');
+            submitBtn.textContent = 'Verificar código';
+            submitBtn.disabled = true;
+            codeInput.value = '';
+            codeInput.focus();
+            charCounter.textContent = '0 / 6 dígitos';
+            charCounter.classList.remove('complete');
+          });
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </script>
+</body>
+</html>

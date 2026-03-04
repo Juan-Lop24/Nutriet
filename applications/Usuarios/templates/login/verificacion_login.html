@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Acceso — NUTRIET</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --pink:      #E8175D;
+            --pink-h:    #c41250;
+            --pink-soft: #fce4ef;
+            --pink-mid:  #f5a8c8;
+            --cream:     #FAF5EF;
+            --cream2:    #f3ece2;
+            --text:      #1C1C1E;
+            --muted:     #7a6f6a;
+            --border:    #eeddd4;
+            --white:     #ffffff;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            background-image: radial-gradient(var(--border) 1px, transparent 1px);
+            background-size: 28px 28px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--pink);
+            letter-spacing: -0.03em;
+            margin-bottom: 32px;
+            text-decoration: none;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 44px 40px 36px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 40px rgba(232, 23, 93, 0.09);
+            animation: cardIn 0.45s cubic-bezier(.34,1.4,.64,1) both;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(18px) scale(0.97); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        .card-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--pink) 0%, #ff6b9d 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 16px rgba(232, 23, 93, 0.32);
+            margin-bottom: 18px;
+        }
+
+        .card h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 26px;
+        }
+
+        .error-box {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            background: #fff0f4;
+            border: 1.5px solid var(--pink-mid);
+            border-radius: 10px;
+            padding: 11px 14px;
+            margin-bottom: 18px;
+            animation: shake 0.35s ease;
+        }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25%      { transform: translateX(-5px); }
+            75%      { transform: translateX(5px); }
+        }
+        .err-icon { font-size: 0.95rem; flex-shrink: 0; }
+        .error-box p { font-size: 0.83rem; font-weight: 600; color: #8b0034; margin: 0; }
+
+        .field-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 7px;
+        }
+
+        .input-wrap { position: relative; margin-bottom: 18px; }
+        .input-icon {
+            position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.95rem; pointer-events: none;
+            color: var(--pink-mid);
+        }
+        .field-input {
+            width: 100%;
+            padding: 13px 14px 13px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            color: var(--text);
+            background: var(--cream);
+            letter-spacing: 0.14em;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            -webkit-appearance: none; appearance: none;
+        }
+        .field-input::placeholder {
+            letter-spacing: 0.04em;
+            color: #c5b9b3;
+            font-size: 0.88rem;
+        }
+        .field-input:focus {
+            outline: none;
+            border-color: var(--pink);
+            box-shadow: 0 0 0 3px rgba(232, 23, 93, 0.13);
+            background: var(--white);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--pink) 0%, #ff5a8a 100%);
+            color: white; border: none;
+            border-radius: 11px;
+            font-family: 'Syne', sans-serif;
+            font-size: 0.98rem; font-weight: 800;
+            cursor: pointer; letter-spacing: 0.02em;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: all 0.22s;
+            box-shadow: 0 4px 18px rgba(232, 23, 93, 0.38);
+            margin-bottom: 20px;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(232, 23, 93, 0.48);
+        }
+        .btn-submit:active { transform: translateY(0); }
+
+        .divider {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 16px;
+        }
+        .divider span { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+        .divider::before, .divider::after {
+            content: ''; flex: 1;
+            height: 1px; background: var(--border);
+        }
+
+        .resend-link {
+            width: 100%;
+            padding: 12px 20px;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem; font-weight: 600;
+            color: var(--muted);
+            text-decoration: none;
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+            transition: all 0.2s;
+        }
+        .resend-link:hover {
+            border-color: var(--pink);
+            color: var(--pink);
+            background: var(--pink-soft);
+        }
+    </style>
+</head>
+<body>
+
+    <a class="logo" href="#">NUTRIET</a>
+
+    <div class="card">
+        <div class="card-icon">🔐</div>
+
+        <h2>Verificación de acceso</h2>
+        <p class="subtitle">Ingresa el código que recibiste para continuar a tu plan nutricional.</p>
+
+        {% if error %}
+        <div class="error-box">
+            <span class="err-icon">⚠️</span>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <form method="POST" novalidate>
+            {% csrf_token %}
+
+            <label class="field-label" for="id_codigo">Código de verificación</label>
+            <div class="input-wrap">
+                <span class="input-icon">✦</span>
+                <input
+                    type="text"
+                    name="codigo"
+                    id="id_codigo"
+                    class="field-input"
+                    placeholder="Ingresa el código"
+                    autocomplete="one-time-code"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <span>Validar acceso</span>
+                <span>→</span>
+            </button>
+        </form>
+
+        <div class="divider"><span>¿No te llegó?</span></div>
+
+        <a href="{% url 'reenviar_codigo' %}" class="resend-link">
+            ↺ Reenviar código
+        </a>
+    </div>
+
+</body>
+</html>

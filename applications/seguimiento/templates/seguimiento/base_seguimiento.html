@@ -1,0 +1,737 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block titulo %}Seguimiento{% endblock %} — Nutriet</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --pink: #f50057;
+            --pink-light: #ff4081;
+            --warm-yellow: #ffe797;
+            --soft-bg: #fff9f0;
+            --text-dark: #1a1a2e;
+            --text-muted: #6c757d;
+            --white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-md: rgba(0, 0, 0, 0.13);
+            --hover-yellow: #fff1c1;
+            --primary-pink: #f50057;
+            --soft-yellow: rgb(255, 249, 230);
+            --danger-red: #dc3545;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body.seguimiento-page {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #fff9f0 0%, #fef0f5 50%, #f5f5ff 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Manchas de fondo decorativas */
+        body.seguimiento-page::before {
+            content: '';
+            position: fixed;
+            top: -100px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(245,0,87,0.06) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body.seguimiento-page::after {
+            content: '';
+            position: fixed;
+            bottom: -80px;
+            left: -80px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,112,67,0.05) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================
+          NAVBAR — Mismo contenido, mejor look
+          ============================================ */
+
+        .navbar {
+            position: fixed; 
+            width: 100%;
+            display: flex;              
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 0 0 20px 20px;
+            border-bottom: 2px solid rgba(245, 0, 87, 0.1);
+            text-align: center;
+            align-items: center;
+            z-index: 100;
+            padding: 0 !important;
+                position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+        }
+
+        .navbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 24px;
+            flex-wrap: wrap;
+        }
+
+        /* Botones de navegación */
+        .btn-principal {
+
+            align-items: center;
+            gap: 8px;
+            background: var(--soft-bg);
+            color: var(--text-dark);
+            border-radius: 50px;
+            padding: 10px 22px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            border: 2px solid rgba(245, 0, 87, 0.12);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-principal::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: radial-gradient(circle, rgba(245,0,87,0.15), transparent);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+            border-radius: 50%;
+        }
+
+        .btn-principal:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .btn-principal:hover {
+            background: var(--pink);
+            color: var(--white);
+            border-color: transparent;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(245, 0, 87, 0.3);
+        }
+
+        .btn-principal.active {
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            color: var(--white);
+            border-color: transparent;
+            box-shadow: 0 6px 18px rgba(245, 0, 87, 0.35);
+        }
+
+        /* Separador visual en la navbar */
+        .nav-divider {
+            width: 1px;
+            height: 24px;
+            background: rgba(245, 0, 87, 0.15);
+            border-radius: 2px;
+        }
+
+        /* ============================================
+          PAGE TITLE STRIP — NUEVO
+          ============================================ */
+
+        .page-title-strip {
+            position: relative;
+            z-index: 1;
+            padding: 36px 20px 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .page-title-strip .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(245, 0, 87, 0.08);
+            color: var(--pink);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            padding: 5px 13px;
+            border-radius: 100px;
+            border: 1px solid rgba(245, 0, 87, 0.18);
+            margin-bottom: 10px;
+        }
+
+        .page-title-strip .eyebrow .dot {
+            width: 5px; height: 5px;
+            background: var(--pink);
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.6); }
+        }
+
+        .page-title-strip h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .page-title-strip h1 em {
+            font-style: italic;
+            background: linear-gradient(135deg, var(--pink), #ff7043);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-title-strip .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 6px;
+        }
+
+        /* Divider decorativo bajo el título */
+        .title-divider {
+            max-width: 1100px;
+            margin: 20px auto 0;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .title-divider .line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(245,0,87,0.25), transparent);
+        }
+
+        .title-divider .line.right {
+            background: linear-gradient(270deg, rgba(245,0,87,0.25), transparent);
+        }
+
+        .title-divider .diamond {
+            width: 8px; height: 8px;
+            background: var(--pink);
+            transform: rotate(45deg);
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        /* ============================================
+          CONTENEDOR PRINCIPAL
+          ============================================ */
+
+        .contenedor {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+          CARDS — Mejoradas globalmente
+          ============================================ */
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 6px 24px var(--shadow);
+            background: var(--white);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 3px;
+            background: linear-gradient(90deg, var(--pink), #ff7043, var(--pink));
+            background-size: 200% 100%;
+            animation: gradShift 3s ease infinite;
+        }
+
+        @keyframes gradShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px var(--shadow-md);
+            transform: translateY(-3px);
+        }
+
+        /* ============================================
+          SCROLLBAR
+          ============================================ */
+
+        ::-webkit-scrollbar { width: 9px; }
+        ::-webkit-scrollbar-track { background: #f5f5f5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--pink), var(--pink-light));
+            border-radius: 10px;
+        }
+
+        /* ============================================
+          ANIMACIÓN DE ENTRADA
+          ============================================ */
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-title-strip { animation: fadeInUp 0.5s ease backwards; }
+        .contenedor > * { animation: fadeInUp 0.6s ease backwards; }
+        .contenedor > *:nth-child(1) { animation-delay: 0.1s; }
+        .contenedor > *:nth-child(2) { animation-delay: 0.2s; }
+        .contenedor > *:nth-child(3) { animation-delay: 0.3s; }
+
+        /* Transiciones suaves globales */
+        * { transition: background-color 0.2s ease, color 0.2s ease; }
+
+
+         /* ============================================
+      SIDEBAR — SIN CAMBIOS ESTRUCTURALES
+      ============================================ */
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 80px;
+      background: linear-gradient(180deg, var(--soft-yellow) 0%, #fff8dc 100%);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      box-shadow: 4px 0 20px var(--shadow-light);
+      z-index: 1000;
+      border-right: 2px solid rgba(245, 0, 87, 0.1);
+    }
+
+    .sidebar:hover {
+      width: 260px;
+      box-shadow: 6px 0 30px var(--shadow-medium);
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(180deg, transparent 0%, rgba(245, 0, 87, 0.02) 100%);
+      pointer-events: none;
+    }
+
+    .sidebar .logo {
+      width: 55px;
+      margin: 25px auto 50px;
+      display: block;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    .sidebar:hover .logo {
+      transform: scale(1.1);
+      filter: drop-shadow(0 6px 12px rgba(245, 0, 87, 0.3));
+    }
+
+    .menu {
+      list-style: none;
+      padding: 0;
+      margin: 10px;
+    }
+
+    .menu li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .menu li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--primary-pink), rgba(245, 0, 87, 0.7));
+      transition: width 0.3s ease;
+      border-radius: 12px;
+    }
+
+    .menu li:hover::before { width: 4px; }
+    .menu li:hover {
+      background: var(--hover-yellow);
+      transform: translateX(4px);
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 22px;
+      text-decoration: none;
+      width: 100%;
+      color: var(--primary-pink);
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .menu i {
+      font-size: 22px;
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+      color: var(--primary-pink);
+    }
+
+    .menu li:hover i {
+      transform: scale(1.15);
+      filter: drop-shadow(0 2px 4px rgba(245, 0, 87, 0.3));
+    }
+
+    .menu span {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar:hover .menu span {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .logout {
+      position: absolute;
+      bottom: 25px;
+      width: 100%;
+      padding: 0 10px;
+    }
+
+    .logout button {
+      all: unset;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 22px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logout button::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: radial-gradient(circle, rgba(245, 0, 87, 0.2), transparent);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+      border-radius: 50%;
+    }
+
+    .logout button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .logout button:hover {
+      background: linear-gradient(135deg, #ffe0e0 0%, #ffcdd2 100%);
+      transform: translateX(4px);
+    }
+
+    .logout i {
+      font-size: 22px;
+      color: var(--primary-pink);
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logout button:hover i { transform: rotate(15deg) scale(1.1); }
+
+    .logout span {
+      font-weight: 600;
+      color: var(--text-dark);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar:hover .logout span {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ── SIDEBAR RESPONSIVE ── */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 1100;
+      background: linear-gradient(135deg, var(--primary-pink), var(--pink-light));
+      border: none;
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(245, 0, 87, 0.35);
+      transition: transform .2s;
+    }
+    .sidebar-toggle:hover { transform: scale(1.08); }
+    .sidebar-toggle i { font-size: 20px; color: #fff; }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 16, 37, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+    }
+    .sidebar-backdrop.open { display: block; }
+
+    @media (max-width: 768px) {
+      .sidebar-toggle { display: flex; }
+
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .sidebar:hover { width: 260px; }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar.open .menu span,
+      .sidebar.open .logout span {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .navbar {
+        left: 0;
+        padding-left: 60px !important;
+      }
+
+      .page-title-strip,
+      .title-divider,
+      .contenedor {
+        padding-top: 10px;
+      }
+
+      .navbar-inner {
+        gap: 6px;
+        padding: 10px 12px;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+      }
+
+      .navbar-inner::-webkit-scrollbar { display: none; }
+
+      .btn-principal {
+        font-size: 0.75rem;
+        padding: 8px 14px;
+        white-space: nowrap;
+      }
+    }
+    </style>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+<body class="seguimiento-page {% block body_class %}{% endblock %}">
+
+    <!-- Botón hamburguesa (solo móvil) -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
+      <i class="fas fa-bars" id="toggleIcon"></i>
+    </button>
+
+    <!-- Backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="sidebar">
+    <img src="{% static 'images/logo.png' %}" class="logo" alt="Nutriet">
+
+    <ul class="menu">
+      <li>
+        <a href="{% url 'main' %}">
+          <i class="fas fa-home"></i>
+          <span>Inicio</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'explorar_recetas' %}">
+          <i class="fas fa-apple-alt"></i>
+          <span>Recetas</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'seguimiento:seguimiento' %}">
+          <i class="fas fa-chart-line"></i>
+          <span>Seguimiento</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'calendario' %}">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Calendario</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'perfil' %}">
+          <i class="fas fa-cog"></i>
+          <span>Configuración</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="logout">
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">
+          <i class="fas fa-right-from-bracket"></i>
+          <span>Cerrar sesión</span>
+        </button>
+      </form>
+    </div>
+  </aside>
+
+    <!-- ================================================
+      NAVBAR — Misma estructura, pill design
+      ================================================ -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a href="{% url 'seguimiento:seguimiento' %}" class="btn-principal">
+                📊 Seguimiento
+            </a>
+            <div class="nav-divider"></div>
+            <a href="{% url 'seguimiento:tablero' %}" class="btn-principal">
+                🗂️ Tablero
+            </a>
+            <div class="nav-divider"></div>
+            <a href="{% url 'seguimiento:agregar' %}" class="btn-principal">
+                ➕ Agregar medición
+            </a>
+            <div class="nav-divider"></div>
+            <a href="{% url 'seguimiento:recomendaciones_ia' %}" class="btn-principal">
+                🤖 Recomendaciones IA
+            </a>
+        </div>
+    </nav>
+
+    <!-- ================================================
+      TÍTULO DE PÁGINA — NUEVO (dinámico por bloque)
+      ================================================ -->
+    <div class="page-title-strip">
+        <div>
+            <div class="eyebrow"><span class="dot"></span> Nutriet · Seguimiento</div>
+            <h1>{% block page_heading %}<em>Mi progreso</em>{% endblock %}</h1>
+            <p class="subtitle">{% block page_subtitle %}Monitorea tu evolución y mantén el control{% endblock %}</p>
+        </div>
+    </div>
+
+    <div class="title-divider">
+        <div class="line"></div>
+        <div class="diamond"></div>
+        <div class="line right"></div>
+    </div>
+
+    <!-- ================================================
+      CONTENIDO
+      ================================================ -->
+    <div class="contenedor">
+        {% block contenido %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const sidebar = document.querySelector('.sidebar');
+      const toggle = document.getElementById('sidebarToggle');
+      const backdrop = document.getElementById('sidebarBackdrop');
+      const icon = document.getElementById('toggleIcon');
+
+      function openSidebar() {
+        sidebar.classList.add('open');
+        backdrop.classList.add('open');
+        icon.className = 'fas fa-times';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeSidebar() {
+        sidebar.classList.remove('open');
+        backdrop.classList.remove('open');
+        icon.className = 'fas fa-bars';
+        document.body.style.overflow = '';
+      }
+
+      toggle.addEventListener('click', () => {
+        sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+      });
+
+      backdrop.addEventListener('click', closeSidebar);
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactos - NUTRIET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #E91E63;
+            --primary-dark: #C2185B;
+            --bg-cream: #FFF8F0;
+            --bg-white: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-gray: #666666;
+            --border: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+#Menu {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#Menu a {
+    text-decoration: none;
+}
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-btn:not(.active) {
+            background: transparent;
+            color: var(--text-dark);
+        }
+
+        .nav-btn:not(.active):hover {
+            background: #FFE8F0;
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: var(--bg-cream);
+            padding: 4rem 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(233, 30, 99, 0.3);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-card {
+            background: var(--bg-cream);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .contact-card:hover::before {
+            opacity: 1;
+        }
+
+        .contact-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .contact-card:hover .contact-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .contact-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            word-break: break-word;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Form Section */
+        .form-section {
+            padding: 6rem 2rem;
+            background: var(--bg-cream);
+        }
+
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: var(--bg-cream);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(233, 30, 99, 0.3);
+        }
+
+        /* Info Section */
+        .info-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+        }
+
+        .info-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-box {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .info-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .info-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .info-text {
+            color: var(--text-gray);
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-cream);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 2px solid var(--border);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        footer p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .contact-section, .form-section, .info-section {
+                padding: 4rem 1rem;
+            }
+
+            .form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .nav-container {
+                gap: 0.5rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            h1 {
+                letter-spacing: -1px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+            #reloj, #persona, #etiqueta,#casa {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+/* MEJOR ALERTA DE ERRORES */
+
+/* Animación de sacudida para errores */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.error-input {
+    border-color: #e63946 !important;
+    animation: shake 0.3s ease-in-out;
+    background-color: #fff1f1 !important;
+}      
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+      <div id="Menu">
+        <a href="{% url 'home' %}"><button id="btn_inicio" class="nav-btn {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+          <svg id="casa" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M3 9.5l9-7 9 7V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
+          </svg> Inicio
+        </button></a>
+
+        <a href="{% url 'redes_sociales' %}"><button id="btn_ayuda" class="nav-btn {% if request.resolver_match.url_name == 'redes_sociales' %}active{% endif %}">
+          <svg id="reloj" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg> Redes sociales
+        </button></a>
+
+        <a href="{% url 'contacto' %}"><button id="btn_contactos" class="nav-btn {% if request.resolver_match.url_name == 'contacto' %}active{% endif %}">
+          <svg id="persona" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg> Contactos
+        </button></a>
+
+        <a href="{% url 'informacion' %}"><button id="btn_informacion" class="nav-btn {% if request.resolver_match.url_name == 'informacion' %}active{% endif %}">
+          <svg id="etiqueta" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg> Informacion
+        </button></a>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>CONTACTOS</h1>
+            <p class="subtitle">"Estamos aquí para ayudarte"</p>
+            <a href="{% url 'home' %}">
+           <button class="back-btn">← Volver al Inicio</button></a>
+        </div>
+    </section>
+
+    <!-- Contact Methods Section -->
+    <section class="contact-section">
+        <h2 class="section-title">Canales de Contacto</h2>
+        <div class="contact-container">
+            <div class="contact-card">
+                <div class="contact-icon">📱</div>
+                <h3 class="contact-title">WhatsApp</h3>
+                <p class="contact-info">+57 3213608049</p>
+                <a href="https://wa.me/573213608041" class="contact-link" target="_blank">
+                    Enviar mensaje
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">✉️</div>
+                <h3 class="contact-title">Email</h3>
+                <p class="contact-info">nutriet.col@gmail.com</p>
+                
+            <a href="mailto:nutriet.col@gmail.com?subject=Consulta&body=Hola, quiero más información"
+            class="contact-link">
+            Enviar correo
+            </a>
+            </div>
+            
+            <div class="contact-card">
+                <div class="contact-icon">✉️</div>
+                <h3 class="contact-title">Atención al Cliente</h3>
+                <p class="contact-info">AtencionClienteNutriet@gmail.com</p>
+                <a href="mailto:AtencionClienteNutriet@gmail.com?subject=Consulta&body=Hola, quiero más información"
+                class="contact-link">
+                    Enviar correo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+<section class="form-section">
+    <h2 class="section-title">Envíanos un Mensaje</h2>
+    <div class="form-container">
+<form id="contactForm" method="POST" novalidate>
+    {% csrf_token %}
+
+            <div class="form-group">
+                <label for="nombre">Nombre completo *</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre">
+                <small class="error" id="errorNombre"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo electrónico *</label>
+                <input type="email" id="email" name="email" placeholder="tu@email.com">
+                <small class="error" id="errorEmail"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="asunto">Asunto *</label>
+                <select id="asunto" name="asunto">
+                    <option value="">Selecciona un asunto</option>
+                    <option value="consulta">Consulta general</option>
+                    <option value="pedido">Información de pedido</option>
+                    <option value="soporte">Soporte técnico</option>
+                    <option value="sugerencia">Sugerencia</option>
+                    <option value="reclamo">Reclamo</option>
+                    <option value="otro">Otro</option>
+                </select>
+                <small class="error" id="errorAsunto"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="mensaje">Mensaje *</label>
+                <textarea id="mensaje" name="mensaje" placeholder="Escribe tu mensaje aquí..."></textarea>
+                <small class="error" id="errorMensaje"></small>
+            </div>
+
+            <button type="submit" class="submit-btn">Enviar Mensaje</button>
+        </form>
+    </div>
+</section>
+
+<!-- ✅ Modal de éxito -->
+<div id="successModal" style="
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+">
+    <div id="successModalBox" style="
+        background: #fff;
+        border-radius: 20px;
+        padding: 48px 40px;
+        max-width: 420px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        transform: scale(0.8);
+        opacity: 0;
+        transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+    ">
+        <div style="
+            width: 72px; height: 72px;
+            background: linear-gradient(135deg, #4ade80, #16a34a);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+            box-shadow: 0 8px 24px rgba(22,163,74,0.35);
+        ">✓</div>
+        <h2 style="margin: 0 0 10px; color: #1a1a2e; font-size: 1.5rem;">¡Mensaje enviado!</h2>
+        <p style="color: #555; font-size: 1rem; line-height: 1.6; margin: 0 0 28px;">
+            Tu mensaje fue recibido con éxito. 🎉<br>
+            Nos pondremos en contacto contigo pronto.
+        </p>
+        <button onclick="closeSuccessModal()" style="
+            background: linear-gradient(135deg, #4ade80, #16a34a);
+            color: #fff;
+            border: none;
+            padding: 12px 36px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(22,163,74,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        " onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(22,163,74,0.5)'"
+           onmouseout="this.style.transform='';this.style.boxShadow='0 4px 15px rgba(22,163,74,0.4)'">
+            ¡Entendido!
+        </button>
+    </div>
+</div>
+
+    <!-- Additional Info Section -->
+    <section class="info-section">
+        <h2 class="section-title">Información Adicional</h2>
+        <div class="info-grid">
+            <div class="info-box">
+                <div class="info-icon">⏰</div>
+                <h3 class="info-label">Horario de Atención</h3>
+                <p class="info-text">Lunes a Viernes<br>8:00 AM - 6:00 PM<br>Sábados: 9:00 AM - 2:00 PM</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon">💬</div>
+                <h3 class="info-label">Tiempo de Respuesta</h3>
+                <p class="info-text">Respondemos en menos de 48 horas en días hábiles</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon">🎯</div>
+                <h3 class="info-label">Nuestro Compromiso</h3>
+                <p class="info-text">Brindarte la mejor atención y soluciones personalizadas</p>
+            </div>
+
+            <div class="info-box">
+                <div class="info-icon">🌟</div>
+                <h3 class="info-label">Calidad</h3>
+                <p class="info-text">Tu satisfacción es nuestra prioridad número uno</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <h3 class="footer-title">NUTRIET</h3>
+            <p>"Come bien vive feliz"</p>
+            <div class="footer-links">
+                <a href="{% url 'home' %}" class="footer-link">Inicio</a>
+                <a href="{% url 'redes_sociales' %}" class="footer-link">Redes sociales</a>
+                <a href="{% url 'contacto' %}" class="footer-link">Contactos</a>
+                <a href="{% url 'informacion' %}" class="footer-link">Información</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.85rem;">© 2026 NUTRIET | Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+<script>
+// VALIDACIÓN COMPLETA DEL FORMULARIO
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+    // Referencias a los campos
+    let nombre = document.getElementById("nombre");
+    let email = document.getElementById("email");
+    let asunto = document.getElementById("asunto");
+    let mensaje = document.getElementById("mensaje");
+
+    // Referencias a los contenedores de error
+    let errorNombre = document.getElementById("errorNombre");
+    let errorEmail = document.getElementById("errorEmail");
+    let errorAsunto = document.getElementById("errorAsunto");
+    let errorMensaje = document.getElementById("errorMensaje");
+
+    // 1. Limpiar errores anteriores siempre que se intenta enviar
+    const campos = [nombre, email, asunto, mensaje];
+    const errores = [errorNombre, errorEmail, errorAsunto, errorMensaje];
+    
+    errores.forEach(err => err.textContent = "");
+    campos.forEach(input => input.classList.remove("error-input"));
+
+    let valido = true;
+
+    // 🔹 VALIDAR NOMBRE (Sin números: solo letras y espacios)
+    let regexNombre = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    if (nombre.value.trim() === "") {
+        errorNombre.textContent = "El nombre es obligatorio socio.";
+        nombre.classList.add("error-input");
+        valido = false;
+    } else if (!regexNombre.test(nombre.value.trim())) {
+        errorNombre.textContent = "El nombre no puede llevar números ni símbolos.";
+        nombre.classList.add("error-input");
+        valido = false;
+    }
+
+    // 🔹 VALIDAR EMAIL (Formato correcto)
+    let regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email.value.trim() === "") {
+        errorEmail.textContent = "El correo es obligatorio.";
+        email.classList.add("error-input");
+        valido = false;
+    } else if (!regexEmail.test(email.value.trim())) {
+        errorEmail.textContent = "Ese no parece un correo válido (ej: usuario@dominio.com).";
+        email.classList.add("error-input");
+        valido = false;
+    }
+
+    // 🔹 VALIDAR ASUNTO (Que no sea la opción vacía)
+    if (asunto.value === "") {
+        errorAsunto.textContent = "Tenés que elegir un asunto de la lista.";
+        asunto.classList.add("error-input");
+        valido = false;
+    }
+
+    // 🔹 VALIDAR MENSAJE (Obligatorio y mínimo 10 caracteres)
+    if (mensaje.value.trim() === "") {
+        errorMensaje.textContent = "No podés mandar un mensaje vacío.";
+        mensaje.classList.add("error-input");
+        valido = false;
+    } else if (mensaje.value.trim().length < 10) {
+        errorMensaje.textContent = "El mensaje es muy corto, metele al menos 10 caracteres.";
+        mensaje.classList.add("error-input");
+        valido = false;
+    }
+
+    // FINALMENTE: Si algo falló, detenemos el envío del formulario
+    if (!valido) {
+        e.preventDefault();
+    } else {
+        e.preventDefault(); // Evitamos el submit clásico, lo mandamos por AJAX
+
+        const form = document.getElementById("contactForm");
+        const formData = new FormData(form);
+        const submitBtn = form.querySelector(".submit-btn");
+
+        // Deshabilitar botón mientras se envía
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Enviando...";
+
+        fetch(form.action || window.location.href, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                showSuccessModal();
+            } else {
+                alert("Ocurrió un error al enviar el mensaje. Intenta de nuevo.");
+            }
+        })
+        .catch(() => {
+            alert("Error de conexión. Revisá tu internet e intentá de nuevo.");
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Enviar Mensaje";
+        });
+    }
+});
+
+function showSuccessModal() {
+    const modal = document.getElementById("successModal");
+    const box = document.getElementById("successModalBox");
+    modal.style.display = "flex";
+    setTimeout(() => {
+        box.style.transform = "scale(1)";
+        box.style.opacity = "1";
+    }, 20);
+    document.getElementById("contactForm").reset();
+}
+
+function closeSuccessModal() {
+    const modal = document.getElementById("successModal");
+    const box = document.getElementById("successModalBox");
+    box.style.transform = "scale(0.8)";
+    box.style.opacity = "0";
+    setTimeout(() => { modal.style.display = "none"; }, 300);
+}
+
+document.getElementById("successModal").addEventListener("click", function(e) {
+    if (e.target === this) closeSuccessModal();
+});
+
+</script>
+
+</body>
+</html>

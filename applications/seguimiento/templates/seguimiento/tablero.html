@@ -1,0 +1,478 @@
+{% extends "seguimiento/base_seguimiento.html" %}
+{% block titulo %}Tablero de Seguimiento{% endblock %}
+{% block body_class %}seguimiento-page{% endblock %}
+
+{% block contenido %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+.modal-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none; /* 🔥 ESTA LÍNEA ES CLAVE */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+/* ================= MODAL ELIMINAR ================= */
+
+.modal-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-box {
+  background: #ffffff;
+  padding: 30px;
+  width: 380px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  animation: aparecer .25s ease;
+}
+
+.modal-box h3 {
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+
+.modal-box p {
+  font-size: .9rem;
+  color: var(--muted);
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-confirmar {
+  background: linear-gradient(135deg,var(--pink),var(--pink2));
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: .2s;
+}
+
+.btn-confirmar:hover {
+  transform: scale(1.05);
+}
+
+.btn-cancelar {
+  background: #eee;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@keyframes aparecer {
+  from { transform: scale(.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+:root{--pink:#EF024A;--pink2:#ff4081;--bg:#fff7e6;--card:#ffffff;--muted:#6c757d;--dark:#1a1a2e;}
+
+/* Grid de métricas */
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:24px 0 20px;}
+.charts-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-bottom:28px;}
+@media(max-width:860px){.dash-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:540px){.charts-grid{grid-template-columns:1fr;}}
+
+/* Metric card */
+.mc{background:var(--card);border-radius:18px;padding:20px 18px;box-shadow:0 4px 20px rgba(0,0,0,.07);display:flex;flex-direction:column;gap:5px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.mc:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.12);}
+.mc::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--pink),var(--pink2));}
+.mc.green::before{background:linear-gradient(90deg,#27ae60,#2ecc71);}
+.mc.blue::before{background:linear-gradient(90deg,#2980b9,#3498db);}
+.mc.orange::before{background:linear-gradient(90deg,#e67e22,#FF7043);}
+.mc-label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.mc-value{font-size:1.85rem;font-weight:900;color:var(--dark);line-height:1.1;}
+.mc-sub{font-size:.78rem;color:var(--muted);}
+.imc-badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:.72rem;font-weight:700;margin-top:3px;}
+.b-ok{background:#d4edda;color:#155724;}.b-bajo{background:#cce5ff;color:#004085;}
+.b-sobre{background:#fff3cd;color:#856404;}.b-obeso{background:#f8d7da;color:#721c24;}
+
+/* Progress ring section */
+.prog-section{background:var(--card);border-radius:18px;padding:22px 28px;box-shadow:0 4px 20px rgba(0,0,0,.07);display:flex;align-items:center;gap:30px;flex-wrap:wrap;margin-bottom:20px;}
+.ring-wrap{position:relative;width:120px;height:120px;flex-shrink:0;}
+.ring-wrap svg{transform:rotate(-90deg);}
+.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.ring-pct{font-size:1.6rem;font-weight:900;color:var(--pink);}
+.ring-sub{font-size:.68rem;color:var(--muted);font-weight:600;}
+.prog-info{flex:1;min-width:180px;}
+.prog-info h4{font-weight:800;color:var(--dark);margin-bottom:10px;font-size:1.1rem;}
+.prog-info p{color:var(--muted);font-size:.88rem;margin:0 0 5px;}
+
+/* Plan profesional */
+.plan-card{background:linear-gradient(135deg,#fff0f5,#fff8f0);border-radius:18px;padding:22px;box-shadow:0 4px 20px rgba(0,0,0,.07);border-left:5px solid var(--pink);margin-bottom:20px;}
+.plan-card h5{font-weight:800;color:var(--pink);margin-bottom:14px;}
+.plan-row{display:flex;gap:20px;flex-wrap:wrap;}
+.plan-item{flex:1;min-width:130px;}
+.plan-item dt{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
+.plan-item dd{font-size:1rem;font-weight:800;color:var(--dark);margin:0;}
+.plan-item.wide{flex:2;min-width:200px;}
+.plan-item.wide dd{font-size:.85rem;font-weight:600;color:#444;line-height:1.5;}
+
+/* Chart card */
+.cc{background:var(--card);border-radius:18px;padding:18px 20px;box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.cc h6{font-weight:800;font-size:.8rem;color:var(--dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;}
+.cc canvas{max-height:200px;}
+
+/* Alerts */
+.al{border-radius:12px;padding:11px 16px;margin-bottom:9px;font-size:.86rem;font-weight:600;}
+.al.danger{background:#ffeaea;color:#c0392b;} .al.warning{background:#fff8e1;color:#d68910;} .al.info{background:#e8f4fd;color:#1a6fa8;}
+
+/* Section title */
+.stitle{font-size:1.1rem;font-weight:800;color:var(--dark);margin:28px 0 14px;display:flex;align-items:center;gap:10px;}
+.stitle::after{content:'';flex:1;height:2px;background:linear-gradient(90deg,var(--pink),transparent);}
+
+/* Table */
+.mt{width:100%;border-collapse:collapse;font-size:.84rem;background:var(--card);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06);}
+.mt th{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#fff;padding:11px 14px;font-weight:700;font-size:.76rem;text-align:center;}
+.mt td{padding:10px 14px;text-align:center;border-bottom:1px solid #f4f4f4;color:var(--dark);font-weight:500;}
+.mt tr:hover td{background:#fff4f0;}
+.mt tr:last-child td{border:none;}
+
+/* Empty */
+.empty{text-align:center;padding:44px 24px;background:var(--card);border-radius:18px;box-shadow:0 4px 20px rgba(0,0,0,.07);}
+.empty .ico{font-size:3.2rem;margin-bottom:14px;}
+.empty h4{font-weight:800;color:var(--dark);}
+.empty p{color:var(--muted);}
+</style>
+
+{% if necesita_medicion %}
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  Swal.fire({icon:'info',title:'📊 ¡Hora de medir tu progreso!',
+    text:'Han pasado más de 15 días desde tu última medición.',
+    confirmButtonText:'Registrar ahora',showCancelButton:true,
+    cancelButtonText:'Después',confirmButtonColor:'#EF024A'})
+  .then(r=>{if(r.isConfirmed)window.location.href='{% url "seguimiento:agregar" %}';});
+});
+</script>
+{% endif %}
+
+<!-- Título -->
+<div style="margin-top:26px;margin-bottom:4px;">
+  <h2 style="font-weight:900;font-size:1.95rem;background:linear-gradient(135deg,var(--pink),var(--pink2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;">
+    📈 Tablero de Seguimiento
+  </h2>
+  <p style="color:var(--muted);font-size:.92rem;">Hola <strong>{{ user.first_name|default:user.username }}</strong>, aquí está tu análisis corporal completo y actualizado.</p>
+</div>
+
+{% if not analisis %}
+<div class="empty" style="margin-top:32px;">
+  <div class="ico">🍽️</div>
+  <h4>Completa tu formulario nutricional primero</h4>
+  <p>Para ver tu análisis necesitamos tu perfil nutricional completo.</p>
+  <a href="{% url 'nutricion:formulario' %}" class="btn-principal mt-3" style="margin-top:16px;display:inline-block;">Completar formulario</a>
+</div>
+{% else %}
+{% with c=analisis.calculations_current g=analisis.goal_plan p=analisis.progress %}
+
+<!-- Alertas -->
+{% if analisis.alerts %}
+<div style="margin-top:18px;">
+  {% for a in analisis.alerts %}
+  <div class="al {{ a.nivel }}">{{ a.mensaje }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- 4 métricas principales -->
+<div class="dash-grid">
+  <div class="mc">
+    <div class="mc-label">Peso actual</div>
+    <div class="mc-value">{{ c.peso_actual }} <span style="font-size:.95rem;font-weight:600;">kg</span></div>
+    <div class="mc-sub">Inicio: <strong>{{ p.peso_inicial }} kg</strong> · Meta: <strong>{{ g.peso_meta }} kg</strong></div>
+  </div>
+
+  <div class="mc blue">
+    <div class="mc-label">IMC</div>
+    <div class="mc-value">{{ c.imc_actual }}</div>
+    <span class="imc-badge
+      {% if c.imc_actual < 18.5 %}b-bajo
+      {% elif c.imc_actual < 25 %}b-ok
+      {% elif c.imc_actual < 30 %}b-sobre
+      {% else %}b-obeso{% endif %}">
+      {{ c.clasificacion_imc }}
+    </span>
+  </div>
+
+  <div class="mc green">
+    <div class="mc-label">% Grasa corporal</div>
+    <div class="mc-value">{{ c.porcentaje_grasa_actual }}<span style="font-size:.95rem;">%</span></div>
+    <div class="mc-sub">Masa magra: <strong>{{ c.masa_magra_actual }} kg</strong></div>
+  </div>
+
+  <div class="mc orange">
+    <div class="mc-label">TDEE</div>
+    <div class="mc-value">{{ c.tdee_actual|floatformat:0 }} <span style="font-size:.95rem;">kcal</span></div>
+    <div class="mc-sub">TMB: <strong>{{ c.tmb_actual|floatformat:0 }} kcal/día</strong></div>
+  </div>
+</div>
+
+<!-- Anillo de progreso + datos -->
+<div class="prog-section">
+  <div class="ring-wrap">
+    <svg viewBox="0 0 110 110" width="120" height="120">
+      <circle cx="55" cy="55" r="46" fill="none" stroke="#f0f0f0" stroke-width="11"/>
+      <circle id="ringArc" cx="55" cy="55" r="46" fill="none"
+        stroke="url(#rg)" stroke-width="11"
+        stroke-dasharray="289.0"
+        stroke-dashoffset="289.0"
+        stroke-linecap="round"/>
+      <defs>
+        <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#EF024A"/>
+          <stop offset="100%" stop-color="#ff4081"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="ring-center">
+      <div class="ring-pct">{{ p.progreso_porcentaje }}%</div>
+      <div class="ring-sub">Progreso</div>
+    </div>
+  </div>
+  <div class="prog-info">
+    <h4>📌 Tu plan hacia la meta</h4>
+    <p>⚖️ Faltan <strong>{{ p.peso_faltante_para_meta }} kg</strong> para <strong>{{ g.peso_meta }} kg</strong></p>
+    <p>📅 Fecha estimada: <strong>{{ g.fecha_estimada_cumplimiento }}</strong></p>
+    <p>🗓️ Semanas restantes: <strong>{{ p.semanas_estimadas_restantes }}</strong></p>
+    <p>🏃 Ritmo recomendado: <strong>{{ g.ritmo_semanal_recomendado }} kg/semana</strong></p>
+  </div>
+</div>
+
+<!-- Comentario profesional -->
+<div class="plan-card">
+  <h5>🩺 Análisis profesional</h5>
+  <div class="plan-row">
+    <div class="plan-item">
+      <dt>Meta original</dt>
+      <dd>{{ g.meta_usuario_original }}</dd>
+    </div>
+    <div class="plan-item">
+      <dt>Meta ajustada</dt>
+      <dd>{{ g.meta_ajustada }}</dd>
+    </div>
+    <div class="plan-item wide">
+      <dt>Recomendación personalizada</dt>
+      <dd>{{ g.comentario_profesional }}</dd>
+    </div>
+  </div>
+</div>
+
+{% endwith %}
+
+<!-- Gráficas -->
+<div class="stitle">📊 Evolución temporal</div>
+<div class="charts-grid">
+  <div class="cc"><h6>⚖️ Peso (kg)</h6><canvas id="cPeso"></canvas></div>
+  <div class="cc"><h6>📐 IMC</h6><canvas id="cIMC"></canvas></div>
+  <div class="cc"><h6>🔥 % Grasa corporal</h6><canvas id="cGrasa"></canvas></div>
+  <div class="cc"><h6>💪 Masa magra (kg)</h6><canvas id="cMagra"></canvas></div>
+  <div class="cc"><h6>🎯 Progreso hacia la meta (%)</h6><canvas id="cProg"></canvas></div>
+  <div class="cc"><h6>📈 Proyección semanal de peso</h6><canvas id="cProyec"></canvas></div>
+</div>
+
+<!-- Historial -->
+<div class="stitle">📋 Historial de mediciones</div>
+{% if mediciones %}
+<div style="overflow-x:auto;border-radius:14px;margin-bottom:36px;">
+  <table class="mt">
+    <thead>
+      <tr>
+        <th>Fecha</th><th>Peso (kg)</th><th>IMC</th>
+        <th>% Grasa</th><th>Masa magra (kg)</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in mediciones|dictsortreversed:"fecha" %}
+      <tr>
+        <td>{{ m.fecha|date:"d/m/Y" }}</td>
+        <td><strong>{{ m.peso }}</strong></td>
+        <td>{{ m.imc|floatformat:1|default:"—" }}</td>
+        <td>{{ m.grasa_corporal|floatformat:1|default:"—" }}{% if m.grasa_corporal %}%{% endif %}</td>
+        <td>
+          {% if m.peso and m.grasa_corporal %}
+            {{ m.peso|floatformat:1 }}
+            {# masa magra calculada inline para no tocar el modelo #}
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          <form method="post" action="{% url 'seguimiento:borrar' m.pk %}" 
+            style="display:inline;" class="form-eliminar">
+            {% csrf_token %}
+            <button type="button"
+                  class="btn-eliminar"
+                  data-id="{{ m.pk }}">
+                🗑️
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty" style="margin-bottom:36px;">
+  <div class="ico">📏</div>
+  <h4>Sin mediciones todavía</h4>
+  <p>Registra tu primera medición para ver tu evolución.</p>
+  <a href="{% url 'seguimiento:agregar' %}" class="btn-principal" style="margin-top:16px;display:inline-block;">+ Agregar primera medición</a>
+</div>
+{% endif %}
+<!-- MODAL CONFIRMAR ELIMINACIÓN -->
+<div id="modalEliminar" class="modal-custom">
+  <div class="modal-box">
+    <h3>¿Eliminar esta medición?</h3>
+    <p>Esta acción no se puede deshacer.</p>
+
+    <div class="modal-actions">
+      <button id="cancelarEliminar" class="btn-cancelar">Cancelar</button>
+      <button id="confirmarEliminar" class="btn-confirmar">Eliminar</button>
+    </div>
+  </div>
+</div>
+<!-- Scripts de gráficas -->
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+const D  = {{ analisis_json|safe }};
+const CH = D.charts;
+
+// ── Animar anillo ────────────────────────────────────────────────────────────
+(function(){
+  const pct = D.progress.progreso_porcentaje;
+  const arc = document.getElementById('ringArc');
+  if (!arc) return;
+  setTimeout(()=>{
+    arc.style.transition = 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)';
+    arc.style.strokeDashoffset = 289.0 - (289.0 * pct / 100);
+  }, 300);
+})();
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const datesOf = a => a.map(d=>d.date);
+const valsOf  = a => a.map(d=>d.value);
+function noData(id){ const c=document.getElementById(id); if(c){ c.parentElement.style.opacity='.45'; const h=c.parentElement.querySelector('h6'); if(h) h.textContent+=' (sin datos)'; }}
+
+function lineChart(id, label, arr, color, fill, extra){
+  const f = arr.filter(d=>d.value!==null&&d.value!==undefined);
+  if(!f.length){noData(id);return;}
+  const ctx = document.getElementById(id);
+  if(!ctx) return;
+  const ds=[{label,data:valsOf(f),borderColor:color,backgroundColor:fill,
+    pointBackgroundColor:color,pointRadius:5,pointHoverRadius:7,
+    borderWidth:2.5,tension:0.4,fill:true}];
+  if(extra) ds.push(...extra);
+  new Chart(ctx.getContext('2d'),{type:'line',data:{labels:datesOf(f),datasets:ds},
+    options:{responsive:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:ds.length>1,labels:{font:{size:10}}}},
+      scales:{x:{grid:{display:false},ticks:{maxRotation:45,font:{size:10}}},
+              y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10}}}}}});
+}
+
+// ── Peso ─────────────────────────────────────────────────────────────────────
+lineChart('cPeso','Peso (kg)',CH.weight_over_time,'#EF024A','rgba(239,2,74,0.08)');
+
+// ── IMC con bandas ────────────────────────────────────────────────────────────
+(function(){
+  const f=CH.bmi_over_time.filter(d=>d.value!==null&&d.value!==undefined);
+  if(!f.length){noData('cIMC');return;}
+  const lb=datesOf(f);
+  new Chart(document.getElementById('cIMC').getContext('2d'),{type:'line',
+    data:{labels:lb,datasets:[
+      {label:'IMC',data:valsOf(f),borderColor:'#3498db',backgroundColor:'rgba(52,152,219,0.08)',
+        pointBackgroundColor:'#3498db',pointRadius:5,borderWidth:2.5,tension:0.4,fill:true},
+      {label:'Saludable (25)',data:lb.map(()=>25),borderColor:'rgba(46,204,113,0.7)',
+        borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false},
+      {label:'Sobrepeso (30)',data:lb.map(()=>30),borderColor:'rgba(255,112,67,0.7)',
+        borderDash:[6,4],borderWidth:1.5,pointRadius:0,fill:false},
+    ]},
+    options:{responsive:true,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{x:{grid:{display:false},ticks:{maxRotation:45,font:{size:10}}},
+              y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10}}}}}});
+})();
+
+// ── Grasa y masa magra ────────────────────────────────────────────────────────
+lineChart('cGrasa','% Grasa',CH.bodyfat_over_time,'#FF7043','rgba(255,112,67,0.08)');
+lineChart('cMagra','Masa magra (kg)',CH.leanmass_over_time,'#2ecc71','rgba(46,204,113,0.08)');
+
+// ── Progreso % (barras) ───────────────────────────────────────────────────────
+(function(){
+  const f=CH.progress_percent_over_time.filter(d=>d.value!==null&&d.value!==undefined);
+  if(!f.length){noData('cProg');return;}
+  new Chart(document.getElementById('cProg').getContext('2d'),{type:'bar',
+    data:{labels:datesOf(f),datasets:[{label:'Progreso %',data:valsOf(f),
+      backgroundColor:f.map(d=>d.value>=75?'rgba(46,204,113,0.75)':d.value>=40?'rgba(52,152,219,0.75)':'rgba(239,2,74,0.65)'),
+      borderRadius:8,borderSkipped:false}]},
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{maxRotation:45,font:{size:10}}},
+              y:{min:0,max:100,grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10}}}}}});
+})();
+
+// ── Proyección semanal (línea punteada) ───────────────────────────────────────
+(function(){
+  const arr=CH.projection_weight_weekly;
+  if(!arr||!arr.length){noData('cProyec');return;}
+  new Chart(document.getElementById('cProyec').getContext('2d'),{type:'line',
+    data:{labels:arr.map(d=>`Sem ${d.week}`),datasets:[{
+      label:'Peso proyectado (kg)',data:arr.map(d=>d.expected_weight),
+      borderColor:'#EF024A',backgroundColor:'rgba(239,2,74,0.06)',
+      borderDash:[8,4],borderWidth:2.2,tension:0.3,fill:true,
+      pointRadius:3,pointBackgroundColor:'#EF024A'}]},
+    options:{responsive:true,plugins:{legend:{display:false}},
+      scales:{x:{grid:{display:false},ticks:{font:{size:10}}},
+              y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{font:{size:10}}}}}});
+})();
+}); // end DOMContentLoaded
+</script>
+
+{% endif %}{# /if analisis #}
+
+
+{% include "seguimiento/_popup_frecuencia.html" %}
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+  const modal = document.getElementById("modalEliminar");
+  const btnConfirmar = document.getElementById("confirmarEliminar");
+  const btnCancelar = document.getElementById("cancelarEliminar");
+
+  let formActual = null;
+
+  document.querySelectorAll(".btn-eliminar").forEach(btn => {
+    btn.addEventListener("click", function() {
+      formActual = this.closest("form");
+      modal.style.display = "flex";
+    });
+  });
+
+  btnCancelar.addEventListener("click", function() {
+    modal.style.display = "none";
+  });
+
+  btnConfirmar.addEventListener("click", function() {
+    if(formActual){
+      formActual.submit();
+    }
+  });
+
+});
+</script>
+{% endblock %}
