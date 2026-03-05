@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - Sistema de Notificaciones</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .navbar h1 {
+            font-size: 1.5em;
+        }
+        
+        .navbar .user-info {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        
+        .navbar a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .device-list {
+            list-style: none;
+        }
+        
+        .device-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .device-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .device-info p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .badge.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+        
+        textarea {
+            resize: vertical;
+        }
+        
+        .notification-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .notification-item h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .notification-item p {
+            color: #666;
+            margin-bottom: 3px;
+            font-size: 0.9em;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin: 20px 0;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🔔 Sistema de Notificaciones</h1>
+        <div class="user-info">
+            <span>Hola, <strong>{{ usuario.username }}</strong></span>
+            <a href="{% url 'logout' %}">Cerrar sesión</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- PASO 1: Obtener Token FCM -->
+        <div class="card">
+            <h2>📱 Paso 1: Obtener Token FCM</h2>
+            
+            <div id="tokenStatus" class="status warning" style="display: none;">
+                <span>⚠️</span>
+                <span id="tokenStatusText">Espera un momento...</span>
+            </div>
+            
+            <p style="margin-bottom: 15px; color: #666;">
+                Haz clic en el botón para obtener tu token FCM y registrar este navegador.
+                Este token es único y se usa para enviarte notificaciones.
+            </p>
+            
+            <button id="obtenerTokenBtn" class="btn" onclick="obtenerToken()">
+                🚀 Obtener Token FCM
+            </button>
+            
+            <div class="loading" id="tokenLoading">
+                <div class="spinner"></div>
+                <p>Obteniendo token...</p>
+            </div>
+            
+            <div id="tokenInfo" style="display: none; margin-top: 20px;">
+                <div class="status success">
+                    <span>✅</span>
+                    <span>¡Token registrado exitosamente!</span>
+                </div>
+                <p style="color: #666; margin-top: 10px;">
+                    Tu navegador está registrado. Ahora puedes recibir notificaciones.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Dispositivos Registrados -->
+        <div class="card">
+            <h2>📲 Tus Dispositivos Registrados</h2>
+            
+            {% if dispositivos %}
+            <ul class="device-list">
+                {% for dispositivo in dispositivos %}
+                <li class="device-item">
+                    <div class="device-info">
+                        <h4>{{ dispositivo.nombre_dispositivo }}</h4>
+                        <p>{{ dispositivo.sistema_operativo }} | Registrado: {{ dispositivo.fecha_registro|date:"d/m/Y H:i" }}</p>
+                        <p style="font-family: monospace; color: #999; font-size: 0.8em;">
+                            Token: {{ dispositivo.token_fcm|truncatewords:3 }}...
+                        </p>
+                    </div>
+                    <span class="badge {% if dispositivo.activo %}active{% else %}inactive{% endif %}">
+                        {% if dispositivo.activo %}✓ Activo{% else %}✗ Inactivo{% endif %}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="status warning">
+                <span>⚠️</span>
+                <span>No tienes dispositivos registrados aún</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- PASO 2: Enviar Notificación de Prueba -->
+        <div class="card">
+            <h2>🧪 Paso 2: Enviar Notificación de Prueba</h2>
+            
+            <p style="margin-bottom: 15px; color: #666;">
+                Una vez registrado tu token, prueba enviándote una notificación.
+            </p>
+            
+            <form id="pruebaForm" method="POST" action="/enviar-prueba/">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="titulo">Título:</label>
+                    <input type="text" id="titulo" name="titulo" value="¡Hola!" placeholder="Título de la notificación">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cuerpo">Mensaje:</label>
+                    <textarea id="cuerpo" name="cuerpo" placeholder="Contenido del mensaje">Esta es una notificación de prueba</textarea>
+                </div>
+                
+                <button type="submit" class="btn">📤 Enviar Notificación</button>
+            </form>
+            
+            <div class="loading" id="pruebaLoading">
+                <div class="spinner"></div>
+                <p>Enviando notificación...</p>
+            </div>
+            
+            <div id="pruebaResult"></div>
+        </div>
+        
+        <!-- Historial de Notificaciones -->
+        <div class="card">
+            <h2>📜 Historial de Notificaciones Recibidas</h2>
+            
+            {% if notificaciones %}
+            <div>
+                {% for notif in notificaciones %}
+                <div class="notification-item">
+                    <h4>{{ notif.titulo }}</h4>
+                    <p><strong>{{ notif.cuerpo }}</strong></p>
+                    <p>📅 {{ notif.fecha_envio|date:"d/m/Y H:i:s" }} | Estado: {{ notif.estado }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="status warning">
+                <span>ℹ️</span>
+                <span>No hay notificaciones registradas aún</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCP7LywDqDvbYawIPRZabt5gFbn5DIoxho",
+    authDomain: "sanguine-robot-478914-g6.firebaseapp.com",
+    projectId: "sanguine-robot-478914-g6",
+    storageBucket: "sanguine-robot-478914-g6.firebasestorage.app",
+    messagingSenderId: "758388755200",
+    appId: "1:758388755200:web:ec3a7b927378dc551b81e5"
+};
+
+const VAPID_KEY = "BMi4sIK9cP1lmADQYF5TPdZnTQtfvumlC71nsLACYZIRWl_y2accEJJT3dzZglu6caB6vFHqv_C9Cy8t2uA9iGI";
+
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/firebase-messaging-sw.js")
+        
+        .catch(err => console.error("Error SW:", err));
+}
+
+async function obtenerToken() {
+
+    const btn = document.getElementById('obtenerTokenBtn');
+    const loading = document.getElementById('tokenLoading');
+    const status = document.getElementById('tokenStatus');
+    const info = document.getElementById('tokenInfo');
+
+    btn.disabled = true;
+    loading.classList.add('active');
+
+    try {
+
+        const permission = await Notification.requestPermission();
+
+        if (permission !== "granted") {
+            throw new Error("Permiso de notificaciones denegado");
+        }
+
+        // ⭐ ESPERAR A QUE SW ESTÉ LISTO
+        const registration = await navigator.serviceWorker.ready;
+
+        const currentToken = await messaging.getToken({
+            vapidKey: VAPID_KEY,
+            serviceWorkerRegistration: registration
+        });
+
+        if (!currentToken) {
+            throw new Error("No se pudo obtener token FCM");
+        }
+
+        console.log("TOKEN REAL:", currentToken);
+
+        registrarTokenEnServidor(currentToken, loading, status, info, btn);
+
+    } catch (err) {
+
+        console.error(err);
+
+        loading.classList.remove('active');
+        status.classList.add('error');
+        status.style.display = "flex";
+        status.innerHTML = `<span>❌</span><span>${err.message}</span>`;
+        btn.disabled = false;
+    }
+}
+
+function registrarTokenEnServidor(token, loading, status, info, btn) {
+
+    fetch("/registrar-token/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: JSON.stringify({
+            token_fcm: token,
+            nombre_dispositivo: "Navegador - " + getBrowserName()
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+
+        loading.classList.remove('active');
+
+        if (data.success) {
+
+            status.classList.remove('warning');
+            status.classList.add('success');
+            status.style.display = "flex";
+            status.innerHTML = `<span>✅</span><span>Token registrado correctamente</span>`;
+
+            info.style.display = "block";
+            btn.style.display = "none";
+
+            setTimeout(() => location.reload(), 1500);
+
+        } else {
+
+            status.classList.add('error');
+            status.style.display = "flex";
+            status.innerHTML = `<span>❌</span><span>${data.error}</span>`;
+            btn.disabled = false;
+        }
+    })
+    .catch(err => {
+
+        loading.classList.remove('active');
+
+        status.classList.add('error');
+        status.style.display = "flex";
+        status.innerHTML = `<span>❌</span><span>${err.message}</span>`;
+        btn.disabled = false;
+    });
+}
+
+messaging.onMessage(payload => {
+
+    console.log("Notificación recibida:", payload);
+
+    if (payload.notification) {
+
+        new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: "/static/images/icon.png"
+        });
+
+        setTimeout(() => location.reload(), 2000);
+    }
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+
+    if (document.cookie) {
+        document.cookie.split(";").forEach(cookie => {
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        });
+    }
+
+    return cookieValue;
+}
+
+function getBrowserName() {
+    const ua = navigator.userAgent;
+
+    if (ua.includes("Firefox")) return "Firefox";
+    if (ua.includes("Chrome")) return "Chrome";
+    if (ua.includes("Safari")) return "Safari";
+    if (ua.includes("Edge")) return "Edge";
+
+    return "Navegador";
+}
+</script>
+
+</body>
+</html>

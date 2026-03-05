@@ -1,0 +1,48 @@
+# ══════════════════════════════════════════════════════════════
+#  NutriET — .gitignore
+# ══════════════════════════════════════════════════════════════
+
+# Entorno y secretos (NUNCA subir al repositorio)
+.env
+*.env
+serviceAccountKey.json
+firebase_key.json
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+logs/
+staticfiles/
+media/
+db.sqlite3
+db.sqlite3-journal
+
+# Tests
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

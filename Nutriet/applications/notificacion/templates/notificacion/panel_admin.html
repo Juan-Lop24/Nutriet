@@ -1,0 +1,389 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔔 Panel de Notificaciones — NutriET</title>
+    <style>
+        :root {
+            --verde: #1B7A4A;
+            --verde-claro: #E8F5EE;
+            --verde-med: #A8D5BE;
+            --verde-oscuro: #145C38;
+            --texto: #1A1A1A;
+            --gris: #666;
+            --borde: #D0E8D8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #F4F9F6; color: var(--texto); }
+
+        /* NAV */
+        .nav {
+            background: var(--verde);
+            color: white;
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        }
+        .nav h1 { font-size: 1.2rem; }
+        .nav a { color: rgba(255,255,255,.85); text-decoration: none; font-size: .9rem; }
+        .nav a:hover { color: white; }
+
+        /* LAYOUT */
+        .container { max-width: 1100px; margin: 28px auto; padding: 0 20px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px 24px;
+            box-shadow: 0 1px 6px rgba(0,0,0,.07);
+            border: 1px solid var(--borde);
+        }
+        .card h2 { font-size: 1rem; color: var(--verde); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--verde-claro); }
+
+        /* STAT CARDS */
+        .stat { text-align: center; }
+        .stat .num { font-size: 2.4rem; font-weight: 700; color: var(--verde); }
+        .stat .label { font-size: .85rem; color: var(--gris); margin-top: 4px; }
+
+        /* CATEGORÍAS */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .cat-btn {
+            background: var(--verde-claro);
+            border: 1px solid var(--verde-med);
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            font-size: .85rem;
+            color: var(--verde-oscuro);
+            font-weight: 600;
+        }
+        .cat-btn:hover { background: var(--verde); color: white; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(27,122,74,.2); }
+        .cat-btn .emoji { display: block; font-size: 1.4rem; margin-bottom: 4px; }
+
+        /* FORM ENVÍO */
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: .85rem; font-weight: 600; color: var(--gris); margin-bottom: 5px; }
+        input, select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            font-size: .9rem;
+            color: var(--texto);
+            background: #FAFFFE;
+            transition: border .2s;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--verde); }
+
+        .btn {
+            background: var(--verde);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: .9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+            width: 100%;
+        }
+        .btn:hover { background: var(--verde-oscuro); }
+        .btn-broadcast {
+            background: #D97706;
+            margin-top: 8px;
+        }
+        .btn-broadcast:hover { background: #B45309; }
+
+        /* TABLA */
+        table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+        th { background: var(--verde); color: white; padding: 10px 12px; text-align: left; }
+        td { padding: 9px 12px; border-bottom: 1px solid var(--borde); }
+        tr:hover td { background: var(--verde-claro); }
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+        .badge-ok { background: #D1FAE5; color: #065F46; }
+        .badge-err { background: #FEE2E2; color: #991B1B; }
+
+        /* SCHEDULER */
+        .task-list { list-style: none; }
+        .task-list li {
+            padding: 8px 12px;
+            border-left: 3px solid var(--verde-med);
+            margin-bottom: 8px;
+            background: var(--verde-claro);
+            border-radius: 0 8px 8px 0;
+            font-size: .85rem;
+        }
+        .task-list li strong { color: var(--verde); }
+
+        /* TOAST */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--verde);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: .9rem;
+            display: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,.2);
+            z-index: 999;
+        }
+        #toast.error { background: #DC2626; }
+
+        /* RESPONSIVE */
+        @media (max-width: 720px) {
+            .grid-3 { grid-template-columns: 1fr 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .cat-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <h1>🔔 Notificaciones NutriET</h1>
+    <a href="/admin/">← Admin</a>
+</nav>
+
+<div class="container">
+
+    <!-- STATS -->
+    <div class="grid-3">
+        <div class="card stat">
+            <div class="num">{{ total_usuarios }}</div>
+            <div class="label">Usuarios activos</div>
+        </div>
+        <div class="card stat">
+            <div class="num">{{ dispositivos_activos }}</div>
+            <div class="label">Dispositivos con push</div>
+        </div>
+        <div class="card stat">
+            <div class="num">{{ tareas|length }}</div>
+            <div class="label">Tareas programadas</div>
+        </div>
+    </div>
+
+    <div class="grid-2">
+
+        <!-- ENVÍO MANUAL -->
+        <div class="card">
+            <h2>⚡ Enviar notificación ahora</h2>
+
+            <p style="font-size:.85rem;color:var(--gris);margin-bottom:14px;">
+                Elige categoría y la app selecciona el copy automáticamente.
+            </p>
+
+            <!-- Selector visual de categoría -->
+            <div class="cat-grid" id="catGrid">
+                {% for cat in categorias %}
+                <div class="cat-btn" data-id="{{ cat.id }}" onclick="selectCat(this)">
+                    <span class="emoji">{{ cat.emoji }}</span>
+                    {{ cat.nombre }}
+                </div>
+                {% endfor %}
+            </div>
+
+            <input type="hidden" id="categoriaSelected" value="">
+
+            <div class="form-group" style="margin-top:16px;">
+                <label>ID de usuario (vacío = tú mismo)</label>
+                <input type="number" id="userId" placeholder="Ej: 3">
+            </div>
+
+            <div class="form-group" id="actividadGroup" style="display:none;">
+                <label>Nombre de la actividad</label>
+                <input type="text" id="nombreActividad" placeholder="Ej: Yoga, Crossfit…">
+            </div>
+
+            <div class="form-group" id="recetaGroup" style="display:none;">
+                <label>Nombre de la receta</label>
+                <input type="text" id="nombreReceta" placeholder="Ej: Ensalada de quinoa…">
+            </div>
+
+            <button class="btn" onclick="enviarNotificacion(false)">
+                ✉️ Enviar a usuario
+            </button>
+            <button class="btn btn-broadcast" onclick="enviarNotificacion(true)">
+                📡 Broadcast a todos
+            </button>
+            <button class="btn" style="background:#6B7280;margin-top:8px;" onclick="runDiagnostico()">
+                🔍 Diagnóstico de tokens
+            </button>
+            <div id="diagResult" style="display:none;margin-top:12px;padding:12px;background:#F9FAFB;border-radius:8px;font-size:0.8rem;border:1px solid #E5E7EB;"></div>
+        </div>
+
+        <!-- SCHEDULER -->
+        <div>
+            <div class="card" style="margin-bottom:20px;">
+                <h2>🕐 Tareas programadas</h2>
+                {% if tareas %}
+                <ul class="task-list">
+                    {% for t in tareas %}
+                    <li>
+                        <strong>{{ t.id }}</strong><br>
+                        <span style="color:var(--gris);">Próximo: {{ t.proximo_disparo }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p style="color:var(--gris);font-size:.85rem;">Scheduler no iniciado o sin tareas.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="card" style="margin-top:0;">
+        <h2>📋 Últimas 20 notificaciones enviadas</h2>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Título</th>
+                        <th>Mensaje</th>
+                        <th>Estado</th>
+                        <th>Detalle / Error</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for n in ultimas_notificaciones %}
+                    <tr>
+                        <td>{{ n.usuario.username }}</td>
+                        <td>{{ n.titulo }}</td>
+                        <td style="max-width:180px;">{{ n.cuerpo|truncatechars:50 }}</td>
+                        <td>
+                            <span class="badge {% if n.estado == 'enviada' %}badge-ok{% else %}badge-err{% endif %}">
+                                {{ n.estado }}
+                            </span>
+                        </td>
+                        <td style="max-width:220px;font-size:0.75rem;color:{% if n.estado == 'error' %}#991B1B{% else %}#065F46{% endif %};">
+                            {% if n.respuesta_firebase %}
+                                {{ n.respuesta_firebase|truncatechars:80 }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>{{ n.fecha_envio|date:"d/m H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" style="text-align:center;color:var(--gris);">Sin notificaciones aún.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+    function selectCat(el) {
+        document.querySelectorAll('.cat-btn').forEach(b => b.style.cssText = '');
+        el.style.background = 'var(--verde)';
+        el.style.color = 'white';
+        document.getElementById('categoriaSelected').value = el.dataset.id;
+
+        // Mostrar campos opcionales según categoría
+        document.getElementById('actividadGroup').style.display = el.dataset.id === 'actividad' ? 'block' : 'none';
+        document.getElementById('recetaGroup').style.display = el.dataset.id === 'receta' ? 'block' : 'none';
+    }
+
+    function showToast(msg, error=false) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = error ? 'error' : '';
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3500);
+    }
+
+    async function enviarNotificacion(broadcast) {
+        const cat = document.getElementById('categoriaSelected').value;
+        if (!cat) { showToast('Selecciona una categoría primero', true); return; }
+
+        const body = {
+            categoria: cat,
+            broadcast: broadcast,
+            nombre_actividad: document.getElementById('nombreActividad').value,
+            nombre_receta: document.getElementById('nombreReceta').value,
+        };
+        const uid = document.getElementById('userId').value;
+        if (uid) body.usuario_id = parseInt(uid);
+
+        try {
+            const res = await fetch('/notificaciones/api/enviar-manual/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+                body: JSON.stringify(body),
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(broadcast ? '📡 Broadcast enviado!' : '✅ Notificación enviada!');
+            } else {
+                showToast(data.error || 'Error al enviar', true);
+            }
+        } catch (e) {
+            showToast('Error de red: ' + e.message, true);
+        }
+    }
+
+    async function runDiagnostico() {
+        const box = document.getElementById('diagResult');
+        box.style.display = 'block';
+        box.innerHTML = '⏳ Enviando prueba a tus tokens...';
+        try {
+            const res = await fetch('/notificaciones/api/diagnostico/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}',
+                },
+            });
+            const data = await res.json();
+            let html = `<strong>Firebase OK:</strong> ${data.firebase_inicializado ? '✅' : '❌'}<br>`;
+            html += `<strong>Dispositivos activos:</strong> ${data.total_dispositivos_activos}<br><br>`;
+            if (data.tokens && data.tokens.length > 0) {
+                data.tokens.forEach(t => {
+                    const icon = t.resultado === 'OK' ? '✅' : '❌';
+                    html += `${icon} <strong>${t.dispositivo}</strong>: ${t.resultado}<br>`;
+                    html += `&nbsp;&nbsp;Token: <code>${t.token_preview}</code><br>`;
+                });
+            } else {
+                html += '⚠️ No hay dispositivos activos registrados para tu usuario.<br>';
+                html += 'Asegúrate de haber aceptado los permisos de notificación en el navegador.';
+            }
+            html += `<br><em style="color:#6B7280;">${data.instruccion}</em>`;
+            box.innerHTML = html;
+        } catch (e) {
+            box.innerHTML = '❌ Error al ejecutar diagnóstico: ' + e.message;
+        }
+    }
+</script>
+</body>
+</html>

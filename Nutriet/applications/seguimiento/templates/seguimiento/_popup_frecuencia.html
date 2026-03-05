@@ -1,0 +1,152 @@
+{% if mostrar_popup_frecuencia %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const CSRF = '{{ csrf_token }}';
+  const URL  = '{% url "seguimiento:guardar_preferencia" %}';
+
+  // Doble protección: si ya eligió en esta sesión del browser, no mostrar
+  if (localStorage.getItem('fq_configurada_' + '{{ request.user.id }}') === '1') return;
+
+  Swal.fire({
+    title: '⏱️ ¿Cada cuánto quieres registrar tus mediciones?',
+    html: `
+      <p style="color:#6c757d;font-size:.9rem;margin-bottom:18px;">
+        Esto define cada cuánto podrás agregar una nueva medición.<br>
+        <strong>Solo se te pregunta una vez.</strong>
+      </p>
+      <div id="fq-opts" style="display:flex;flex-direction:column;gap:11px;">
+
+        <label class="fq-card" data-val="1">
+          <input type="radio" name="fq" value="1">
+          <div class="fq-icon">⚡</div>
+          <div class="fq-text">
+            <strong>Cada 24 horas</strong>
+            <span>Seguimiento diario intensivo</span>
+          </div>
+        </label>
+
+        <label class="fq-card fq-selected" data-val="15">
+          <input type="radio" name="fq" value="15" checked>
+          <div class="fq-icon">📅</div>
+          <div class="fq-text">
+            <strong>Cada 15 días</strong>
+            <span>Recomendado ✨</span>
+          </div>
+        </label>
+
+        <label class="fq-card" data-val="30">
+          <input type="radio" name="fq" value="30">
+          <div class="fq-icon">🗓️</div>
+          <div class="fq-text">
+            <strong>Cada mes</strong>
+            <span>Seguimiento a largo plazo</span>
+          </div>
+        </label>
+
+      </div>
+    `,
+    showConfirmButton: true,
+    confirmButtonText: 'Guardar preferencia',
+    confirmButtonColor: '#EF024A',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    customClass: { popup: 'fq-popup', confirmButton: 'fq-btn' },
+    didOpen: () => {
+      // Selección visual de tarjetas
+      document.querySelectorAll('.fq-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.fq-card').forEach(c => c.classList.remove('fq-selected'));
+          card.classList.add('fq-selected');
+          card.querySelector('input').checked = true;
+        });
+      });
+    },
+    preConfirm: () => {
+      const sel = document.querySelector('#fq-opts input[name=fq]:checked');
+      if (!sel) { Swal.showValidationMessage('Selecciona una opción'); return false; }
+      return fetch(URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+        body: JSON.stringify({ frecuencia_dias: parseInt(sel.value) })
+      }).then(r => r.json()).then(d => {
+        if (!d.ok) throw new Error(d.error || 'Error al guardar');
+        return d;
+      }).catch(err => Swal.showValidationMessage('Error: ' + err.message));
+    }
+  }).then(result => {
+    if (result.isConfirmed && result.value) {
+      const etiquetas = { 1: 'cada 24 horas', 15: 'cada 15 días', 30: 'cada mes' };
+      Swal.fire({
+        icon: 'success',
+        title: '¡Listo! 🎉',
+        html: `Registrarás tus mediciones <strong>${etiquetas[result.value.frecuencia_dias]}</strong>.`,
+        timer: 2200,
+        timerProgressBar: true,
+        showConfirmButton: false,
+      });
+    }
+  });
+});
+</script>
+
+<style>
+/* Popup container */
+.fq-popup {
+  border-radius: 22px !important;
+  padding: 28px 24px !important;
+  max-width: 480px !important;
+  font-family: 'Montserrat', sans-serif !important;
+}
+.fq-btn {
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  padding: 11px 28px !important;
+  font-size: .95rem !important;
+}
+
+/* Tarjetas de opción */
+.fq-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 2px solid #e5e5e5;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+  background: #fff;
+  user-select: none;
+}
+.fq-card input { display: none; }
+.fq-card:hover {
+  border-color: rgba(239,2,74,.35);
+  background: #fff5f8;
+}
+.fq-card.fq-selected {
+  border-color: #EF024A;
+  background: #fff5f8;
+  box-shadow: 0 2px 12px rgba(239,2,74,.15);
+}
+.fq-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 40px;
+  text-align: center;
+}
+.fq-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.fq-text strong {
+  font-size: .95rem;
+  color: #1a1a2e;
+  font-weight: 700;
+}
+.fq-text span {
+  font-size: .78rem;
+  color: #6c757d;
+}
+</style>
+{% endif %}
