@@ -14,11 +14,21 @@ from firebase_admin import credentials
 # BASE_DIR apunta al directorio del manage.py
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-FIREBASE_CRED_PATH = BASE_DIR / "serviceAccountKey.json"
+# ✅ DESPUÉS — lee desde variable de entorno
+import json
 
-if FIREBASE_CRED_PATH.exists() and not firebase_admin._apps:
-    cred = credentials.Certificate(str(FIREBASE_CRED_PATH))
+FIREBASE_SERVICE_ACCOUNT_JSON = os.getenv("FIREBASE_SERVICE_ACCOUNT")
+
+if FIREBASE_SERVICE_ACCOUNT_JSON and not firebase_admin._apps:
+    service_account_info = json.loads(FIREBASE_SERVICE_ACCOUNT_JSON)
+    cred = credentials.Certificate(service_account_info)
     firebase_admin.initialize_app(cred)
+elif not firebase_admin._apps:
+    # Fallback local: busca el archivo si existe
+    FIREBASE_CRED_PATH = BASE_DIR / "serviceAccountKey.json"
+    if FIREBASE_CRED_PATH.exists():
+        cred = credentials.Certificate(str(FIREBASE_CRED_PATH))
+        firebase_admin.initialize_app(cred)
 
 # Archivo .env está en la raíz del proyecto
 ENV_PATH = BASE_DIR / ".env"
@@ -203,6 +213,7 @@ FIREBASE_WEB_CONFIG = {
     "messagingSenderId": os.getenv("FIREBASE_MESSAGING_SENDER_ID"),
     "appId": os.getenv("FIREBASE_APP_ID"),
 }
+
 
 # ─────────────────────────────────────────────
 # REST FRAMEWORK
