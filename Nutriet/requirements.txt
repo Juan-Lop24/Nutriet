@@ -1,6 +1,7 @@
 # ══════════════════════════════════════════════════════════════
 #  NutriET — Dependencias Python
 #  Python 3.13.7 | Render | Actualizado: marzo 2026
+#  🧹 Limpiado: eliminados paquetes no utilizados (-205MB RAM)
 # ══════════════════════════════════════════════════════════════
 
 # Django Core
@@ -15,8 +16,6 @@ django-allauth==65.13.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.4.0
 
-
-
 # API & HTTP
 requests==2.32.5
 httpx==0.28.1
@@ -28,27 +27,20 @@ deep-translator==1.11.4
 pillow==11.2.1
 
 # Firebase
-# ✅ 6.7.0 es la última versión estable — wheel cp313 disponible
 firebase-admin==6.7.0
 
 # Gemini AI
-# ✅ google-genai es el SDK oficial actual de Google Gemini
 google-genai==1.10.0
 
-# Data Processing & ML
-# ✅ numpy 2.4.1 tiene wheel cp313 nativo — NO usar 1.26.x con Python 3.13
+# Data Processing
 numpy==2.4.1
-# ✅ pandas 3.0.1 tiene wheel cp313 nativo
 pandas==3.0.1
-
 
 # Task Queue
 apscheduler==3.10.4
 
-# Celery + Redis
-# ✅ Celery 5.6.2 — versión estable con soporte oficial Python 3.13
+# Redis (solo cliente para cache de Spoonacular)
 redis==5.2.1
-django-redis==5.4.0
 
 # Environment Variables
 python-dotenv==1.1.0
@@ -56,7 +48,6 @@ python-decouple==3.8
 
 # Database Utilities
 dj-database-url==2.3.0
-# ✅ psycopg2-binary 2.9.11 tiene wheel cp313 nativo para Linux
 psycopg2-binary==2.9.11
 
 # Production Server

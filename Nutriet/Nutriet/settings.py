@@ -58,8 +58,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Apps terceros
-    'formtools',
     # Nuevas apps
     'applications.base',
     'applications.home',
