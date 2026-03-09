@@ -15,8 +15,7 @@ django-allauth==65.13.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.4.0
 
-# Forms & Validation
-django-formtools==2.5.1
+
 
 # API & HTTP
 requests==2.32.5
@@ -28,16 +27,9 @@ deep-translator==1.11.4
 # Image Processing
 pillow==11.2.1
 
-# Web Scraping
-beautifulsoup4==4.14.3
-soupsieve==2.8
-
 # Firebase
 # ✅ 6.7.0 es la última versión estable — wheel cp313 disponible
 firebase-admin==6.7.0
-
-# AI
-openai==1.40.0
 
 # Gemini AI
 # ✅ google-genai es el SDK oficial actual de Google Gemini
@@ -48,15 +40,13 @@ google-genai==1.10.0
 numpy==2.4.1
 # ✅ pandas 3.0.1 tiene wheel cp313 nativo
 pandas==3.0.1
-# ✅ scikit-learn 1.6.1 — soporta Python 3.9–3.13 con wheel nativo
-scikit-learn==1.6.1
+
 
 # Task Queue
 apscheduler==3.10.4
 
 # Celery + Redis
 # ✅ Celery 5.6.2 — versión estable con soporte oficial Python 3.13
-celery==5.6.2
 redis==5.2.1
 django-redis==5.4.0
 
@@ -72,12 +62,6 @@ psycopg2-binary==2.9.11
 # Production Server
 gunicorn==23.0.0
 whitenoise==6.9.0
-
-# CORS Support
-django-cors-headers==4.7.0
-
-# Serialization
-djangorestframework-camel-case==1.4.2
 
 # Date/Time utilities
 python-dateutil==2.9.0.post0
