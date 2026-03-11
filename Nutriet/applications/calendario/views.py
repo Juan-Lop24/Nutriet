@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 @never_cache
 @login_required
 @verificar_formulario_completo
-def obtener_eventos(request):
-
+def calendario_view(request):
+    
     eventos = Actividad.objects.filter(usuario=request.user)
 
     data = []
