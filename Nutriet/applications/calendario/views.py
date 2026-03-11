@@ -19,8 +19,12 @@ def calendario_view(request):
     return render(request, 'calendario.html')
 
 
-@login_required  #  FIX 1: proteger endpoint para que solo usuarios autenticados accedan a sus propios eventos
+@never_cache  #  FIX CRÍTICO: evita que Render o el navegador cachee la respuesta entre usuarios
+@login_required
 def obtener_eventos(request):
+    # Doble verificación: si por alguna razón el usuario no está autenticado, retornar vacío
+    if not request.user.is_authenticated:
+        return JsonResponse([], safe=False)
 
     eventos = Actividad.objects.filter(usuario=request.user)
 
@@ -37,7 +41,12 @@ def obtener_eventos(request):
             "start": start
         })
 
-    return JsonResponse(data, safe=False)
+    response = JsonResponse(data, safe=False)
+    # Headers explícitos para que ningún proxy/CDN/Render cachee esta respuesta
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Vary'] = 'Cookie'
+    return response
 
 
 
@@ -61,7 +70,7 @@ def _enviar_notif_confirmacion(usuario_id, titulo_evento, fecha_str, hora_str=No
 
 
 @csrf_exempt
-@login_required  # ✅ FIX 2: proteger endpoint para que solo usuarios autenticados puedan agregar eventos
+@login_required  #  FIX 2: proteger endpoint para que solo usuarios autenticados puedan agregar eventos
 def agregar_evento(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -143,7 +152,7 @@ def eliminar_evento(request, evento_id):
     if request.method != 'DELETE':
         return HttpResponseNotAllowed(['DELETE'])
 
-    # ✅ FIX 5 (el más crítico): usuario=request.user garantiza que solo el dueño
+    #  FIX 5 (el más crítico): usuario=request.user garantiza que solo el dueño
     # puede eliminar su propio evento. Antes faltaba este filtro y cualquier
     # usuario podía eliminar eventos ajenos.
     actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
