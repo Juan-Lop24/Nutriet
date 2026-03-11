@@ -366,7 +366,7 @@
                 },
             });
             const data = await res.json();
-            let html = `<strong>Firebase OK:</strong> ${data.firebase_inicializado ? '✅' : '❌'}<br>`;
+            let html = `<strong>OneSignal OK:</strong> ${data.onesignal_configurado ? '✅' : '❌'}<br>`;
             html += `<strong>Dispositivos activos:</strong> ${data.total_dispositivos_activos}<br><br>`;
             if (data.tokens && data.tokens.length > 0) {
                 data.tokens.forEach(t => {

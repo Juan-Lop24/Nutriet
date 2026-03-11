@@ -1,13 +1,11 @@
 from django.conf import settings
-import json
 
 
-def firebase_config(request):
-    """Expone la configuración web de Firebase para las plantillas."""
-    config = getattr(settings, 'FIREBASE_WEB_CONFIG', {})
-    vapid = getattr(settings, 'FIREBASE_VAPID_KEY', '')
-
+def onesignal_config(request):
+    """
+    Expone el App ID de OneSignal a todos los templates.
+    Reemplaza el anterior firebase_config.
+    """
     return {
-        'FIREBASE_WEB_CONFIG': json.dumps(config),
-        'FIREBASE_VAPID_KEY': vapid,
+        'ONESIGNAL_APP_ID': getattr(settings, 'ONESIGNAL_APP_ID', ''),
     }
