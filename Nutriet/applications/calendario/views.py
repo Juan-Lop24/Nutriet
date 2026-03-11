@@ -15,15 +15,9 @@ logger = logging.getLogger(__name__)
 @never_cache
 @login_required
 @verificar_formulario_completo
-def calendario_view(request):
-    return render(request, 'calendario.html')
-
-
 def obtener_eventos(request):
-    if request.user.is_authenticated:
-        eventos = Actividad.objects.filter(usuario=request.user)
-    else:
-        eventos = Actividad.objects.all()
+
+    eventos = Actividad.objects.filter(usuario=request.user)
 
     data = []
     for e in eventos:
@@ -31,10 +25,14 @@ def obtener_eventos(request):
             start = f"{e.fecha.isoformat()}T{e.hora.strftime('%H:%M')}"
         else:
             start = e.fecha.isoformat()
-        data.append({"id": e.id, "title": e.titulo, "start": start})
+
+        data.append({
+            "id": e.id,
+            "title": e.titulo,
+            "start": start
+        })
 
     return JsonResponse(data, safe=False)
-
 
 def _enviar_notif_confirmacion(usuario_id, titulo_evento, fecha_str, hora_str=None):
     """Notifica al usuario que su actividad fue guardada."""
@@ -89,7 +87,7 @@ def agregar_evento(request):
         titulo=titulo,
         fecha=fecha,
         hora=hora,
-        usuario=request.user if request.user.is_authenticated else None,
+        usuario=request.user
     )
 
     # Notificación de confirmación inmediata
@@ -114,7 +112,8 @@ def editar_evento(request, evento_id):
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"error": "JSON inválido"}, status=400)
 
-    actividad = get_object_or_404(Actividad, id=evento_id)
+    actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
+
 
     if request.user.is_authenticated and actividad.usuario and actividad.usuario != request.user:
         return JsonResponse({"error": "Sin permiso"}, status=403)
@@ -138,7 +137,7 @@ def eliminar_evento(request, evento_id):
     if request.method != 'DELETE':
         return HttpResponseNotAllowed(['DELETE'])
 
-    actividad = get_object_or_404(Actividad, id=evento_id)
+    actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
 
     if request.user.is_authenticated and actividad.usuario and actividad.usuario != request.user:
         return JsonResponse({"error": "Sin permiso"}, status=403)

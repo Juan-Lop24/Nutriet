@@ -6,8 +6,6 @@ class Actividad(models.Model):
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
         related_name='actividades_calendario',
         help_text='Usuario dueño de esta actividad'
     )
