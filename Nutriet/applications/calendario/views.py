@@ -19,6 +19,7 @@ def calendario_view(request):
     return render(request, 'calendario.html')
 
 
+@login_required  #  FIX 1: proteger endpoint para que solo usuarios autenticados accedan a sus propios eventos
 def obtener_eventos(request):
 
     eventos = Actividad.objects.filter(usuario=request.user)
@@ -60,6 +61,7 @@ def _enviar_notif_confirmacion(usuario_id, titulo_evento, fecha_str, hora_str=No
 
 
 @csrf_exempt
+@login_required  # ✅ FIX 2: proteger endpoint para que solo usuarios autenticados puedan agregar eventos
 def agregar_evento(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -97,18 +99,18 @@ def agregar_evento(request):
     )
 
     # Notificación de confirmación inmediata
-    if request.user.is_authenticated:
-        _enviar_notif_confirmacion(
-            usuario_id=request.user.id,
-            titulo_evento=titulo,
-            fecha_str=fecha,
-            hora_str=hora_display,
-        )
+    _enviar_notif_confirmacion(
+        usuario_id=request.user.id,
+        titulo_evento=titulo,
+        fecha_str=fecha,
+        hora_str=hora_display,
+    )
 
     return JsonResponse({"id": actividad.id, "ok": True})
 
 
 @csrf_exempt
+@login_required  #  FIX 3: proteger endpoint
 def editar_evento(request, evento_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -118,11 +120,8 @@ def editar_evento(request, evento_id):
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"error": "JSON inválido"}, status=400)
 
+    # usuario=request.user garantiza que solo el dueño puede editar su evento
     actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
-
-
-    if request.user.is_authenticated and actividad.usuario and actividad.usuario != request.user:
-        return JsonResponse({"error": "Sin permiso"}, status=403)
 
     actividad.titulo = data.get('title', actividad.titulo).strip()
     hora_str = data.get('time')
@@ -139,14 +138,15 @@ def editar_evento(request, evento_id):
 
 
 @csrf_exempt
+@login_required  #  FIX 4: proteger endpoint
 def eliminar_evento(request, evento_id):
     if request.method != 'DELETE':
         return HttpResponseNotAllowed(['DELETE'])
 
-    actividad = get_object_or_404(Actividad, id=evento_id, )
-
-    if request.user.is_authenticated and actividad.usuario and actividad.usuario != request.user:
-        return JsonResponse({"error": "Sin permiso"}, status=403)
+    # ✅ FIX 5 (el más crítico): usuario=request.user garantiza que solo el dueño
+    # puede eliminar su propio evento. Antes faltaba este filtro y cualquier
+    # usuario podía eliminar eventos ajenos.
+    actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
 
     actividad.delete()
     return JsonResponse({"message": "Evento eliminado", "ok": True})
