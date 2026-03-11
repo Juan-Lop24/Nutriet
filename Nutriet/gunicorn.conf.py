@@ -5,8 +5,9 @@ import multiprocessing
 import os
 
 # ── Workers ───────────────────────────────────────────────────────────────────
-# Fórmula recomendada: (2 × núcleos) + 1
-workers = int(os.getenv("GUNICORN_WORKERS", multiprocessing.cpu_count() * 2 + 1))
+# Render free tier solo tiene 512MB — máximo 2 workers para no OOM
+# En producción con más RAM, sube GUNICORN_WORKERS vía variable de entorno
+workers = int(os.getenv("GUNICORN_WORKERS", 2))
 worker_class = "sync"   # 'sync' es estable; usa 'gevent' si tienes muchas conexiones I/O
 threads = int(os.getenv("GUNICORN_THREADS", 2))
 worker_connections = 1000
