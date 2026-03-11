@@ -1,6 +1,6 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "Dockerfile"
+builder = "railpack"
+buildCommand = "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
 
 [deploy]
 startCommand = "gunicorn -c gunicorn.conf.py Nutriet.wsgi:application"
@@ -8,6 +8,8 @@ healthcheckPath = "/health/"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 3
+```
 
-[[services]]
-name = "web"
+Y agrega esta variable de entorno en Railway:
+```
+RAILPACK_PYTHON_VERSION = 3.13
