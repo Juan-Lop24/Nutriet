@@ -15,6 +15,10 @@ logger = logging.getLogger(__name__)
 @never_cache
 @login_required
 @verificar_formulario_completo
+def calendario_view(request):
+    return render(request, 'calendario.html')
+
+
 def obtener_eventos(request):
 
     eventos = Actividad.objects.filter(usuario=request.user)
@@ -33,6 +37,8 @@ def obtener_eventos(request):
         })
 
     return JsonResponse(data, safe=False)
+
+
 
 def _enviar_notif_confirmacion(usuario_id, titulo_evento, fecha_str, hora_str=None):
     """Notifica al usuario que su actividad fue guardada."""
@@ -137,7 +143,7 @@ def eliminar_evento(request, evento_id):
     if request.method != 'DELETE':
         return HttpResponseNotAllowed(['DELETE'])
 
-    actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
+    actividad = get_object_or_404(Actividad, id=evento_id, )
 
     if request.user.is_authenticated and actividad.usuario and actividad.usuario != request.user:
         return JsonResponse({"error": "Sin permiso"}, status=403)
