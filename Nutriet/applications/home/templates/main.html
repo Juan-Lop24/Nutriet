@@ -991,6 +991,26 @@
       .dashboard-top, .dashboard-bottom { gap: 20px; }
       .page-header-left h1 { font-size: 1.9rem; }
       .header-stats { display: none; }
+
+      /* En móvil las gráficas vuelven a altura fija para no estirarse */
+      .seguimiento-card {
+        display: block;
+        height: auto;
+      }
+      .mini-chart {
+        display: block;
+        flex: none;
+        height: auto;
+      }
+      .mini-chart > div {
+        flex: none;
+        height: auto;
+        margin-bottom: 16px;
+      }
+      .mini-chart canvas {
+        flex: none;
+        height: 200px !important;
+      }
     }
 
     /* Transiciones globales suaves */
