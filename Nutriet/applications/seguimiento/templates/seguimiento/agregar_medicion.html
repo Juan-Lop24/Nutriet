@@ -402,6 +402,18 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 0 20px;
+      justify-items: center;
+    }
+
+    .fields-grid .field-group {
+      width: 100%;
+    }
+
+    /* Si solo hay un campo, se centra automáticamente */
+    .fields-grid .field-group:only-child {
+      grid-column: 1 / -1;
+      max-width: 50%;
+      margin: 0 auto;
     }
 
     @media (max-width: 576px) {
