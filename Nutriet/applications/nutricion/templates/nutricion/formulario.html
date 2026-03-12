@@ -92,6 +92,10 @@
         .dj-err p{font-size:.85rem;font-weight:700;color:var(--pink);margin-bottom:6px}
         .dj-err ul{padding-left:18px}
         .dj-err li{font-size:.82rem;color:#8b0034;margin-bottom:2px}
+        .dj-warn{background:#fffbea;border:1.5px solid #f5d76e;border-radius:var(--r-md);
+                 padding:14px 18px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px}
+        .dj-warn .warn-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+        .dj-warn p{font-size:.84rem;font-weight:500;color:#7a5c00;line-height:1.5}
 
         /* SEXO TOGGLE */
         .sexo-t{display:flex;gap:10px}
@@ -247,7 +251,16 @@
     </div>
     {% endif %}
     {% if messages %}
-    <div class="dj-err">{% for m in messages %}<p>{{ m }}</p>{% endfor %}</div>
+    {% for m in messages %}
+        {% if m.tags == 'warning' %}
+        <div class="dj-warn">
+            <span class="warn-icon">⚠️</span>
+            <p>{{ m }}</p>
+        </div>
+        {% else %}
+        <div class="dj-err"><p>{{ m }}</p></div>
+        {% endif %}
+    {% endfor %}
     {% endif %}
 
     <form id="mainForm" method="POST" novalidate>

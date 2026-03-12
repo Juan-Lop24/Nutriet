@@ -180,6 +180,47 @@ def _aplicar_ingredientes_excluidos(qs, ingredientes_texto):
     return qs
 
 
+def _detectar_ingredientes_no_reconocidos(ingredientes_texto):
+    """
+    Dado el texto de ingredientes excluidos (separados por coma), devuelve
+    una lista con los ingredientes que NO pudieron reconocerse: es decir,
+    aquellos que no están en el diccionario interno Y cuya traducción tampoco
+    aparece en ningún ingrediente almacenado en la base de datos.
+
+    Esta función es SOLO informativa: no bloquea ni altera ningún queryset.
+    Se usa en las vistas para mostrar un mensaje de advertencia al usuario.
+    """
+    if not ingredientes_texto:
+        return []
+
+    no_reconocidos = []
+
+    ingredientes_es = [
+        i.strip().lower()
+        for i in ingredientes_texto.split(",")
+        if i.strip()
+    ]
+
+    for ingrediente_es in ingredientes_es:
+        terminos_en = _traducir_ingrediente_a_ingles(ingrediente_es)
+
+        # Si el único resultado es el propio término sin traducción exitosa,
+        # verificamos si al menos una receta en la BD lo contiene
+        encontrado = False
+        todos_los_terminos = terminos_en + [ingrediente_es]
+        for termino in todos_los_terminos:
+            if RecetaMealDB.objects.filter(
+                ingredientes_json__icontains=termino
+            ).exists():
+                encontrado = True
+                break
+
+        if not encontrado:
+            no_reconocidos.append(ingrediente_es)
+
+    return no_reconocidos
+
+
 def _qs_base():
     return (
         RecetaMealDB.objects
@@ -329,6 +370,18 @@ def generador_dieta(request):
         RecetaFavorita.objects.filter(usuario=request.user).values_list("recipe_id", flat=True)
     )
 
+    # ── Advertencia de ingredientes no reconocidos ──────────────────────────
+    no_reconocidos = _detectar_ingredientes_no_reconocidos(ingredientes_excluidos)
+    if no_reconocidos:
+        from django.contrib import messages
+        lista = ", ".join(no_reconocidos)
+        messages.warning(
+            request,
+            f"No tenemos registrado(s) el/los siguiente(s) alimento(s): «{lista}». "
+            f"Los demás ingredientes sí fueron aplicados correctamente."
+        )
+    # ────────────────────────────────────────────────────────────────────────
+
     return render(request, "Apispoonacular/dieta_generada.html", {
         "datos_dieta":             datos_dieta,
         "dieta":                   dieta,
@@ -419,6 +472,18 @@ def explorar_recetas(request):
     from .models import RecetaFavorita
     favoritos_qs  = RecetaFavorita.objects.filter(usuario=request.user).order_by("-creado_en")
     favoritos_ids = set(f.recipe_id for f in favoritos_qs)
+
+    # ── Advertencia de ingredientes no reconocidos ──────────────────────────
+    no_reconocidos = _detectar_ingredientes_no_reconocidos(ingredientes_excluidos)
+    if no_reconocidos:
+        from django.contrib import messages
+        lista = ", ".join(no_reconocidos)
+        messages.warning(
+            request,
+            f"No tenemos registrado(s) el/los siguiente(s) alimento(s): «{lista}». "
+            f"Los demás ingredientes sí fueron aplicados correctamente."
+        )
+    # ────────────────────────────────────────────────────────────────────────
 
     return render(request, "Apispoonacular/explorar_recetas.html", {
         "recetas":                 recetas,
