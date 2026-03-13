@@ -73,3 +73,24 @@ echo "▶  Para iniciar el servidor:"
 echo "   Desarrollo:  python manage.py runserver"
 echo "   Producción:  gunicorn -c gunicorn.conf.py Nutriet.wsgi:application"
 echo ""
+
+echo ""
+echo "👤 Creando superusuario si no existe..."
+python - << 'PYEOF'
+import os, django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Nutriet.settings")
+django.setup()
+from django.contrib.auth import get_user_model
+User = get_user_model()
+email    = os.getenv("SUPERUSER_EMAIL")
+password = os.getenv("SUPERUSER_PASSWORD")
+username = os.getenv("SUPERUSER_USERNAME", "admin")
+if email and password:
+    if not User.objects.filter(email=email).exists():
+        User.objects.create_superuser(username=username, email=email, password=password)
+        print("   Superusuario creado: " + username)
+    else:
+        print("   El superusuario ya existe")
+else:
+    print("   SUPERUSER_EMAIL o SUPERUSER_PASSWORD no definidos, se omite")
+PYEOF
