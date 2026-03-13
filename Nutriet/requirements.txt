@@ -22,6 +22,7 @@ django-formtools==2.5.1
 # API & HTTP
 requests==2.32.5
 httpx==0.28.1
+resend==2.23.0
 
 # Translation
 deep-translator==1.11.4

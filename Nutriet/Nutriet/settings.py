@@ -165,9 +165,12 @@ LOGIN_URL             = '/usuarios/login/'
 LOGIN_REDIRECT_URL    = '/cuestionario/'
 LOGOUT_REDIRECT_URL   = 'login'
 
-# EMAIL — Resend API (reemplaza Gmail SMTP)
-RESEND_API_KEY     = os.getenv('RESEND_API_KEY')
+# ─── Email — Resend API ───────────────────────────────────────────────────────
+EMAIL_BACKEND      = 'Nutriet.resend_backend.ResendEmailBackend'
+RESEND_API_KEY     = os.getenv('RESEND_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Nutriet <noreply@nutriet.app>')
+# Alias usado en send_mail() con settings.EMAIL_HOST_USER
+EMAIL_HOST_USER    = DEFAULT_FROM_EMAIL
 
 # ─── REST Framework ──────────────────────────────────────────────────────────
 REST_FRAMEWORK = {

@@ -257,12 +257,29 @@ class LoginView(FormView):
 
             nombre = user.first_name if user.first_name else user.username
 
-            messages.success(
-                self.request,
-                f"¡Bienvenido a Nutriet, {nombre}! 👋"
-            )
+            # ── Generar y enviar código de verificación ──────────────
+            try:
+                verificacion, _ = VerificacionCodigo.objects.get_or_create(usuario=user)
+                verificacion.generar_codigo()
 
-            return redirect('main')
+                send_mail(
+                    'Código de acceso - NUTRIET',
+                    f'Hola {nombre} 👋\n\nTu código de acceso es: {verificacion.codigo}\n\nEste código expira en 5 minutos.',
+                    settings.EMAIL_HOST_USER,
+                    [user.email],
+                    fail_silently=False,
+                )
+
+                messages.info(
+                    self.request,
+                    f"¡Bienvenido a Nutriet, {nombre}! 👋 Te enviamos un código de verificación a tu correo."
+                )
+                return redirect('verificacion_login')
+
+            except Exception:
+                # Si el correo falla → entrar sin verificación
+                messages.success(self.request, f"¡Bienvenido a Nutriet, {nombre}! 👋")
+                return redirect('main')
 
         messages.error(self.request, 'Correo o contraseña incorrectos.')
         return self.form_invalid(form)

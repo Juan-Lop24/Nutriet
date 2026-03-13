@@ -24,7 +24,7 @@ def google_callback(request):
     if not code:
         return redirect("login")
 
-    # ── 1. Obtener token ──────────────────────────────────────────────────────
+    # -- 1. Obtener token
     token_url = "https://oauth2.googleapis.com/token"
     data = {
         "code":          code,
@@ -39,7 +39,7 @@ def google_callback(request):
     if not access_token:
         return redirect("login")
 
-    # ── 2. Obtener datos del usuario de Google ────────────────────────────────
+    # -- 2. Obtener datos del usuario de Google
     userinfo_url = "https://www.googleapis.com/oauth2/v3/userinfo"
     headers      = {"Authorization": f"Bearer {access_token}"}
     info         = requests.get(userinfo_url, headers=headers).json()
@@ -50,7 +50,7 @@ def google_callback(request):
     if not email:
         return redirect("login")
 
-    # ── 3. Generar username único ─────────────────────────────────────────────
+    # -- 3. Generar username unico
     base_username = re.sub(r"[^a-zA-Z0-9_]", "", email.split("@")[0]) or "user"
     username = base_username
     i = 1
@@ -58,7 +58,7 @@ def google_callback(request):
         username = f"{base_username}{i}"
         i += 1
 
-    # ── 4. Buscar o crear usuario ─────────────────────────────────────────────
+    # -- 4. Buscar o crear usuario
     user, created = User.objects.get_or_create(
         email=email,
         defaults={
@@ -71,39 +71,36 @@ def google_callback(request):
         user.set_unusable_password()
         user.save()
 
-    # ── 5. Iniciar sesión ─────────────────────────────────────────────────────
+    # -- 5. Iniciar sesion
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-    # ── 6. Si es usuario NUEVO → enviar código de verificación por correo ─────
-    if created:
-        from .models import VerificacionCodigo
-        from django.core.mail import send_mail
+    # -- 6. Enviar codigo de verificacion a TODOS (nuevos y existentes)
+    from .models import VerificacionCodigo
+    from django.core.mail import send_mail
 
-        try:
-            verificacion, _ = VerificacionCodigo.objects.get_or_create(usuario=user)
-            verificacion.generar_codigo()
+    try:
+        verificacion, _ = VerificacionCodigo.objects.get_or_create(usuario=user)
+        verificacion.generar_codigo()
 
-            send_mail(
-                'Código de verificación - Nutriet',
-                (
-                    f'Hola {user.first_name or user.username} 👋\n\n'
-                    f'Tu cuenta fue creada con Google. Tu código de verificación es: '
-                    f'{verificacion.codigo}\n\n'
-                    f'Este código expira en 5 minutos.'
-                ),
-                settings.EMAIL_HOST_USER,
-                [user.email],
-                fail_silently=False,
-            )
-            # Redirigir a la pantalla de verificación
-            return redirect("/usuarios/verificacion-login/")
+        nombre = user.first_name or user.username
+        asunto = 'Bienvenido a Nutriet! Codigo de verificacion' if created else 'Codigo de acceso - NUTRIET'
 
-        except Exception:
-            # Si el envío falla, igual continuamos al main con notificaciones
-            pass
+        send_mail(
+            asunto,
+            (
+                f'Hola {nombre}!\n\n'
+                f'Tu codigo de acceso es: {verificacion.codigo}\n\n'
+                f'Este codigo expira en 5 minutos.'
+            ),
+            settings.EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )
+        return redirect("/usuarios/verificacion-login/")
 
-    # ── 7. Usuario existente → ir al main ────────────────────────────────────
-    if getattr(user, "notificaciones_configuradas", False):
-        return redirect("/main/")
-    else:
-        return redirect("/main/?setup_notifications=true")
+    except Exception:
+        # Si el envio falla, continuar sin verificacion
+        if getattr(user, "notificaciones_configuradas", False):
+            return redirect("/main/")
+        else:
+            return redirect("/main/?setup_notifications=true")
