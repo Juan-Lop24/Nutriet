@@ -1,10 +1,12 @@
 import re
+import logging
 import requests
 from django.shortcuts import redirect
 from django.conf import settings
 from django.contrib.auth import get_user_model, login
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 def google_login(request):
@@ -85,6 +87,8 @@ def google_callback(request):
         nombre = user.first_name or user.username
         asunto = 'Bienvenido a Nutriet! Codigo de verificacion' if created else 'Codigo de acceso - NUTRIET'
 
+        logger.info(f"[RESEND] Intentando enviar codigo a {user.email} | RESEND_API_KEY presente: {bool(settings.RESEND_API_KEY)}")
+
         send_mail(
             asunto,
             (
@@ -96,9 +100,12 @@ def google_callback(request):
             [user.email],
             fail_silently=False,
         )
+
+        logger.info(f"[RESEND] Correo enviado exitosamente a {user.email}")
         return redirect("/usuarios/verificacion-login/")
 
-    except Exception:
+    except Exception as e:
+        logger.error(f"[RESEND] ERROR al enviar correo a {user.email}: {type(e).__name__}: {e}")
         # Si el envio falla, continuar sin verificacion
         if getattr(user, "notificaciones_configuradas", False):
             return redirect("/main/")
