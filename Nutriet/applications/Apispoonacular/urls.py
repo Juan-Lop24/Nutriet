@@ -11,4 +11,5 @@ urlpatterns = [
     path('mis-favoritos/', views.recetas_favoritas, name='recetas_favoritas'),
     path('eliminar-favorito/<int:recipe_id>/', views.eliminar_favorito, name='eliminar_favorito'),
     path('traducir-instrucciones/', views.traducir_instrucciones, name='traducir_instrucciones'),
+    path('receta-json/<int:recipe_id>/', views.receta_info_json, name='receta_info_json'),
 ]

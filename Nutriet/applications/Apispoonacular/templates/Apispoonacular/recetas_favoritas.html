@@ -5,201 +5,633 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mis Favoritas — Nutriet</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --rosa:#EF024A; --rosa2:#ff4d79; --amarillo:#FFE047;
-  --crema:#FFF8EE; --oscuro:#1a1025; --gris:#6b7280;
-  --sombra: 0 4px 24px rgba(0,0,0,.09);
+  --primary-pink:  #f50057;
+  --pink-light:    #ff4081;
+  --soft-yellow:   rgb(255,249,230);
+  --hover-yellow:  #fff1c1;
+  --white:         #ffffff;
+  --text-dark:     #1a1a2e;
+  --text-muted:    #6c757d;
+  --shadow-light:  rgba(0,0,0,0.08);
+  --shadow-medium: rgba(0,0,0,0.13);
+  --warning-orange:#FF7043;
+  --bg-gradient:   linear-gradient(135deg,#fff9f0 0%,#fef0f5 50%,#f0f5ff 100%);
 }
 * { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'DM Sans',sans-serif; background:var(--crema); color:var(--oscuro); min-height:100vh; }
+body { font-family:'Montserrat',sans-serif; background:var(--bg-gradient); min-height:100vh; color:var(--text-dark); overflow-x:hidden; }
+body::before { content:''; position:fixed; top:-50%; right:-20%; width:700px; height:700px; background:radial-gradient(circle,rgba(245,0,87,.06) 0%,transparent 70%); border-radius:50%; pointer-events:none; animation:floatBg 8s ease-in-out infinite; z-index:0; }
+body::after  { content:''; position:fixed; bottom:-20%; left:5%; width:500px; height:500px; background:radial-gradient(circle,rgba(255,112,67,.06) 0%,transparent 70%); border-radius:50%; pointer-events:none; animation:floatBg 10s ease-in-out infinite reverse; z-index:0; }
+@keyframes floatBg      { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-40px) scale(1.05);} }
+@keyframes gradientShift{ 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+@keyframes fadeInUp     { from{opacity:0;transform:translateY(28px);} to{opacity:1;transform:translateY(0);} }
+@keyframes pulseDot     { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.6);} }
+@keyframes slideUp      { from{transform:translateY(30px);opacity:0;} to{transform:translateY(0);opacity:1;} }
+@keyframes spin         { to{transform:rotate(360deg);} }
 
-.Men {
-  background: #fff;
-  border-bottom: 2px solid var(--amarillo);
-  padding: 0 28px;
-  align-items: center; gap: 6px;
-  text-align: center;
-  height: 58px;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
-}
-.Men a { color: var(--oscuro); text-decoration: none; font-weight: 600; font-size: .82rem; padding: 7px 14px; border-radius: 8px; transition: .18s;  margin-top: 14px; display: inline-block; }
-.Men a:hover, .Men a.activo { background: var(--rosa); color: #fff; }
-.Men-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900; color: var(--rosa); margin-right: 12px; }
+/* SIDEBAR */
+.sidebar { position:fixed; top:0; left:0; height:100vh; width:80px; background:linear-gradient(180deg,var(--soft-yellow) 0%,#fff8dc 100%); transition:all .3s cubic-bezier(.4,0,.2,1); overflow:hidden; box-shadow:4px 0 20px var(--shadow-light); z-index:1000; border-right:2px solid rgba(245,0,87,.1); }
+.sidebar:hover { width:260px; }
+.sidebar .logo { width:55px; margin:25px auto 50px; display:block; transition:all .3s ease; filter:drop-shadow(0 4px 8px rgba(0,0,0,.1)); }
+.sidebar:hover .logo { transform:scale(1.1); filter:drop-shadow(0 6px 12px rgba(245,0,87,.3)); }
+.menu { list-style:none; padding:0; margin:10px; }
+.menu li { display:flex; align-items:center; margin-bottom:8px; border-radius:12px; overflow:hidden; position:relative; }
+.menu li::before { content:''; position:absolute; left:0; top:0; height:100%; width:0; background:linear-gradient(90deg,var(--primary-pink),rgba(245,0,87,.7)); transition:width .3s ease; border-radius:12px; }
+.menu li:hover::before { width:4px; }
+.menu li:hover { background:var(--hover-yellow); transform:translateX(4px); }
+.menu a { display:flex; align-items:center; gap:18px; padding:16px 22px; text-decoration:none; width:100%; color:var(--primary-pink); transition:all .2s ease; position:relative; z-index:1; }
+.menu i { font-size:22px; min-width:28px; text-align:center; color:var(--primary-pink); }
+.menu li:hover i { transform:scale(1.15); filter:drop-shadow(0 2px 4px rgba(245,0,87,.3)); }
+.menu span { font-size:15px; font-weight:600; color:var(--text-dark); white-space:nowrap; opacity:0; transform:translateX(-10px); transition:all .3s ease; }
+.sidebar:hover .menu span { opacity:1; transform:translateX(0); }
+.logout { position:absolute; bottom:25px; width:100%; padding:0 10px; }
+.logout button { all:unset; width:100%; display:flex; align-items:center; gap:18px; padding:16px 22px; cursor:pointer; border-radius:12px; transition:all .3s ease; position:relative; overflow:hidden; }
+.logout button::before { content:''; position:absolute; top:50%; left:50%; width:0; height:0; background:radial-gradient(circle,rgba(245,0,87,.2),transparent); transform:translate(-50%,-50%); transition:width .4s,height .4s; border-radius:50%; }
+.logout button:hover::before { width:300px; height:300px; }
+.logout button:hover { background:linear-gradient(135deg,#ffe0e0,#ffcdd2); transform:translateX(4px); }
+.logout i { font-size:22px; color:var(--primary-pink); min-width:28px; text-align:center; position:relative; z-index:1; }
+.logout button:hover i { transform:rotate(15deg) scale(1.1); }
+.logout span { font-weight:600; color:var(--text-dark); opacity:0; transform:translateX(-10px); transition:all .3s ease; position:relative; z-index:1; }
+.sidebar:hover .logout span { opacity:1; transform:translateX(0); }
+.sidebar-toggle { display:none; position:fixed; top:14px; left:14px; z-index:1100; background:linear-gradient(135deg,var(--primary-pink),var(--pink-light)); border:none; border-radius:12px; width:44px; height:44px; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(245,0,87,.35); transition:transform .2s; }
+.sidebar-toggle i { font-size:20px; color:#fff; }
+.sidebar-backdrop { display:none; position:fixed; inset:0; background:rgba(26,16,37,.55); backdrop-filter:blur(3px); z-index:999; }
+.sidebar-backdrop.open { display:block; }
 
+/* LAYOUT */
+.page-wrap { margin-left:100px; position:relative; z-index:1; min-height:100vh; }
 
-.hero {
-  background: linear-gradient(135deg, var(--oscuro) 0%, #2d1b4e 100%);
-  padding: 44px 28px 36px;
-  position: relative; overflow: hidden;
-}
-.hero::before {
-  content:''; position:absolute; inset:0;
-  background: radial-gradient(ellipse at 80% 50%, rgba(239,2,74,.18) 0%, transparent 60%),
-              radial-gradient(ellipse at 10% 80%, rgba(255,224,71,.12) 0%, transparent 50%);
-}
+/* NAV */
+.Men { background:var(--white); border-bottom:2px solid rgba(245,0,87,.1); padding:0 36px; display:flex; align-items:center; justify-content:center; gap:6px; height:64px; z-index:100; box-shadow:0 4px 20px rgba(245,0,87,.08); position:relative; }
+.Men::after { content:''; position:absolute; bottom:0; left:0; width:100%; height:3px; background:linear-gradient(90deg,transparent,rgba(245,0,87,.15),var(--primary-pink),rgba(245,0,87,.15),transparent); background-size:200% 100%; animation:gradientShift 4s ease infinite; }
+.Men a { color:var(--text-muted); text-decoration:none; font-weight:700; font-size:.88rem; padding:10px 22px; border-radius:14px; transition:all .25s cubic-bezier(.4,0,.2,1); display:inline-flex; align-items:center; gap:8px; font-family:'Montserrat',sans-serif; letter-spacing:.02em; position:relative; overflow:hidden; }
+.Men a::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--primary-pink),var(--pink-light)); opacity:0; transition:opacity .25s ease; border-radius:14px; z-index:0; }
+.Men a span, .Men a .nav-emoji { position:relative; z-index:1; transition:transform .25s ease; }
+.Men a:hover::before { opacity:1; }
+.Men a:hover { color:#fff; transform:translateY(-2px); box-shadow:0 8px 20px rgba(245,0,87,.35); }
+.Men a:hover .nav-emoji { transform:scale(1.3) rotate(-8deg); }
+.Men a.activo::before { opacity:1; }
+.Men a.activo { color:#fff; box-shadow:0 6px 18px rgba(245,0,87,.4); }
+.Men a.activo::after { content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%); width:6px; height:6px; background:#fff; border-radius:50%; box-shadow:0 0 8px rgba(255,255,255,.8); animation:pulseDot 2s ease-in-out infinite; z-index:2; }
+
+/* HERO */
+.hero { background:linear-gradient(135deg,#1a1a2e 0%,#2d1b4e 100%); padding:52px 48px 72px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 80% 50%,rgba(245,0,87,.2) 0%,transparent 60%),radial-gradient(ellipse at 10% 80%,rgba(255,112,67,.12) 0%,transparent 50%); }
 .hero-inner { max-width:1100px; margin:0 auto; position:relative; }
-.hero h1 { font-family:'Playfair Display',serif; font-size:2.2rem; color:#fff; margin-bottom:8px; }
-.hero h1 span { color:var(--amarillo); }
-.hero p { color:rgba(255,255,255,.7); font-size:.95rem; }
+.hero-tag { display:inline-flex; align-items:center; gap:8px; background:rgba(245,0,87,.15); color:#ff8ab0; font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; padding:6px 14px; border-radius:100px; border:1px solid rgba(245,0,87,.3); margin-bottom:16px; }
+.hero-tag .dot { width:6px; height:6px; background:#ff4081; border-radius:50%; animation:pulseDot 2s ease-in-out infinite; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:2.8rem; color:#fff; line-height:1.15; margin-bottom:10px; }
+.hero h1 em { font-style:italic; background:linear-gradient(135deg,var(--primary-pink),var(--warning-orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+.hero p { color:rgba(255,255,255,.65); font-size:.95rem; }
 
-.contenido { max-width:1100px; margin:36px auto 60px; padding:0 20px; }
+/* CONTENIDO */
+.contenido { max-width:1100px; margin:0 auto; padding:40px 20px 80px; }
+.count-wrap { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:30px; animation:fadeInUp .5s ease; }
+.count-left  { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.count-pill  { display:inline-flex; align-items:center; gap:8px; background:var(--white); border-radius:20px; padding:8px 20px; font-size:.82rem; font-weight:600; color:var(--text-muted); box-shadow:0 3px 14px var(--shadow-light); border:1px solid rgba(245,0,87,.1); }
+.count-pill strong { color:var(--primary-pink); font-size:1.05rem; font-weight:800; }
 
-.fav-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 22px;
+/* Botón eliminar todas */
+.btn-eliminar-todas {
+  display:inline-flex; align-items:center; gap:7px;
+  background:#fff0f0; color:#c0392b;
+  border:1.5px solid rgba(220,53,69,.25);
+  border-radius:20px; padding:8px 18px;
+  font-size:.8rem; font-weight:700; cursor:pointer;
+  font-family:'Montserrat',sans-serif;
+  transition:all .25s ease;
 }
+.btn-eliminar-todas:hover { background:#fee2e2; border-color:rgba(220,53,69,.5); transform:translateY(-2px); box-shadow:0 4px 14px rgba(220,53,69,.2); }
 
-.fav-card {
-  background:#fff;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow: var(--sombra);
-  border: 1.5px solid rgba(239,2,74,.12);
-  display:flex; flex-direction:column;
-  transition: transform .22s, box-shadow .22s;
+.btn-explorar { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,var(--primary-pink),var(--pink-light)); color:#fff; border:none; border-radius:12px; padding:10px 22px; font-weight:700; font-size:.85rem; text-decoration:none; font-family:'Montserrat',sans-serif; box-shadow:0 4px 14px rgba(245,0,87,.3); transition:all .25s ease; }
+.btn-explorar:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(245,0,87,.4); color:#fff; }
+
+/* GRID */
+.fav-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:24px; }
+
+/* CARD */
+.fav-card { background:var(--white); border-radius:22px; overflow:hidden; box-shadow:0 6px 24px var(--shadow-light); border:1.5px solid rgba(245,0,87,.08); display:flex; flex-direction:column; transition:transform .22s, box-shadow .22s; position:relative; animation:fadeInUp .5s ease backwards; cursor:pointer; }
+.fav-card::before { content:''; position:absolute; top:0; left:0; width:100%; height:4px; background:linear-gradient(90deg,var(--primary-pink),var(--pink-light),var(--warning-orange)); background-size:200% 100%; animation:gradientShift 3s ease infinite; }
+.fav-card:hover { transform:translateY(-7px); box-shadow:0 18px 44px var(--shadow-medium); }
+.fav-card:hover .fav-card-nombre { color:var(--primary-pink); }
+.fav-card:nth-child(1)  { animation-delay:.05s; }
+.fav-card:nth-child(2)  { animation-delay:.10s; }
+.fav-card:nth-child(3)  { animation-delay:.15s; }
+.fav-card:nth-child(4)  { animation-delay:.20s; }
+.fav-card:nth-child(5)  { animation-delay:.25s; }
+.fav-card:nth-child(6)  { animation-delay:.30s; }
+.fav-card:nth-child(7)  { animation-delay:.35s; }
+.fav-card:nth-child(8)  { animation-delay:.40s; }
+
+.fav-card-img { height:180px; overflow:hidden; background:linear-gradient(135deg,#fde8f0,#fff3e0); position:relative; }
+.fav-card-img img { width:100%; height:100%; object-fit:cover; transition:transform .4s ease; }
+.fav-card:hover .fav-card-img img { transform:scale(1.08); }
+.fav-card-img::after { content:''; position:absolute; bottom:0; left:0; right:0; height:60px; background:linear-gradient(to top,rgba(26,16,37,.22),transparent); pointer-events:none; }
+/* lupa al hover */
+.fav-card-img::before { content:'🔍'; position:absolute; inset:0; z-index:2; display:flex; align-items:center; justify-content:center; font-size:2rem; background:rgba(245,0,87,.32); opacity:0; transition:opacity .25s ease; }
+.fav-card:hover .fav-card-img::before { opacity:1; }
+.fav-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; }
+
+.fav-card-body { padding:16px 18px 18px; flex:1; display:flex; flex-direction:column; }
+.fav-card-nombre { font-weight:700; font-size:.95rem; color:var(--text-dark); margin-bottom:14px; flex:1; line-height:1.4; transition:color .2s ease; }
+.fav-card-actions { margin-top:auto; }
+.btn-quitar {
+  width:100%; background:#fff0f0; color:#c0392b;
+  border:1.5px solid rgba(220,53,69,.2); border-radius:12px;
+  padding:10px; font-size:.82rem; font-weight:700; cursor:pointer;
+  transition:all .2s ease; display:flex; align-items:center; justify-content:center; gap:6px;
+  font-family:'Montserrat',sans-serif;
 }
-.fav-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(0,0,0,.13); }
+.btn-quitar:hover { background:#fee2e2; border-color:rgba(220,53,69,.4); transform:translateY(-1px); }
 
-.fav-card-img {
-  height:160px; overflow:hidden;
-  background: linear-gradient(135deg,#fde8f0,#fff3e0);
-  position:relative;
+/* EMPTY */
+.empty { text-align:center; padding:100px 20px; animation:fadeInUp .6s ease; }
+.empty-ico { font-size:5rem; margin-bottom:20px; }
+.empty h3 { font-family:'Playfair Display',serif; color:var(--text-dark); font-size:1.8rem; margin-bottom:12px; }
+.empty p { color:var(--text-muted); font-size:.95rem; margin-bottom:28px; }
+.empty a { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,var(--primary-pink),var(--pink-light)); color:#fff; border-radius:14px; padding:14px 32px; font-weight:700; font-size:.95rem; text-decoration:none; box-shadow:0 6px 20px rgba(245,0,87,.35); transition:all .25s ease; }
+.empty a:hover { transform:translateY(-3px); }
+
+/* MODAL */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(26,16,37,.65); backdrop-filter:blur(6px); z-index:2000; align-items:center; justify-content:center; padding:16px; }
+.modal-overlay.open { display:flex; }
+.modal-box { background:var(--white); border-radius:24px; max-width:720px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 24px 80px rgba(0,0,0,.28); animation:slideUp .3s ease; border:1px solid rgba(245,0,87,.1); }
+.modal-hero { position:relative; height:240px; overflow:hidden; border-radius:24px 24px 0 0; background:linear-gradient(135deg,#1a1025,#2d1b4e); }
+.modal-hero img { width:100%; height:100%; object-fit:cover; opacity:.82; }
+.modal-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(26,16,37,.9) 0%,transparent 50%); display:flex; flex-direction:column; justify-content:flex-end; padding:22px; }
+.modal-titulo { font-family:'Playfair Display',serif; font-size:1.5rem; color:#fff; line-height:1.2; }
+.modal-close { position:absolute; top:14px; right:14px; background:rgba(255,255,255,.15); backdrop-filter:blur(4px); border:none; color:#fff; border-radius:50%; width:36px; height:36px; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.2s; }
+.modal-close:hover { background:var(--primary-pink); }
+.modal-body { padding:24px 28px 30px; }
+.modal-badges { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.mbadge { border-radius:20px; padding:5px 13px; font-size:.75rem; font-weight:700; }
+.mbadge-area    { background:#e8f4fd; color:#1a6fa8; }
+.mbadge-cat     { background:#fef3c7; color:#92400e; }
+.mbadge-tiempo  { background:#d1fae5; color:#065f46; }
+.mbadge-dif-facil   { background:#d1fae5; color:#065f46; }
+.mbadge-dif-media   { background:#fef3c7; color:#92400e; }
+.mbadge-dif-dificil { background:#fee2e2; color:#991b1b; }
+.modal-macros { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:22px; }
+.mm-box { background:linear-gradient(135deg,#fff0f6,#fff8f0); border-radius:14px; text-align:center; padding:14px 8px; border-bottom:3px solid var(--primary-pink); }
+.mm-val { font-weight:900; font-size:1.25rem; color:var(--primary-pink); }
+.mm-lbl { font-size:.68rem; color:var(--text-muted); font-weight:600; margin-top:3px; text-transform:uppercase; }
+.modal-extra { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
+.mm-extra { border-radius:8px; padding:5px 12px; font-size:.74rem; font-weight:700; }
+.mm-fibra { background:#ecfdf5; color:#059669; }
+.mm-sodio { background:#eff6ff; color:#2563eb; }
+.section-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--text-dark); margin-bottom:12px; padding-bottom:8px; border-bottom:2px solid rgba(245,0,87,.1); }
+.ingredientes-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:22px; }
+.ing-item { background:#f9fafb; border-radius:10px; padding:8px 13px; font-size:.83rem; color:var(--text-dark); border-left:3px solid rgba(245,0,87,.3); }
+.ing-item strong { color:var(--primary-pink); margin-right:4px; }
+.instrucciones-box { background:#f9fafb; border-radius:14px; padding:20px; font-size:.88rem; line-height:1.8; color:#374151; white-space:pre-line; margin-bottom:20px; }
+.modal-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.btn-yt { background:#ff0000; color:#fff; border:none; border-radius:12px; padding:11px 22px; font-weight:700; font-size:.85rem; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:.2s; font-family:'Montserrat',sans-serif; }
+.btn-yt:hover { opacity:.85; transform:translateY(-2px); }
+.btn-fav-modal { background:#fce7f3; color:var(--primary-pink); border:2px solid rgba(245,0,87,.2); border-radius:12px; padding:11px 22px; font-weight:700; font-size:.85rem; cursor:pointer; transition:.2s; font-family:'Montserrat',sans-serif; display:inline-flex; align-items:center; gap:7px; }
+.btn-fav-modal:hover { background:#fee2e2; border-color:#dc3545; color:#c0392b; }
+.spinner-modal { text-align:center; padding:60px 20px; color:var(--text-muted); }
+.spinner-ring { width:44px; height:44px; border:4px solid #f3f4f6; border-top-color:var(--primary-pink); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 14px; }
+
+::-webkit-scrollbar { width:10px; }
+::-webkit-scrollbar-track { background:#f1f1f1; border-radius:10px; }
+::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--primary-pink),var(--pink-light)); border-radius:10px; }
+
+/* ── CONFIRM DIALOG ── */
+.confirm-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(26,16,37,.7); backdrop-filter:blur(8px);
+  z-index:3000; align-items:center; justify-content:center; padding:20px;
 }
-.fav-card-img img { width:100%; height:100%; object-fit:cover; transition:transform .35s; }
-.fav-card:hover .fav-card-img img { transform:scale(1.06); }
-.fav-placeholder { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem; }
-
-.fav-card-body { padding:14px 16px 16px; flex:1; display:flex; flex-direction:column; }
-.fav-card-nombre { font-weight:700; font-size:.95rem; color:var(--oscuro); margin-bottom:12px; flex:1; line-height:1.3; }
-
-.fav-card-actions { display:flex; gap:8px; margin-top:auto; }
-.btn-ver {
+.confirm-overlay.open { display:flex; }
+.confirm-box {
+  background:var(--white); border-radius:28px;
+  max-width:420px; width:100%;
+  box-shadow:0 30px 80px rgba(0,0,0,.3);
+  animation:slideUp .3s ease;
+  overflow:hidden; position:relative;
+}
+.confirm-header {
+  background:linear-gradient(135deg,#1a1a2e,#2d1b4e);
+  padding:32px 28px 24px; text-align:center; position:relative;
+}
+.confirm-header::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(245,0,87,.25),transparent 70%);
+}
+.confirm-icon {
+  font-size:3rem; margin-bottom:12px; display:block; position:relative; z-index:1;
+  animation:pulseDot 2s ease-in-out infinite;
+}
+.confirm-title {
+  font-family:'Playfair Display',serif; font-size:1.4rem;
+  color:#fff; margin-bottom:6px; position:relative; z-index:1;
+}
+.confirm-subtitle {
+  color:rgba(255,255,255,.6); font-size:.85rem;
+  position:relative; z-index:1;
+}
+.confirm-body { padding:24px 28px 28px; }
+.confirm-warning {
+  background:linear-gradient(135deg,#fff0f6,#fff8f0);
+  border:1px solid rgba(245,0,87,.2);
+  border-radius:14px; padding:14px 18px;
+  font-size:.85rem; color:var(--text-dark);
+  margin-bottom:22px; text-align:center; line-height:1.5;
+}
+.confirm-warning strong { color:var(--primary-pink); }
+.confirm-btns { display:flex; gap:12px; }
+.btn-confirm-cancel {
+  flex:1; background:#f3f4f6; color:var(--text-dark);
+  border:none; border-radius:14px; padding:13px;
+  font-weight:700; font-size:.9rem; cursor:pointer;
+  font-family:'Montserrat',sans-serif; transition:all .2s ease;
+}
+.btn-confirm-cancel:hover { background:#e5e7eb; transform:translateY(-1px); }
+.btn-confirm-ok {
   flex:1;
-  background: linear-gradient(135deg, var(--rosa), var(--rosa2));
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  padding:9px 14px;
-  font-size:.82rem;
-  font-weight:700;
-  cursor:pointer;
-  text-decoration:none;
-  text-align:center;
-  display:inline-flex; align-items:center; justify-content:center; gap:5px;
-  transition:.2s;
+  background:linear-gradient(135deg,#dc3545,#ff5252);
+  color:#fff; border:none; border-radius:14px; padding:13px;
+  font-weight:700; font-size:.9rem; cursor:pointer;
+  font-family:'Montserrat',sans-serif;
+  box-shadow:0 4px 14px rgba(220,53,69,.35);
+  transition:all .2s ease;
 }
-.btn-ver:hover { opacity:.88; color:#fff; transform:translateY(-1px); }
+.btn-confirm-ok:hover { transform:translateY(-2px); box-shadow:0 8px 22px rgba(220,53,69,.45); }
 
-.btn-eliminar {
-  background:#fee2e2;
-  color:#991b1b;
-  border:none;
-  border-radius:10px;
-  padding:9px 12px;
-  font-size:.85rem;
-  font-weight:700;
-  cursor:pointer;
-  transition:.2s;
-  display:inline-flex; align-items:center;
+@media(max-width:768px) {
+  .sidebar-toggle { display:flex; }
+  .sidebar { transform:translateX(-100%); width:260px !important; }
+  .sidebar.open { transform:translateX(0); }
+  .sidebar.open .menu span,.sidebar.open .logout span { opacity:1; transform:translateX(0); }
+  .page-wrap { margin-left:0 !important; padding-top:70px; }
+  .hero { padding:40px 20px 60px; }
+  .hero h1 { font-size:2rem; }
+  .contenido { padding:30px 16px 60px; }
+  .fav-grid { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; }
+  .modal-macros { grid-template-columns:repeat(2,1fr); }
+  .ingredientes-grid { grid-template-columns:1fr; }
 }
-.btn-eliminar:hover { background:#fca5a5; transform:translateY(-1px); }
-
-.empty {
-  text-align:center;
-  padding:80px 20px;
-  color:var(--gris);
+@media(max-width:480px) {
+  .fav-grid { grid-template-columns:1fr 1fr; gap:12px; }
+  .fav-card-img { height:140px; }
 }
-.empty-ico { font-size:4rem; margin-bottom:16px; }
-.empty h3 { font-family:'Playfair Display',serif; color:var(--oscuro); font-size:1.5rem; margin-bottom:10px; }
-.empty a {
-  display:inline-block;
-  margin-top:18px;
-  background: linear-gradient(135deg, var(--rosa), var(--rosa2));
-  color:#fff;
-  border-radius:12px;
-  padding:12px 28px;
-  font-weight:700;
-  text-decoration:none;
-  transition:.2s;
-}
-.empty a:hover { opacity:.88; }
-
-.count-chip {
-  display:inline-flex; align-items:center; gap:6px;
-  background:#fff;
-  border-radius:20px;
-  padding:6px 16px;
-  font-size:.82rem;
-  font-weight:600;
-  color:var(--gris);
-  box-shadow:0 1px 6px rgba(0,0,0,.06);
-  margin-bottom:24px;
-}
-.count-chip strong { color:var(--rosa); }
 </style>
 </head>
+
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
+  <i class="fas fa-bars" id="toggleIcon"></i>
+</button>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
 <body>
-
-<div class="Men">
-  <a href="/generar-dieta/">🍱 Mi Dieta</a>
-  <a href="/explorar/" >🔍 Explorar</a>
-  <a href="{% url 'recetas_favoritas' %}" class="activo" >💗 Favoritas</a>
-</div>
-
-<div class="hero">
-  <div class="hero-inner">
-    <h1>Mis Recetas <span>Favoritas</span></h1>
-    <p>Todas las recetas que has guardado en un solo lugar.</p>
+<aside class="sidebar">
+  <img src="{% static 'images/logo.png' %}" class="logo" alt="Nutriet">
+  <ul class="menu">
+    <li><a href="{% url 'main' %}"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+    <li><a href="{% url 'explorar_recetas' %}"><i class="fas fa-apple-alt"></i><span>Recetas</span></a></li>
+    <li><a href="{% url 'seguimiento:seguimiento' %}"><i class="fas fa-chart-line"></i><span>Seguimiento</span></a></li>
+    <li><a href="{% url 'calendario' %}"><i class="fas fa-calendar-alt"></i><span>Calendario</span></a></li>
+    <li><a href="{% url 'perfil' %}"><i class="fas fa-cog"></i><span>Configuración</span></a></li>
+  </ul>
+  <div class="logout">
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+      <button type="submit"><i class="fas fa-right-from-bracket"></i><span>Cerrar sesión</span></button>
+    </form>
   </div>
-</div>
+</aside>
 
-<div class="contenido">
-  {% if favoritos %}
-  <div class="count-chip">
-    <strong>{{ favoritos|length }}</strong> receta{% if favoritos|length != 1 %}s guardada{% else %} guardada{% endif %}s
+<div class="page-wrap">
+
+  <div class="Men">
+    <a href="/generar-dieta/"><span class="nav-emoji"></span><span>Mi Dieta</span></a>
+    <a href="{% url 'explorar_recetas' %}"><span class="nav-emoji"></span><span>Explorar</span></a>
+    <a href="{% url 'recetas_favoritas' %}" class="activo"><span class="nav-emoji">💗</span><span>Favoritas</span></a>
   </div>
-  <div class="fav-grid">
-    {% for fav in favoritos %}
-    <div class="fav-card">
-      <div class="fav-card-img">
-        {% if fav.imagen %}
-        <img src="{{ fav.imagen }}" alt="{{ fav.titulo }}" loading="lazy"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-        <div class="fav-placeholder" style="display:none;">🍳</div>
-        {% else %}
-        <div class="fav-placeholder">🍳</div>
-        {% endif %}
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-tag"><span class="dot"></span> Mi colección</div>
+      <h1>Mis Recetas <em>Favoritas</em></h1>
+      <p>Todas las recetas que has guardado en un solo lugar.</p>
+    </div>
+  </div>
+
+  <div class="contenido" id="contenidoPrincipal">
+    {% if favoritos %}
+    <div class="count-wrap">
+      <div class="count-left">
+        <div class="count-pill">
+          <strong id="contadorFav">{{ favoritos|length }}</strong>
+          receta{% if favoritos|length != 1 %}s guardadas{% else %} guardada{% endif %}
+        </div>
+        <button class="btn-eliminar-todas" onclick="confirmarEliminarTodas()">
+          🗑️ Eliminar todas
+        </button>
       </div>
-      <div class="fav-card-body">
-        <div class="fav-card-nombre">{{ fav.titulo }}</div>
-        <div class="fav-card-actions">
-          <a href="{% url 'receta_detalle' fav.recipe_id %}" class="btn-ver">
-            🔍 Ver receta
-          </a>
-          <form method="post" action="{% url 'eliminar_favorito' fav.recipe_id %}" style="margin:0;">
-            {% csrf_token %}
-            <button type="submit" class="btn-eliminar" title="Eliminar de favoritos">🗑️</button>
-          </form>
+      <a href="{% url 'explorar_recetas' %}" class="btn-explorar">🔍 Explorar más recetas</a>
+    </div>
+
+    <div class="fav-grid" id="favGrid">
+      {% for fav in favoritos %}
+      <div class="fav-card" data-id="{{ fav.recipe_id }}" data-titulo="{{ fav.titulo|escapejs }}" data-imagen="{{ fav.imagen|escapejs }}">
+        <div class="fav-card-img">
+          {% if fav.imagen %}
+          <img src="{{ fav.imagen }}" alt="{{ fav.titulo }}" loading="lazy"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="fav-placeholder" style="display:none;">🍳</div>
+          {% else %}
+          <div class="fav-placeholder">🍳</div>
+          {% endif %}
+        </div>
+        <div class="fav-card-body">
+          <div class="fav-card-nombre">{{ fav.titulo }}</div>
+          <div class="fav-card-actions">
+            <button class="btn-quitar" onclick="event.stopPropagation(); quitarFavorito({{ fav.recipe_id }}, this)">
+              🗑️ Quitar
+            </button>
+          </div>
         </div>
       </div>
+      {% endfor %}
     </div>
-    {% endfor %}
-  </div>
 
-  {% else %}
-  <div class="empty">
-    <div class="empty-ico">💔</div>
-    <h3>Aún no tienes favoritas</h3>
-    <p>Explora recetas y guarda las que más te gusten con el botón ♥</p>
-    <a href="{% url 'explorar_recetas' %}">🔍 Explorar recetas</a>
+    {% else %}
+    <div class="empty" id="emptyState">
+      <div class="empty-ico">💔</div>
+      <h3>Aún no tienes favoritas</h3>
+      <p>Explora recetas y guarda las que más te gusten con el botón ♥</p>
+      <a href="{% url 'explorar_recetas' %}">🔍 Explorar recetas</a>
+    </div>
+    {% endif %}
   </div>
-  {% endif %}
 </div>
 
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-header">
+      <span class="confirm-icon">🗑️</span>
+      <div class="confirm-title">Eliminar todas</div>
+      <div class="confirm-subtitle">Esta acción no se puede deshacer</div>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-warning">
+        ¿Estás seguro de que quieres eliminar<br>
+        <strong>todas tus recetas favoritas</strong>?
+      </div>
+      <div class="confirm-btns">
+        <button class="btn-confirm-cancel" onclick="cerrarConfirm()">Cancelar</button>
+        <button class="btn-confirm-ok" onclick="cerrarConfirm(); ejecutarEliminarTodas()">Sí, eliminar todas</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)cerrarModal()">
+  <div class="modal-box">
+    <div class="spinner-modal" id="modalSpinner">
+      <div class="spinner-ring"></div>
+      Cargando receta...
+    </div>
+    <div id="modalContent" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+const TOGGLE_FAV_URL = "{% url 'toggle_favorito' %}";
+const CSRF           = "{{ csrf_token }}";
+const _cache         = {};
+const _tradCache     = {};
+
+/* ── ABRIR MODAL ── */
+function abrirModal(id, titulo, imagen) {
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalSpinner').style.display = 'block';
+  document.getElementById('modalContent').style.display = 'none';
+  document.body.style.overflow = 'hidden';
+
+  if (_cache[id]) { renderModal(_cache[id]); return; }
+
+  // Intentar endpoint JSON; si no existe, usar datos básicos
+  fetch('/receta-json/' + id + '/')
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(data => { _cache[id] = data; renderModal(data); })
+    .catch(() => {
+      // Fallback: mostrar con datos básicos disponibles
+      const data = { id, nombre: titulo, imagen_url: imagen };
+      _cache[id] = data;
+      renderModal(data);
+    });
+}
+
+function cerrarModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function renderModal(r) {
+  const difClass   = r.dificultad ? 'mbadge-dif-' + r.dificultad : '';
+  const macrosHtml = r.calorias ? `
+    <div class="modal-macros">
+      <div class="mm-box"><div class="mm-val">${r.calorias}</div><div class="mm-lbl">kcal</div></div>
+      <div class="mm-box"><div class="mm-val">${r.proteinas_g||'--'}g</div><div class="mm-lbl">Proteínas</div></div>
+      <div class="mm-box"><div class="mm-val">${r.carbohidratos_g||'--'}g</div><div class="mm-lbl">Carbos</div></div>
+      <div class="mm-box"><div class="mm-val">${r.grasas_g||'--'}g</div><div class="mm-lbl">Grasas</div></div>
+    </div>
+    <div class="modal-extra">
+      ${r.fibra_g  ? '<span class="mm-extra mm-fibra">🌿 Fibra: '+r.fibra_g+'g</span>'  : ''}
+      ${r.sodio_mg ? '<span class="mm-extra mm-sodio">🧂 Sodio: '+r.sodio_mg+'mg</span>' : ''}
+    </div>` : '';
+
+  const ingsHtml = (r.ingredientes||[]).map(i =>
+    '<div class="ing-item"><strong>' + (i.medida||'') + '</strong> ' + (i.ingrediente||'') + '</div>'
+  ).join('');
+
+  const instrHtml = r.instrucciones
+    ? '<h3 class="section-title">📝 Instrucciones</h3><div class="instrucciones-box" id="instr-' + r.id + '"><span style="color:#9ca3af">⏳ Traduciendo...</span></div>'
+    : '';
+
+  document.getElementById('modalContent').innerHTML =
+    '<div class="modal-hero">' +
+      (r.imagen_url ? '<img src="' + r.imagen_url + '" alt="' + r.nombre + '">' : '') +
+      '<div class="modal-hero-overlay"><div class="modal-titulo">' + r.nombre + '</div></div>' +
+      '<button class="modal-close" onclick="cerrarModal()">✕</button>' +
+    '</div>' +
+    '<div class="modal-body">' +
+      '<div class="modal-badges">' +
+        (r.area       ? '<span class="mbadge mbadge-area">🌍 '  + r.area      + '</span>' : '') +
+        (r.categoria  ? '<span class="mbadge mbadge-cat">🍽️ '   + r.categoria + '</span>' : '') +
+        (r.tiempo_min ? '<span class="mbadge mbadge-tiempo">⏱ ' + r.tiempo_min + ' min</span>' : '') +
+        (r.dificultad ? '<span class="mbadge ' + difClass + '">' + r.dificultad.charAt(0).toUpperCase() + r.dificultad.slice(1) + '</span>' : '') +
+      '</div>' +
+      macrosHtml +
+      (ingsHtml ? '<h3 class="section-title">🛒 Ingredientes</h3><div class="ingredientes-grid">' + ingsHtml + '</div>' : '') +
+      instrHtml +
+      '<div class="modal-actions">' +
+        (r.youtube_url ? '<a href="' + r.youtube_url + '" target="_blank" class="btn-yt">▶️ Ver en YouTube</a>' : '') +
+        '<button class="btn-fav-modal" onclick="quitarDesdeModal(' + r.id + ', this)">🗑 Quitar de favoritos</button>' +
+      '</div>' +
+    '</div>';
+
+  document.getElementById('modalSpinner').style.display = 'none';
+  document.getElementById('modalContent').style.display = 'block';
+
+  if (r.instrucciones) traducir(r.id, r.instrucciones);
+}
+
+/* ── TRADUCCIÓN ── */
+function traducir(id, texto) {
+  const box = document.getElementById('instr-' + id);
+  if (!box) return;
+  if (_tradCache[id]) { box.innerHTML = _tradCache[id]; return; }
+  fetch("{% url 'traducir_instrucciones' %}", {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+    body: JSON.stringify({ texto })
+  })
+  .then(r => r.json())
+  .then(d => {
+    const t = (d.ok && d.traduccion) ? d.traduccion : texto;
+    const html = t.split(/\r?\n/).filter(p => p.trim())
+      .map((p,i) => '<strong style="color:var(--primary-pink)">' + (i+1) + '.</strong> ' + p)
+      .join('<br>');
+    _tradCache[id] = html;
+    box.innerHTML = html;
+  })
+  .catch(() => { box.innerHTML = texto; });
+}
+
+/* ── QUITAR FAVORITO (desde card) ── */
+function quitarFavorito(id, btn) {
+  const card = btn.closest('.fav-card');
+  btn.disabled = true;
+  btn.textContent = '⏳';
+  fetch(TOGGLE_FAV_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+    body: JSON.stringify({ recipe_id: id, titulo: card.dataset.titulo || '', imagen: card.dataset.imagen || '' })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok && !d.favorito) {
+      animarYEliminar(card);
+    } else {
+      btn.disabled = false;
+      btn.textContent = '🗑️ Quitar';
+    }
+  })
+  .catch(() => { btn.disabled = false; btn.textContent = '🗑️ Quitar'; });
+}
+
+/* ── QUITAR DESDE MODAL ── */
+function quitarDesdeModal(id, btn) {
+  btn.disabled = true;
+  btn.textContent = '⏳ Eliminando...';
+  const card = document.querySelector('.fav-card[data-id="' + id + '"]');
+  fetch(TOGGLE_FAV_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+    body: JSON.stringify({ recipe_id: id, titulo: _cache[id]?.nombre || '', imagen: _cache[id]?.imagen_url || '' })
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d.ok && !d.favorito) {
+      cerrarModal();
+      if (card) animarYEliminar(card);
+    } else {
+      btn.disabled = false;
+      btn.textContent = '🗑 Quitar de favoritos';
+    }
+  })
+  .catch(() => { btn.disabled = false; btn.textContent = '🗑 Quitar de favoritos'; });
+}
+
+/* ── CONFIRM DIALOG ── */
+function mostrarConfirm() {
+  document.getElementById('confirmOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function cerrarConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* ── ELIMINAR TODAS ── */
+function confirmarEliminarTodas() {
+  mostrarConfirm();
+}
+function ejecutarEliminarTodas() {
+  const cards = document.querySelectorAll('.fav-card[data-id]');
+  const ids   = Array.from(cards).map(c => parseInt(c.dataset.id));
+  let done = 0;
+  ids.forEach(id => {
+    const card = document.querySelector('.fav-card[data-id="' + id + '"]');
+    fetch(TOGGLE_FAV_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+      body: JSON.stringify({ recipe_id: id, titulo: card?.dataset.titulo||'', imagen: card?.dataset.imagen||'' })
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok && !d.favorito && card) animarYEliminar(card);
+      done++;
+      if (done === ids.length) mostrarVacio();
+    })
+    .catch(() => { done++; });
+  });
+}
+
+/* ── HELPERS DOM ── */
+function animarYEliminar(card) {
+  card.style.transition = 'all .35s ease';
+  card.style.transform  = 'scale(0.85)';
+  card.style.opacity    = '0';
+  setTimeout(() => {
+    card.remove();
+    actualizarContador(-1);
+    const grid = document.getElementById('favGrid');
+    if (grid && grid.children.length === 0) mostrarVacio();
+  }, 350);
+}
+
+function actualizarContador(delta) {
+  const el = document.getElementById('contadorFav');
+  if (el) el.textContent = Math.max(0, parseInt(el.textContent) + delta);
+}
+
+function mostrarVacio() {
+  const contenido = document.getElementById('contenidoPrincipal');
+  if (contenido) contenido.innerHTML =
+    '<div class="empty"><div class="empty-ico">💔</div>' +
+    '<h3>Aún no tienes favoritas</h3>' +
+    '<p>Explora recetas y guarda las que más te gusten con el botón ♥</p>' +
+    '<a href="{% url "explorar_recetas" %}">🔍 Explorar recetas</a></div>';
+}
+
+/* ── EVENT DELEGATION para abrir modal al hacer click en card ── */
+document.addEventListener('click', function(e) {
+  const card = e.target.closest('.fav-card[data-id]');
+  if (!card) return;
+  if (e.target.closest('.fav-card-actions')) return;
+  abrirModal(parseInt(card.dataset.id), card.dataset.titulo, card.dataset.imagen);
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+
+/* ── SIDEBAR ── */
+const sidebar  = document.querySelector('.sidebar');
+const toggle   = document.getElementById('sidebarToggle');
+const backdrop = document.getElementById('sidebarBackdrop');
+const icon     = document.getElementById('toggleIcon');
+function openSidebar()  { sidebar.classList.add('open');    backdrop.classList.add('open');    icon.className='fas fa-times'; document.body.style.overflow='hidden'; }
+function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('open'); icon.className='fas fa-bars';  document.body.style.overflow=''; }
+toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+backdrop.addEventListener('click', closeSidebar);
+document.addEventListener('keydown', e => { if (e.key==='Escape' && sidebar.classList.contains('open')) closeSidebar(); });
+</script>
 </body>
 </html>
