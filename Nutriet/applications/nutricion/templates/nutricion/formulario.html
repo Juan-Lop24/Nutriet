@@ -42,11 +42,11 @@
         .pb-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--pink),#ff6b9d);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
 
         /* FORM OUTER */
-        .form-outer{max-width:680px;margin:0 auto;padding:0 24px 64px}
+        .form-outer{max-width:680px;margin:0 auto;padding:0 24px 160px}
 
         /* SECTION CARDS */
         .sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);
-            overflow:hidden;margin-bottom:18px;box-shadow:0 2px 20px rgba(232,23,93,.07);
+            margin-bottom:18px;box-shadow:0 2px 20px rgba(232,23,93,.07);
             transition:box-shadow .3s}
         .sc:focus-within{box-shadow:0 4px 32px rgba(232,23,93,.14)}
         .sc-head{display:flex;align-items:center;gap:14px;padding:20px 28px 0}
@@ -92,10 +92,6 @@
         .dj-err p{font-size:.85rem;font-weight:700;color:var(--pink);margin-bottom:6px}
         .dj-err ul{padding-left:18px}
         .dj-err li{font-size:.82rem;color:#8b0034;margin-bottom:2px}
-        .dj-warn{background:#fffbea;border:1.5px solid #f5d76e;border-radius:var(--r-md);
-                 padding:14px 18px;margin-bottom:18px;display:flex;align-items:flex-start;gap:10px}
-        .dj-warn .warn-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
-        .dj-warn p{font-size:.84rem;font-weight:500;color:#7a5c00;line-height:1.5}
 
         /* SEXO TOGGLE */
         .sexo-t{display:flex;gap:10px}
@@ -202,6 +198,21 @@
         .ovst.on{color:var(--muted)}
         .ovst.on .sd{opacity:1;animation:blk .9s ease infinite}
         @keyframes blk{0%,100%{opacity:1}50%{opacity:.2}}
+
+        /* INGREDIENT CHIPS */
+        .ing-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 13px;
+                  background:var(--pink-soft);border:1.5px solid var(--pink-mid);border-radius:50px;
+                  font-size:.81rem;font-weight:600;color:var(--pink);animation:chipIn .15s ease}
+        @keyframes chipIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+        .ing-chip button{background:none;border:none;cursor:pointer;color:var(--pink);
+                         font-size:.85rem;padding:0;line-height:1;opacity:.7;transition:opacity .15s}
+        .ing-chip button:hover{opacity:1}
+        .ing-opt{padding:10px 14px;font-size:.88rem;cursor:pointer;color:var(--text);
+                 border-bottom:1px solid var(--cream2);transition:background .15s}
+        .ing-opt:last-child{border-bottom:none}
+        .ing-opt:hover,.ing-opt.active{background:var(--pink-soft);color:var(--pink);font-weight:600}
+        .ing-opt mark{background:none;color:var(--pink);font-weight:800}
+        .ing-noresult{padding:10px 14px;font-size:.85rem;color:var(--muted);font-style:italic}
     </style>
 </head>
 <body>
@@ -251,16 +262,7 @@
     </div>
     {% endif %}
     {% if messages %}
-    {% for m in messages %}
-        {% if m.tags == 'warning' %}
-        <div class="dj-warn">
-            <span class="warn-icon">⚠️</span>
-            <p>{{ m }}</p>
-        </div>
-        {% else %}
-        <div class="dj-err"><p>{{ m }}</p></div>
-        {% endif %}
-    {% endfor %}
+    <div class="dj-err">{% for m in messages %}<p>{{ m }}</p>{% endfor %}</div>
     {% endif %}
 
     <form id="mainForm" method="POST" novalidate>
@@ -281,14 +283,14 @@
                 <div class="fg" style="margin-bottom:16px">
                     <label class="fl">Sexo <span class="req">*</span></label>
                     <div class="sexo-t">
-                        {% for val, display in form.sexo.field.choices %}
+                        {% for val, display in form.sexo.field.choices %}{% if val %}
                         <input type="radio" name="sexo" id="s_{{ val }}" value="{{ val }}"
                                {% if form.sexo.value == val %}checked{% endif %}>
                         <label for="s_{{ val }}">
                             <span class="ico">{% if val == "M" %}♂{% else %}♀{% endif %}</span>
                             {{ display }}
                         </label>
-                        {% endfor %}
+                        {% endif %}{% endfor %}
                     </div>
                     {% if form.sexo.errors %}<div class="ferr show">{{ form.sexo.errors.0 }}</div>
                     {% else %}<div class="ferr" id="err_sexo">Selecciona tu sexo.</div>{% endif %}
@@ -302,11 +304,11 @@
                             <input type="number" name="edad" id="id_edad"
                                    class="fi{% if form.edad.errors %} bad{% endif %}"
                                    value="{{ form.edad.value|default:'' }}"
-                                   placeholder="25" min="10" max="100">
+                                   min="10" max="100">
                             <span class="unit">años</span>
                         </div>
                         {% if form.edad.errors %}<div class="ferr show">{{ form.edad.errors.0 }}</div>
-                        {% else %}<div class="ferr" id="err_edad"></div>{% endif %}
+                        {% else %}<div class="ferr" id="err_edad" style="min-height:0"></div>{% endif %}
                     </div>
                     <div class="fg">
                         <label class="fl" for="id_peso">Peso actual <span class="req">*</span></label>
@@ -314,11 +316,11 @@
                             <input type="number" name="peso" id="id_peso"
                                    class="fi{% if form.peso.errors %} bad{% endif %}"
                                    value="{{ form.peso.value|default:'' }}"
-                                   placeholder="70" step="0.1" min="20" max="300">
+                                   step="0.1" min="20" max="300">
                             <span class="unit">kg</span>
                         </div>
                         {% if form.peso.errors %}<div class="ferr show">{{ form.peso.errors.0 }}</div>
-                        {% else %}<div class="ferr" id="err_peso"></div>{% endif %}
+                        {% else %}<div class="ferr" id="err_peso" style="min-height:0"></div>{% endif %}
                     </div>
                     <div class="fg">
                         <label class="fl" for="id_altura">Altura <span class="req">*</span></label>
@@ -326,11 +328,11 @@
                             <input type="number" name="altura" id="id_altura"
                                    class="fi{% if form.altura.errors %} bad{% endif %}"
                                    value="{{ form.altura.value|default:'' }}"
-                                   placeholder="170" step="0.1" min="100" max="250">
+                                   step="0.1" min="100" max="250">
                             <span class="unit">cm</span>
                         </div>
                         {% if form.altura.errors %}<div class="ferr show">{{ form.altura.errors.0 }}</div>
-                        {% else %}<div class="ferr" id="err_altura"></div>{% endif %}
+                        {% else %}<div class="ferr" id="err_altura" style="min-height:0"></div>{% endif %}
                     </div>
                 </div>
 
@@ -352,7 +354,7 @@
                 <div class="fg" style="margin-bottom:16px">
                     <label class="fl">Objetivo principal <span class="req">*</span></label>
                     <div class="obj-g">
-                        {% for val, display in form.objetivo.field.choices %}
+                        {% for val, display in form.objetivo.field.choices %}{% if val %}
                         <input type="radio" name="objetivo" id="o_{{ val }}" value="{{ val }}"
                                {% if form.objetivo.value == val %}checked{% endif %}>
                         <label for="o_{{ val }}" class="oc">
@@ -364,11 +366,11 @@
                                 {% if val == "Aumentar" %}Masa muscular{% elif val == "Reducir" %}Quemar grasa{% else %}Equilibrio{% endif %}
                             </div>
                         </label>
-                        {% endfor %}
+                        {% endif %}{% endfor %}
                     </div>
                     <div class="obj-hint" id="obj-hint"></div>
                     {% if form.objetivo.errors %}<div class="ferr show">{{ form.objetivo.errors.0 }}</div>
-                    {% else %}<div class="ferr" id="err_obj"></div>{% endif %}
+                    {% else %}<div class="ferr" id="err_obj" style="min-height:0"></div>{% endif %}
                 </div>
 
                 <!-- PESO OBJETIVO -->
@@ -378,11 +380,11 @@
                         <input type="number" name="peso_objetivo" id="id_peso_objetivo"
                                class="fi{% if form.peso_objetivo.errors %} bad{% endif %}"
                                value="{{ form.peso_objetivo.value|default:'' }}"
-                               placeholder="65" step="0.1" min="20" max="300">
+                               step="0.1" min="20" max="300">
                         <span class="unit">kg</span>
                     </div>
                     {% if form.peso_objetivo.errors %}<div class="ferr show">{{ form.peso_objetivo.errors.0 }}</div>
-                    {% else %}<div class="ferr" id="err_pobj"></div>{% endif %}
+                    {% else %}<div class="ferr" id="err_pobj" style="min-height:0"></div>{% endif %}
                 </div>
 
                 <!-- PLAZO SLIDER -->
@@ -419,17 +421,17 @@
                 <div class="fg" style="margin-bottom:16px">
                     <label class="fl">Nivel de actividad física <span class="req">*</span></label>
                     <div class="act-l">
-                        {% for val, display in form.nivel_actividad.field.choices %}
+                        {% for val, display in form.nivel_actividad.field.choices %}{% if val %}
                         <input type="radio" name="nivel_actividad" id="a_{{ val }}" value="{{ val }}"
                                {% if form.nivel_actividad.value == val %}checked{% endif %}>
                         <label for="a_{{ val }}" class="ai">
                             <div class="ai-dot"></div>
                             <div class="ai-text">{{ display }}</div>
                         </label>
-                        {% endfor %}
+                        {% endif %}{% endfor %}
                     </div>
                     {% if form.nivel_actividad.errors %}<div class="ferr show">{{ form.nivel_actividad.errors.0 }}</div>
-                    {% else %}<div class="ferr" id="err_act"></div>{% endif %}
+                    {% else %}<div class="ferr" id="err_act" style="min-height:0"></div>{% endif %}
                 </div>
 
                 <!-- COMIDAS -->
@@ -474,17 +476,34 @@
                 </div>
 
                 <!-- INGREDIENTES A EXCLUIR -->
-                <div class="fg">
-                    <label class="fl" for="id_ingredientes_excluidos">
+                <div class="fg" id="ing-wrapper">
+                    <label class="fl">
                         Ingredientes que NO quieres en tus recetas
                         <span style="font-weight:400;color:var(--muted);font-size:.76rem">(opcional)</span>
                     </label>
                     <p style="font-size:.8rem;color:var(--muted);margin-bottom:8px">
-                        Escribe los ingredientes que no te gustan o no puedes comer por cualquier razón, separados por coma.
-                        <br><strong>Ej:</strong> arroz, pollo, frijol, leche
+                        Escribe uno o varios ingredientes separados por coma y presiona <kbd style="background:var(--cream2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.75rem">Enter</kbd> o <kbd style="background:var(--cream2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:.75rem">,</kbd> para agregarlos.
+                        Los que no tengamos registrados serán omitidos automáticamente.
                     </p>
-                    <textarea name="ingredientes_excluidos" id="id_ingredientes_excluidos"
-                              class="fi" placeholder="Ej: arroz, leche, carne roja, mariscos…">{{ form.ingredientes_excluidos.value|default:"" }}</textarea>
+                    <!-- Chips -->
+                    <div id="ing-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px"></div>
+                    <!-- Input + dropdown -->
+                    <div style="position:relative">
+                        <input type="text" id="ing-search" class="fi"
+                               placeholder="Ej: arroz, pollo, leche…"
+                               autocomplete="off"
+                               style="padding-right:38px">
+                        <span style="position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:.95rem;pointer-events:none">🔍</span>
+                        <div id="ing-dropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;
+                             background:white;border:1.5px solid var(--border);border-radius:var(--r-sm);
+                             box-shadow:0 8px 24px rgba(0,0,0,.10);z-index:500;max-height:220px;overflow-y:auto"></div>
+                    </div>
+                    <!-- Aviso ingredientes no reconocidos (se muestra tras agregar) -->
+                    <div id="ing-warn" style="display:none;margin-top:8px;background:#fffbea;border:1.5px solid #f5d76e;
+                         border-radius:var(--r-sm);padding:9px 13px;font-size:.8rem;color:#7a5c00;line-height:1.5"></div>
+                    <!-- Hidden real -->
+                    <input type="hidden" name="ingredientes_excluidos" id="id_ingredientes_excluidos"
+                           value="{{ form.ingredientes_excluidos.value|default:'' }}">
                 </div>
 
             </div>
@@ -616,6 +635,145 @@ document.addEventListener("DOMContentLoaded",()=>{
         const errId={sexo:"err_sexo",objetivo:"err_obj",nivel_actividad:"err_act"}[name];
         document.querySelectorAll("[name="+name+"]").forEach(r=>r.addEventListener("change",()=>document.getElementById(errId).classList.remove("show")));
     });
+
+    // ── INGREDIENTES EXCLUIDOS ───────────────────────────────────────────────
+    (function(){
+        const VALIDOS = ["aceite","ajo","almendra","arroz","atún","azúcar","brócoli",
+            "cacahuate","camarones","canela","carne","cebolla","cerdo","chile",
+            "chocolate","cilantro","comino","conejo","cordero","crema","espinaca",
+            "frijol","garbanzos","gluten","harina","huevo","jamón","ketchup",
+            "leche","lechuga","lentejas","limón","mantequilla","manzana","maní",
+            "mariscos","mayonesa","maíz","mostaza","naranja","nuez","pan","papa",
+            "pasta","patata","pato","pavo","perejil","pescado","pimienta","pimiento",
+            "piña","plátano","pollo","queso","sal","salchicha","salmón","salsa",
+            "soja","tocino","tomate","trigo","uva","vainilla","vinagre","zanahoria"];
+
+        function norm(s){ return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim(); }
+
+        const searchInput = document.getElementById("ing-search");
+        const dropdown    = document.getElementById("ing-dropdown");
+        const chipsWrap   = document.getElementById("ing-chips");
+        const hiddenInput = document.getElementById("id_ingredientes_excluidos");
+        const warnDiv     = document.getElementById("ing-warn");
+
+        if(!searchInput) return;
+
+        let seleccionados = []; // solo los válidos
+
+        // Cargar valor inicial si viene de un POST con errores
+        const initVal = hiddenInput.value.trim();
+        if(initVal){
+            initVal.split(",").forEach(v=>{
+                const t = v.trim();
+                if(t && VALIDOS.some(x=> norm(x)===norm(t))) addChip(t, false);
+            });
+        }
+
+        function syncHidden(){ hiddenInput.value = seleccionados.join(", "); }
+
+        function addChip(nombre, animate=true){
+            const canonical = VALIDOS.find(x=> norm(x)===norm(nombre)) || nombre;
+            if(seleccionados.includes(canonical)) return;
+            seleccionados.push(canonical);
+            syncHidden();
+            const chip = document.createElement("span");
+            chip.className = "ing-chip";
+            chip.innerHTML = canonical + '<button type="button" aria-label="Quitar">✕</button>';
+            chip.querySelector("button").addEventListener("click",()=>{
+                seleccionados = seleccionados.filter(x=>x!==canonical);
+                syncHidden(); chip.remove();
+            });
+            chipsWrap.appendChild(chip);
+        }
+
+        // Procesa texto que puede tener múltiples ingredientes separados por coma
+        function procesarTexto(texto){
+            const partes = texto.split(",").map(p=>p.trim()).filter(Boolean);
+            const noReconocidos = [];
+            partes.forEach(p=>{
+                const esValido = VALIDOS.some(v=> norm(v)===norm(p));
+                if(esValido){
+                    addChip(p);
+                } else if(p.length > 1){
+                    noReconocidos.push(p);
+                }
+            });
+            // Mostrar aviso de los no reconocidos
+            if(noReconocidos.length > 0){
+                warnDiv.innerHTML = '⚠️ No tenemos registrado(s): <strong>' +
+                    noReconocidos.map(x=>`"${x}"`).join(", ") +
+                    '</strong>. Los demás sí fueron agregados correctamente.';
+                warnDiv.style.display = "block";
+            }
+            searchInput.value = "";
+            dropdown.style.display = "none";
+            searchInput.classList.remove("bad");
+        }
+
+        function showDropdown(query){
+            const q = norm(query);
+            // Si hay coma en el texto, no mostrar dropdown (modo multi)
+            if(query.includes(",")){ dropdown.style.display="none"; return; }
+            const matches = q.length < 1 ? [] :
+                VALIDOS.filter(v=> norm(v).includes(q) && !seleccionados.includes(v));
+            dropdown.innerHTML = "";
+            if(q.length >= 1 && matches.length === 0){
+                dropdown.innerHTML = '<div class="ing-noresult">😕 "<strong>'+query+
+                    '</strong>" no está en nuestra lista. Puedes escribir varios separados por coma.</div>';
+                dropdown.style.display = "block"; return;
+            }
+            if(matches.length === 0){ dropdown.style.display="none"; return; }
+            matches.slice(0,8).forEach((v,i)=>{
+                const div = document.createElement("div");
+                div.className = "ing-opt"+(i===0?" active":"");
+                const re = new RegExp("("+q.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")", "i");
+                div.innerHTML = v.replace(re,"<mark>$1</mark>");
+                div.addEventListener("mousedown",e=>{ e.preventDefault(); addChip(v); searchInput.value=""; dropdown.style.display="none"; });
+                dropdown.appendChild(div);
+            });
+            dropdown.style.display = "block";
+        }
+
+        searchInput.addEventListener("keydown",e=>{
+            const opts = dropdown.querySelectorAll(".ing-opt");
+            const active = dropdown.querySelector(".ing-opt.active");
+            if(e.key==="ArrowDown"){ e.preventDefault();
+                if(!active&&opts[0]) opts[0].classList.add("active");
+                else if(active&&active.nextElementSibling){ active.classList.remove("active"); active.nextElementSibling.classList.add("active"); }
+            } else if(e.key==="ArrowUp"){ e.preventDefault();
+                if(active&&active.previousElementSibling){ active.classList.remove("active"); active.previousElementSibling.classList.add("active"); }
+            } else if(e.key==="Enter"){ e.preventDefault();
+                if(active){ addChip(active.textContent.trim()); searchInput.value=""; dropdown.style.display="none"; }
+                else if(searchInput.value.trim()){ procesarTexto(searchInput.value); }
+            } else if(e.key===","){ 
+                // Al escribir coma, procesar lo que hay antes
+                setTimeout(()=>{ 
+                    const val = searchInput.value.replace(/,\s*$/,"").trim();
+                    if(val){ procesarTexto(val); }
+                }, 10);
+            } else if(e.key==="Escape"){ dropdown.style.display="none"; }
+        });
+
+        searchInput.addEventListener("input",()=>{
+            warnDiv.style.display="none";
+            searchInput.classList.remove("bad");
+            showDropdown(searchInput.value.trim());
+        });
+
+        searchInput.addEventListener("blur",()=>{
+            setTimeout(()=>{ dropdown.style.display="none"; },150);
+            const val = searchInput.value.trim();
+            if(val) procesarTexto(val);
+        });
+
+        // Al hacer submit, procesar lo que quede en el input
+        document.getElementById("mainForm").addEventListener("submit",e=>{
+            const val = searchInput.value.trim();
+            if(val) procesarTexto(val);
+            // Nunca bloquear el submit por ingredientes - solo se omiten los inválidos
+        }, true);
+    })();
+    // ─────────────────────────────────────────────────────────────────────────
 });
 </script>
 </body>
