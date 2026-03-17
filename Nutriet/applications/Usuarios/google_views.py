@@ -76,37 +76,47 @@ def google_callback(request):
     # -- 5. Iniciar sesion
     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
 
-    # -- 6. Enviar codigo de verificacion a TODOS (nuevos y existentes)
     from .models import VerificacionCodigo
-    from django.core.mail import send_mail
 
-    try:
-        verificacion, _ = VerificacionCodigo.objects.get_or_create(usuario=user)
-        verificacion.generar_codigo()
+    # -- 6. Usuario NUEVO: enviar codigo de verificacion una sola vez
+    if created:
+        from django.core.mail import send_mail
 
-        nombre = user.first_name or user.username
-        asunto = 'Bienvenido a Nutriet! Codigo de verificacion' if created else 'Codigo de acceso - NUTRIET'
+        try:
+            verificacion, _ = VerificacionCodigo.objects.get_or_create(usuario=user)
+            verificacion.generar_codigo()
 
-        logger.info(f"[RESEND] Intentando enviar codigo a {user.email} | RESEND_API_KEY presente: {bool(settings.RESEND_API_KEY)}")
+            nombre = user.first_name or user.username
 
-        send_mail(
-            asunto,
-            (
-                f'Hola {nombre}!\n\n'
-                f'Tu codigo de acceso es: {verificacion.codigo}\n\n'
-                f'Este codigo expira en 5 minutos.'
-            ),
-            settings.EMAIL_HOST_USER,
-            [user.email],
-            fail_silently=False,
-        )
+            logger.info(f"[GOOGLE] Enviando codigo de verificacion a nuevo usuario {user.email}")
 
-        logger.info(f"[RESEND] Correo enviado exitosamente a {user.email}")
-        return redirect("/usuarios/verificacion-login/")
+            send_mail(
+                'Bienvenido a Nutriet! Codigo de verificacion',
+                (
+                    f'Hola {nombre}!\n\n'
+                    f'Tu codigo de acceso es: {verificacion.codigo}\n\n'
+                    f'Este codigo expira en 5 minutos.'
+                ),
+                settings.EMAIL_HOST_USER,
+                [user.email],
+                fail_silently=False,
+            )
 
-    except Exception as e:
-        logger.error(f"[RESEND] ERROR al enviar correo a {user.email}: {type(e).__name__}: {e}")
-        # Si el envio falla, continuar sin verificacion
+            logger.info(f"[GOOGLE] Correo enviado exitosamente a {user.email}")
+            return redirect("/usuarios/verificacion-login/")
+
+        except Exception as e:
+            logger.error(f"[GOOGLE] ERROR al enviar correo a {user.email}: {type(e).__name__}: {e}")
+            # Si el envio falla, continuar sin verificacion
+            return redirect("/main/?setup_notifications=true")
+
+    # -- 7. Usuario EXISTENTE: marcar verificacion como completada y entrar directo
+    else:
+        logger.info(f"[GOOGLE] Usuario existente {user.email} — entrando sin pedir codigo")
+
+        # Marcar la verificacion como completada para no bloquear en verificacion_login
+        VerificacionCodigo.objects.filter(usuario=user).update(verificado=True)
+
         if getattr(user, "notificaciones_configuradas", False):
             return redirect("/main/")
         else:
