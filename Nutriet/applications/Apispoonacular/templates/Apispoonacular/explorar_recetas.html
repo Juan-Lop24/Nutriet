@@ -947,15 +947,15 @@ const TODAS_FAVORITAS = [
 
 const RECETAS_DATA = {
 {% for r in recetas %}
-  "{{ r.id }}": {
-    id: {{ r.id }},
+  "{{ r.id|default:0 }}":
+    id: {{ r.id|default:0 }},
     nombre: "{{ r.nombre|default:''|escapejs }}",
     categoria: "{{ r.categoria|default:''|escapejs }}",
     area: "{{ r.area|default:''|escapejs }}",
     imagen_url: "{{ r.imagen_url|default:''|escapejs }}",
     youtube_url: "{{ r.youtube_url|default:''|escapejs }}",
     instrucciones: "{{ r.instrucciones|default:''|escapejs }}",
-    ingredientes: {{ r.ingredientes|default:'[]'|safe }},
+    ingredientes: {{ r.ingredientes|default:"[]"|safe }},
     calorias: {{ r.calorias|default:'null' }},
     proteinas_g: {{ r.proteinas_g|default:'null' }},
     carbohidratos_g: {{ r.carbohidratos_g|default:'null' }},
