@@ -1105,7 +1105,7 @@ async function toggleFav(id, titulo, imagen, btnEl) {
         btn.classList.toggle('btn-fav-active', d.favorito);
       }
       // Actualizar botón en la card del grid
-      const cardBtn = document.querySelector('.btn-fav-card[onclick*="toggleFavCard('+id+',"]');
+      const cardBtn = document.querySelector(`.btn-fav-card[onclick*="toggleFavCard(${id},"]`);
       if (cardBtn) {
         cardBtn.textContent = d.favorito ? '♥ Guardado' : '♡ Guardar';
         cardBtn.classList.toggle('active', d.favorito);
@@ -1132,7 +1132,7 @@ async function toggleFavCard(id, titulo, imagen, btn) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-CSRFToken': '{{ csrf_token }}',
+        'X-CSRFToken': getCookie('csrftoken'),
       },
       body: JSON.stringify({ recipe_id: id, titulo, imagen }),
     });
