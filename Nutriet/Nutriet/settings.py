@@ -24,6 +24,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://nutrietcol.site',
     'https://www.nutrietcol.site',
     'https://nutriest.onrender.com',
+    'http://nutrietcol.site',
+    'http://www.nutrietcol.site', 
 ]
 
 # ─── OneSignal (reemplaza Firebase) ──────────────────────────────────────────
