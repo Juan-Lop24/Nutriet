@@ -1,0 +1,539 @@
+{% extends "seguimiento/base_seguimiento.html" %}
+{% block titulo %}Agregar medición{% endblock %}
+{% block body_class %}seguimiento-page{% endblock %}
+
+{% block contenido %}
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-pink: #f50057;
+      --pink-light: #ff4081;
+      --soft-yellow: rgb(255, 249, 230);
+      --white: #ffffff;
+      --text-dark: #1a1a2e;
+      --text-muted: #6c757d;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+      --shadow-heavy: rgba(0, 0, 0, 0.15);
+      --danger-red: #dc3545;
+      --warning-orange: #FF7043;
+      --bg-gradient: linear-gradient(135deg, #fff9f0 0%, #fef0f5 50%, #f0f5ff 100%);
+      --focus-color: #f50057;
+      --border-gray: #e0e0e0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-gradient) !important;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Fondo decorativo */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%; right: -20%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(245, 0, 87, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatBg 8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%; left: 5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255, 112, 67, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatBg 10s ease-in-out infinite reverse;
+      z-index: 0;
+    }
+
+    @keyframes floatBg {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-40px) scale(1.05); }
+    }
+
+    /* ============================================
+      CONTAINER & PAGE HEADER
+      ============================================ */
+
+    .medicion-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 50px 20px 80px;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Etiqueta de sección */
+    .page-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 0, 87, 0.08);
+      color: var(--primary-pink);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid rgba(245, 0, 87, 0.2);
+      margin-bottom: 14px;
+    }
+
+    .page-tag .dot {
+      width: 6px; height: 6px;
+      background: var(--primary-pink);
+      border-radius: 50%;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.6); }
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+
+    .page-title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--primary-pink), #ff7043);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 36px;
+    }
+
+    .header-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(245,0,87,0.2), transparent);
+      margin-bottom: 36px;
+    }
+
+    /* ============================================
+      BLOQUEO / CONTADOR
+      ============================================ */
+
+    .bloqueo-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 30px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 40px var(--shadow-light);
+      border: 1px solid rgba(245, 0, 87, 0.12);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.5s ease 0.1s backwards;
+    }
+
+    .bloqueo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--danger-red), #ff5252, var(--danger-red));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50%       { background-position: 100% 50%; }
+    }
+
+    .bloqueo-icon {
+      font-size: 2.8rem;
+      margin-bottom: 8px;
+    }
+
+    .bloqueo-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--danger-red);
+      margin-bottom: 6px;
+    }
+
+    #contador-tiempo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 3rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--danger-red), #ff4081);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 18px;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    .bloqueo-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .meta-pill {
+      background: rgba(245, 0, 87, 0.06);
+      border: 1px solid rgba(245, 0, 87, 0.15);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .meta-pill span {
+      color: var(--primary-pink);
+      font-weight: 700;
+    }
+
+    /* ============================================
+      FORMULARIO CARD
+      ============================================ */
+
+    .form-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 36px 32px;
+      box-shadow: 0 10px 40px var(--shadow-light);
+      border: 1px solid rgba(245, 0, 87, 0.1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.5s ease 0.2s backwards;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--primary-pink), #ff4081, var(--warning-orange));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    /* ============================================
+      CAMPOS
+      ============================================ */
+
+    .field-group {
+      margin-bottom: 20px;
+    }
+
+    .field-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .field-group label::before {
+      content: '';
+      display: inline-block;
+      width: 4px; height: 14px;
+      background: linear-gradient(180deg, var(--primary-pink), #ff4081);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 2px solid var(--border-gray);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      background: #fafafa;
+      transition: all 0.3s ease;
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-pink);
+      background: var(--white);
+      box-shadow: 0 0 0 4px rgba(245, 0, 87, 0.08), 0 4px 16px rgba(245, 0, 87, 0.12);
+      transform: translateY(-2px);
+    }
+
+    input:hover:not(:focus), select:hover:not(:focus), textarea:hover:not(:focus) {
+      border-color: rgba(245, 0, 87, 0.3);
+    }
+
+    input.is-invalid, select.is-invalid, textarea.is-invalid {
+      border-color: var(--danger-red) !important;
+      box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1) !important;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-8px); }
+      75%       { transform: translateX(8px); }
+    }
+
+    select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f50057' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      appearance: none;
+    }
+
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* Separador entre grupos de campos */
+    .fields-divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(245,0,87,0.1), transparent);
+      margin: 24px 0;
+    }
+
+    /* ============================================
+      BOTÓN
+      ============================================ */
+
+    .btn-guardar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, var(--primary-pink), #ff4081);
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(245, 0, 87, 0.35);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .btn-guardar::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.5s ease, height 0.5s ease;
+    }
+
+    .btn-guardar:hover::before { width: 500px; height: 500px; }
+
+    .btn-guardar:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(245, 0, 87, 0.45);
+    }
+
+    .btn-guardar:active { transform: translateY(-1px); }
+
+    .btn-guardar:disabled {
+      background: linear-gradient(135deg, #ccc, #aaa) !important;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .btn-guardar:disabled:hover { transform: none !important; }
+
+    /* ============================================
+      GRID 2 COLUMNAS
+      ============================================ */
+
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 20px;
+      justify-items: center;
+    }
+
+    .fields-grid .field-group {
+      width: 100%;
+    }
+
+    /* Si solo hay un campo, se centra automáticamente */
+    .fields-grid .field-group:only-child {
+      grid-column: 1 / -1;
+      max-width: 50%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 576px) {
+      .fields-grid { grid-template-columns: 1fr; }
+      .medicion-wrapper { padding: 30px 16px 60px; }
+      .page-title { font-size: 1.8rem; }
+      #contador-tiempo { font-size: 2.2rem; }
+      .form-card { padding: 24px 20px; }
+      .bloqueo-card { padding: 24px 20px; }
+    }
+
+    /* ============================================
+      SCROLLBAR
+      ============================================ */
+
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--primary-pink), #ff4081);
+      border-radius: 10px;
+    }
+
+    * { transition: background-color 0.3s ease, color 0.3s ease; }
+  </style>
+</head>
+
+<div class="medicion-wrapper">
+
+  <!-- PAGE HEADER -->
+  <div class="page-tag"><span class="dot"></span> Seguimiento</div>
+  <h1 class="page-title">Registrar <em>medición</em></h1>
+  <p class="page-subtitle">Monitorea tu evolución y mantén el control</p>
+  <div class="header-divider"></div>
+
+  <!-- BLOQUEO: cuando NO puede medir -->
+  {% if bloqueado %}
+  <div class="bloqueo-card text-center">
+    <div class="bloqueo-icon">⏳</div>
+    <div class="bloqueo-label">Próxima medición disponible en</div>
+    <div id="contador-tiempo"></div>
+    <div class="bloqueo-meta">
+      <div class="meta-pill">Frecuencia: <span>{{ frecuencia_label }}</span></div>
+      <div class="meta-pill">Última: <span>{{ ultima_fecha|date:"d M Y, H:i" }}</span></div>
+      <div class="meta-pill">Próxima: <span>{{ proxima_fecha|date:"d M Y, H:i" }}</span></div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var segundos = {{ segundos_restantes }};
+    var cont = document.getElementById('contador-tiempo');
+    function fmt(s){
+      var d=Math.floor(s/86400), h=Math.floor((s%86400)/3600),
+          m=Math.floor((s%3600)/60), ss=s%60;
+      return (d>0?d+'d ':'')+String(h).padStart(2,'0')+'h '+
+             String(m).padStart(2,'0')+'m '+String(ss).padStart(2,'0')+'s';
+    }
+    function tick(){
+      if(segundos<=0){ location.reload(); return; }
+      cont.textContent = fmt(segundos);
+      segundos--;
+    }
+    tick();
+    setInterval(tick, 1000);
+  })();
+  </script>
+  {% endif %}
+
+  <!-- FORMULARIO -->
+  <div class="form-card">
+    <form method="POST">
+      {% csrf_token %}
+      <div class="fields-grid">
+        {% for campo in form %}
+        <div class="field-group">
+          <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+          {{ campo }}
+          {% if campo.errors %}
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const field = document.getElementById("{{ campo.id_for_label }}");
+              if(field) field.classList.add('is-invalid');
+              {% for error in campo.errors %}
+              Swal.fire({
+                icon: 'error',
+                title: 'Error en {{ campo.label }}',
+                text: '{{ error|escapejs }}',
+                toast: true,
+                position: 'top-end',
+                timer: 4000,
+                timerProgressBar: true,
+                showConfirmButton: false
+              });
+              {% endfor %}
+            });
+          </script>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="fields-divider"></div>
+
+      {% if bloqueado %}
+      <button class="btn-guardar" disabled>
+        ⏳ Espera hasta {{ proxima_fecha|date:"d M Y, H:i" }}
+      </button>
+      {% else %}
+      <button class="btn-guardar" type="submit">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+        </svg>
+        Guardar medición
+      </button>
+      {% endif %}
+
+    </form>
+  </div>
+
+</div>
+
+{% include "seguimiento/_popup_frecuencia.html" %}
+
+{% endblock %}

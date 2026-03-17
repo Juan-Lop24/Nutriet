@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información - NUTRIET</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #E91E63;
+            --primary-dark: #C2185B;
+            --bg-cream: #FFF8F0;
+            --bg-white: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-gray: #666666;
+            --border: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+#Menu {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#Menu a {
+    text-decoration: none;
+}
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-btn:not(.active) {
+            background: transparent;
+            color: var(--text-dark);
+        }
+
+        .nav-btn:not(.active):hover {
+            background: #FFE8F0;
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: var(--bg-cream);
+            padding: 4rem 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(233, 30, 99, 0.3);
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+        }
+
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-dark);
+            font-weight: 800;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text {
+            line-height: 1.8;
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .about-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        .about-image {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+        }
+
+        .about-image-icon {
+            font-size: 8rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-image h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        /* Mission Section */
+        .mission-section {
+            padding: 6rem 2rem;
+            background: var(--bg-cream);
+        }
+
+        .mission-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .mission-card {
+            background: var(--bg-white);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mission-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .mission-card:hover::before {
+            opacity: 1;
+        }
+
+        .mission-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mission-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .mission-desc {
+            color: var(--text-gray);
+            line-height: 1.7;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 2rem;
+            align-items: start;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: var(--bg-cream);
+            border-radius: 16px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+
+        .feature-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--primary);
+            min-width: 80px;
+        }
+
+        .feature-content h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-content p {
+            color: var(--text-gray);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        /* Values Section */
+        .values-section {
+            padding: 6rem 2rem;
+            background: var(--bg-cream);
+        }
+
+        .values-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .value-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-white);
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .value-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .value-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .value-desc {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 6rem 2rem;
+            background: var(--bg-white);
+            text-align: center;
+        }
+
+        .team-intro {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            color: var(--text-gray);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .team-stats {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-cream);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 2px solid var(--border);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        footer p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .about-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .feature-item {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .feature-number {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-section, .mission-section, .features-section, .values-section, .team-section {
+                padding: 4rem 1rem;
+            }
+
+            .nav-container {
+                gap: 0.5rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            h1 {
+                letter-spacing: -1px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+    #reloj, #persona, #etiqueta,#casa {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5;
+    }
+
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+      <div id="Menu">
+        <a href="{% url 'home' %}"><button id="btn_inicio" class="nav-btn {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}">
+          <svg id="casa" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M3 9.5l9-7 9 7V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
+          </svg> Inicio
+        </button></a>
+
+        <a href="{% url 'redes_sociales' %}"><button id="btn_ayuda" class="nav-btn {% if request.resolver_match.url_name == 'redes_sociales' %}active{% endif %}">
+          <svg id="reloj" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg> Redes sociales
+        </button></a>
+
+        <a href="{% url 'contacto' %}"><button id="btn_contactos" class="nav-btn {% if request.resolver_match.url_name == 'contacto' %}active{% endif %}">
+          <svg id="persona" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg> Contactos
+        </button></a>
+
+        <a href="{% url 'informacion' %}"><button id="btn_informacion" class="nav-btn {% if request.resolver_match.url_name == 'informacion' %}active{% endif %}">
+          <svg id="etiqueta" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg> Informacion
+        </button></a>
+      </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>INFORMACIÓN</h1>
+            <p class="subtitle">Conoce más sobre NUTRIET y nuestra misión de transformar tu relación con la alimentación</p>
+            <a href="{% url 'home' %}">
+           <button class="back-btn">← Volver al Inicio</button></a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="informacion">
+        <h2 class="section-title">¿Qué es NUTRIET?</h2>
+        <div class="about-container">
+            <div class="about-text">
+                <p>NUTRIET es tu compañero digital en el camino hacia una alimentación saludable y balanceada. Somos una plataforma creada para guiarte paso a paso en la creación de rutinas alimenticias personalizadas, fáciles de entender y adaptadas a tu vida diaria.</p>
+                
+                <p>No importa si nunca has seguido un plan nutricional antes o si te cuesta diferenciar entre lo que realmente es saludable y lo que no. En NUTRIET encontrarás la orientación necesaria para avanzar con confianza hacia tus metas de bienestar.</p>
+                
+                <p>Nuestro enfoque se basa en hacer la nutrición accesible para todos, sin complicaciones ni dietas extremas. Creemos que comer bien debe ser un placer, no una carga.</p>
+            </div>
+            <div class="about-image">
+                <div class="about-image-icon">🥗</div>
+                <h3>Come bien<br>Vive feliz</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <h2 class="section-title">Nuestra Misión y Visión</h2>
+        <div class="mission-grid">
+            <div class="mission-card">
+                <div class="mission-icon">🎯</div>
+                <h3 class="mission-title">Misión</h3>
+                <p class="mission-desc">Democratizar el acceso a la información nutricional de calidad, ayudando a las personas a crear hábitos alimenticios saludables de manera simple y sostenible.</p>
+            </div>
+
+            <div class="mission-card">
+                <div class="mission-icon">🌟</div>
+                <h3 class="mission-title">Visión</h3>
+                <p class="mission-desc">Ser la plataforma líder en Colombia para educación nutricional personalizada, transformando la forma en que las personas se relacionan con su alimentación.</p>
+            </div>
+
+            <div class="mission-card">
+                <div class="mission-icon">💚</div>
+                <h3 class="mission-title">Propósito</h3>
+                <p class="mission-desc">Empoderar a cada usuario con las herramientas y conocimientos necesarios para tomar decisiones alimenticias informadas y saludables cada día.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <h2 class="section-title">¿Qué Ofrecemos?</h2>
+        <div class="features-container">
+            <div class="feature-item">
+                <div class="feature-number">01</div>
+                <div class="feature-content">
+                    <h3>Planes Nutricionales Personalizados</h3>
+                    <p>Creamos rutinas alimenticias adaptadas a tus necesidades, objetivos y estilo de vida. Ya sea que busques perder peso, ganar masa muscular o simplemente comer más saludable, tenemos un plan para ti.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-number">02</div>
+                <div class="feature-content">
+                    <h3>Educación Nutricional Accesible</h3>
+                    <p>Aprende sobre nutrición de forma clara y sencilla. Te explicamos los conceptos básicos sin tecnicismos complicados, para que entiendas qué comes y por qué es importante.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-number">03</div>
+                <div class="feature-content">
+                    <h3>Recetas Saludables y Prácticas</h3>
+                    <p>Descubre una amplia variedad de recetas nutritivas, fáciles de preparar y deliciosas. Cada receta incluye información nutricional completa y pasos detallados.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-number">04</div>
+                <div class="feature-content">
+                    <h3>Seguimiento de Progreso</h3>
+                    <p>Monitorea tu avance con herramientas simples e intuitivas. Visualiza tus logros y mantente motivado en tu camino hacia una vida más saludable.</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-number">05</div>
+                <div class="feature-content">
+                    <h3>Soporte Continuo</h3>
+                    <p>No estás solo en este proceso. Nuestro equipo está disponible para resolver tus dudas y acompañarte en cada paso de tu transformación nutricional.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section -->
+    <section class="values-section">
+        <h2 class="section-title">Nuestros Valores</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">🤝</div>
+                <h3 class="value-title">Compromiso</h3>
+                <p class="value-desc">Dedicados a tu bienestar y éxito nutricional</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">📚</div>
+                <h3 class="value-title">Educación</h3>
+                <p class="value-desc">Conocimiento accesible para todos</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">✨</div>
+                <h3 class="value-title">Calidad</h3>
+                <p class="value-desc">Información basada en ciencia y evidencia</p>
+            </div>
+
+            <div class="value-card">
+                <div class="value-icon">🌱</div>
+                <h3 class="value-title">Sostenibilidad</h3>
+                <p class="value-desc">Hábitos que perduran en el tiempo</p>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="footer-content">
+            <h3 class="footer-title">NUTRIET</h3>
+            <p>"Come bien vive feliz"</p>
+            <div class="footer-links">
+                <a href="{% url 'home' %}" class="footer-link">Inicio</a>
+                <a href="{% url 'redes_sociales' %}" class="footer-link">Redes sociales</a>
+                <a href="{% url 'contacto' %}" class="footer-link">Contactos</a>
+                <a href="{% url 'informacion' %}" class="footer-link">Información</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.85rem;">© 2026 NUTRIET | Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        // Function to go back
+        function goBack() {
+            window.history.back();
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Animate cards on scroll
+        document.querySelectorAll('.mission-card, .feature-item, .value-card, .stat-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ✅ Activo automático por data-page
+        (function() {
+            const url = window.location.pathname;
+            const pageMap = {
+                'redes':       'redes_sociales',
+                'contacto':    'contacto',
+                'informacion': 'informacion',
+            };
+            let currentPage = 'inicio';
+            for (const [keyword, page] of Object.entries(pageMap)) {
+                if (url.includes(keyword)) { currentPage = page; break; }
+            }
+            document.querySelectorAll('.nav-container a[data-page]').forEach(link => {
+                link.classList.toggle('active', link.dataset.page === currentPage);
+            });
+        })();
+    </script>
+</body>
+</html>

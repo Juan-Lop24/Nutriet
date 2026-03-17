@@ -1,0 +1,1280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Nutriet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px #cf96a9;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container {
+            padding: 50px 40px;
+            background: white;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .logo-container {
+            background: linear-gradient(135deg, #e91e63 0%, #ffecb3 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        .logo-container::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -80px;
+            left: -80px;
+        }
+
+        .volver {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .volver:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+        }
+
+        h2 {
+            color: #e91e63;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        form > div {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e91e63;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .field-error {
+            color: #c62828;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .terminos {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .terminos input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #e91e63;
+        }
+
+        .terminos span {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .terminos-link {
+            color: #e91e63;
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .terminos-link:hover {
+            color: #c2185b;
+        }
+
+        /* Modal de Términos y Condiciones */
+        .modal-terminos {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 3% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: transform 0.2s ease;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(85vh - 100px);
+            overflow-y: auto;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .modal-body h4 {
+            color: #e91e63;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .modal-body ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .modal-body ul li {
+            margin-bottom: 8px;
+        }
+
+        .modal-body strong {
+            color: #e91e63;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: #fff3f8;
+            border-left: 4px solid #e91e63;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        /* Scrollbar personalizada */
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #e91e63;
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #c2185b;
+        }
+
+        .registrar {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .registrar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(253, 203, 110, 0.4);
+        }
+
+        .registrar:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .social-buttons {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .social-buttons button {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-buttons button:hover {
+            border-color: #e91e63;
+            background: #fef5f9;
+            transform: translateY(-2px);
+        }
+
+        .social-buttons button a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .social-buttons img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .google {
+            color: #4285f4;
+        }
+
+
+        .login-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-text a {
+            color: #e91e63;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-text a:hover {
+            color: #c2185b;
+            text-decoration: underline;
+        }
+
+        .logo {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 20px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 10px 30px rgba(233, 30, 99, 0.2));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .brand-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .brand {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .slogan {
+            font-size: 16px;
+            color: #666;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-container {
+                padding: 30px;
+                order: -1;
+            }
+
+            .logo {
+                max-width: 250px;
+            }
+
+            .form-container {
+                padding: 30px 25px;
+                max-height: none;
+            }
+
+            .brand {
+                font-size: 32px;
+            }
+        }
+
+        /* Animaciones de entrada */
+        form > div {
+            animation: fadeInUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        form > div:nth-child(1) { animation-delay: 0.1s; }
+        form > div:nth-child(2) { animation-delay: 0.15s; }
+        form > div:nth-child(3) { animation-delay: 0.2s; }
+        form > div:nth-child(4) { animation-delay: 0.25s; }
+        form > div:nth-child(5) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading state para el botón */
+        .registrar.loading {
+            background: #999;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .registrar.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            to { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        /* Personalización del scrollbar */
+        .form-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .form-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .form-container::-webkit-scrollbar-thumb {
+            background: #e91e63;
+            border-radius: 4px;
+        }
+
+        .form-container::-webkit-scrollbar-thumb:hover {
+            background: #c2185b;
+        }
+
+        /* Teléfono con prefijo */
+        .phone-wrapper {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .phone-wrapper:focus-within {
+            border-color: #e91e63;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .phone-wrapper.error-border {
+            border-color: #c62828 !important;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1) !important;
+        }
+
+        .phone-wrapper.valid-border {
+            border-color: #4caf50 !important;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1) !important;
+        }
+
+        .phone-prefix {
+            padding: 14px 12px;
+            background: linear-gradient(135deg, #e91e63, #c2185b);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .phone-wrapper input {
+            border: none !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transform: none !important;
+            flex: 1;
+        }
+
+        .phone-wrapper input:focus {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        /* Input icons */
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        /* Password container */
+.password-container {
+    position: relative;
+}
+
+.password-container input {
+    padding-right: 45px !important;
+}
+
+/* Ojito */
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #999;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.toggle-password:hover {
+    color: #e91e63;
+}
+
+/* Barra de fuerza */
+.password-strength {
+    margin-top: 8px;
+}
+
+.strength-bar {
+    height: 5px;
+    background: #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    width: 0%;
+    transition: 0.3s;
+}
+
+.strength-weak .strength-bar-fill {
+    width: 33%;
+    background: #f44336;
+}
+
+.strength-medium .strength-bar-fill {
+    width: 66%;
+    background: #ff9800;
+}
+
+.strength-strong .strength-bar-fill {
+    width: 100%;
+    background: #4caf50;
+}
+
+/* Requisitos */
+.password-requirements {
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.requirement-item {
+    font-size: 12px;
+    color: #777;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.requirement-item.valid {
+    color: #4caf50;
+}
+
+/* Coincidencia */
+.match-indicator {
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 600;
+    display: none;
+}
+
+.match-indicator.match {
+    color: #4caf50;
+    display: block;
+}
+
+.match-indicator.no-match {
+    color: #f44336;
+    display: block;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <a href="{% url 'home' %}" class="volver">
+                ← volver
+            </a>
+
+            <h2>Registro de Usuario</h2>
+
+            <form method="post" id="formRegistro">
+                {% csrf_token %}
+
+                <div>
+                    <label for="{{ form.username.id_for_label }}">Nombre de usuario:</label>
+                    <div class="input-wrapper">
+                        {{ form.username }}
+                        <span class="input-icon"></span>
+                    </div>
+                    {% for error in form.username.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.email.id_for_label }}">Correo electrónico:</label>
+                    <div class="input-wrapper">
+                        {{ form.email }}
+                        <span class="input-icon"></span>
+                    </div>
+                    {% for error in form.email.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div>
+                    <label for="{{ form.telefono.id_for_label }}">Teléfono:</label>
+                    <div class="phone-wrapper">
+                        <span class="phone-prefix">+57</span>
+                        {{ form.telefono }}
+                    </div>
+                    <span class="field-error" id="telefono-error" style="display:none;">⚠ El número debe ser colombiano: +57 seguido de 10 dígitos</span>
+                    {% for error in form.telefono.errors %}
+                        <span class="field-error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div>
+    <label>Contraseña:</label>
+    <div class="password-container">
+        {{ form.password }}
+        <i class="fas fa-eye toggle-password" data-target="id_password"></i>
+    </div>
+
+    <div class="password-strength" id="strengthIndicator">
+        <div class="strength-bar">
+            <div class="strength-bar-fill" id="strengthBar"></div>
+        </div>
+    </div>
+
+    <div class="password-requirements">
+        <div class="requirement-item" id="req-length">• Mínimo 8 caracteres</div>
+        <div class="requirement-item" id="req-uppercase">• Una letra mayúscula</div>
+        <div class="requirement-item" id="req-lowercase">• Una letra minúscula</div>
+        <div class="requirement-item" id="req-number">• Un número</div>
+        <div class="requirement-item" id="req-special">• Un carácter especial (!@#$%...)</div>
+    </div>
+</div>
+
+
+<div>
+    <label>Confirmar contraseña:</label>
+    <div class="password-container">
+        {{ form.confirmar_password }}
+        <i class="fas fa-eye toggle-password" data-target="id_confirmar_password"></i>
+    </div>
+
+    <div class="match-indicator" id="matchIndicator"></div>
+</div>
+
+                
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <span class="field-error" style="font-weight: bold; margin-bottom: 10px; display: block;">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="terminos">
+                    <input type="checkbox" name="terminos" id="terminos" required>
+                    <span>Acepto los <span class="terminos-link" id="openTerminos">Términos y Condiciones</span> y la Política de Privacidad</span>
+                </div>
+
+                <button type="submit" class="registrar">Registrarse</button>
+            </form>
+
+            <div class="divider">O</div>
+
+            
+            <div class="social-buttons">
+                <button class="google">
+                <img src="https://cdn-icons-png.flaticon.com/512/720/720255.png" alt="Google"><a href="{% url 'google_login' %}">Registrarse con Google</a>
+            </button>
+            </div>
+
+            <div class="login-text">
+                <p>¿Ya tienes una cuenta?
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Nutriet Logo" class="logo" />
+
+        </div>
+    </div>
+
+    <!-- Modal de Términos y Condiciones -->
+    <div id="modalTerminos" class="modal-terminos">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📜 Términos y Condiciones - NutriET</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Fecha de última actualización:</strong> Febrero 2026</p>
+                
+                <h4>1. IDENTIFICACIÓN DEL RESPONSABLE</h4>
+                <p>
+                    <strong>Nombre:</strong> Nutriet<br>
+                    <strong>País:</strong> Colombia 🇨🇴<br>
+                    <strong>Correo de contacto:</strong> nutriet_col@gmail.com<br>
+                    <strong>Naturaleza:</strong> Aplicación web de servicios nutricionales
+                </p>
+
+                <h4>2. ACEPTACIÓN DE LOS TÉRMINOS</h4>
+                <p>
+                    Al registrarse y utilizar Nutriet, el usuario declara que ha leído, entendido y acepta de manera expresa e inequívoca estos Términos y Condiciones, así como la Política de Privacidad asociada.
+                </p>
+                <p>
+                    Si el usuario no está de acuerdo con estos términos, deberá abstenerse de utilizar la plataforma y sus servicios.
+                </p>
+
+                <h4>3. DESCRIPCIÓN DEL SERVICIO</h4>
+                <p>Nutriet es una plataforma digital que ofrece los siguientes servicios:</p>
+                <ul>
+                    <li>Registro y gestión de perfiles de usuario</li>
+                    <li>Creación de planes nutricionales personalizados</li>
+                    <li>Seguimiento y monitoreo de hábitos alimenticios</li>
+                    <li>Sistema de recordatorios y notificaciones</li>
+                    <li>Evaluación de progreso y métricas nutricionales</li>
+                    <li>Recursos educativos sobre nutrición y alimentación saludable</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <strong>⚠️ AVISO IMPORTANTE:</strong>
+                    <p style="margin-top: 10px;">
+                        NutriET es una herramienta de apoyo informativo y <strong>NO SUSTITUYE</strong> la consulta médica o nutricional profesional. Los planes y recomendaciones proporcionados tienen carácter orientativo. Ante cualquier duda o condición médica, el usuario debe consultar a un profesional de la salud certificado.
+                    </p>
+                </div>
+
+                <h4>4. USO DEL SERVICIO</h4>
+                <p>El usuario se compromete a:</p>
+                <ul>
+                    <li>✅ Proporcionar información veraz, exacta y actualizada en su registro</li>
+                    <li>✅ Utilizar la plataforma únicamente para fines personales y lícitos</li>
+                    <li>✅ Mantener la confidencialidad de su cuenta y contraseña</li>
+                    <li>✅ Notificar inmediatamente cualquier uso no autorizado de su cuenta</li>
+                </ul>
+                
+                <p>Está estrictamente prohibido:</p>
+                <ul>
+                    <li>❌ Manipular, alterar o intentar vulnerar la seguridad del sistema</li>
+                    <li>❌ Compartir credenciales de acceso con terceros</li>
+                    <li>❌ Utilizar la plataforma para fines comerciales sin autorización</li>
+                    <li>❌ Publicar contenido ofensivo, ilegal o que viole derechos de terceros</li>
+                    <li>❌ Realizar ingeniería inversa o intentar extraer código fuente</li>
+                </ul>
+
+                <h4>5. DATOS PERSONALES Y DATOS DE SALUD</h4>
+                <p>
+                    NutriET recopila y procesa datos personales y <strong>datos sensibles de salud</strong>, incluyendo pero no limitados a:
+                </p>
+                <ul>
+                    <li>Peso, altura y composición corporal</li>
+                    <li>Índice de Masa Corporal (IMC)</li>
+                    <li>Hábitos alimenticios y preferencias dietéticas</li>
+                    <li>Alergias e intolerancias alimentarias</li>
+                    <li>Condiciones médicas relevantes para la nutrición</li>
+                    <li>Historial de progreso y objetivos de salud</li>
+                </ul>
+
+                <div class="highlight-box">
+                    <strong>🔒 PROTECCIÓN DE DATOS SENSIBLES</strong>
+                    <p style="margin-top: 10px;">
+                        Conforme a la <strong>Ley 1581 de 2012</strong> y el Decreto 1377 de 2013 de la República de Colombia, los datos de salud son considerados <strong>datos sensibles</strong> que requieren un tratamiento especial.
+                    </p>
+                    <p>
+                        Al aceptar estos términos, el usuario otorga su <strong>consentimiento informado, previo y expreso</strong> para el tratamiento de sus datos personales y datos sensibles de salud, exclusivamente para los fines descritos en estos Términos y en nuestra Política de Privacidad.
+                    </p>
+                </div>
+
+                <h4>6. DERECHOS DEL USUARIO SOBRE SUS DATOS</h4>
+                <p>El usuario tiene derecho a:</p>
+                <ul>
+                    <li>📋 Conocer, actualizar y rectificar sus datos personales</li>
+                    <li>🗑️ Solicitar la eliminación de sus datos</li>
+                    <li>🚫 Revocar la autorización de tratamiento en cualquier momento</li>
+                    <li>📥 Solicitar una copia de sus datos en formato portable</li>
+                    <li>⚠️ Presentar quejas ante la Superintendencia de Industria y Comercio</li>
+                </ul>
+                <p>
+                    Para ejercer estos derechos, el usuario puede contactarnos en: <strong>contacto@nutriet.com</strong>
+                </p>
+
+                <h4>7. LIMITACIÓN DE RESPONSABILIDAD MÉDICA</h4>
+                <div class="highlight-box">
+                    <strong>⚕️ DESCARGO DE RESPONSABILIDAD MÉDICA</strong>
+                    <p style="margin-top: 10px;">
+                        La información, planes nutricionales y recomendaciones proporcionadas por Nutriet tienen <strong>fines exclusivamente informativos y educativos</strong>. No constituyen asesoramiento médico, diagnóstico o tratamiento profesional.
+                    </p>
+                    <p>
+                        Nutriet no se responsabiliza por:
+                    </p>
+                    <ul>
+                        <li>Consecuencias derivadas de seguir los planes sin supervisión profesional</li>
+                        <li>Reacciones adversas a cambios dietéticos</li>
+                        <li>Interacciones con condiciones médicas preexistentes</li>
+                        <li>Decisiones tomadas basándose únicamente en la información de la plataforma</li>
+                    </ul>
+                    <p>
+                        <strong>El usuario es responsable de consultar a un profesional de la salud certificado antes de iniciar cualquier plan nutricional o realizar cambios significativos en su alimentación.</strong>
+                    </p>
+                </div>
+
+                <h4>8. SUSPENSIÓN Y CANCELACIÓN DE CUENTA</h4>
+                <p>
+                    NutriET se reserva el derecho de suspender o cancelar cuentas en caso de:
+                </p>
+                <ul>
+                    <li>Incumplimiento de estos Términos y Condiciones</li>
+                    <li>Uso fraudulento o malintencionado de la plataforma</li>
+                    <li>Violación de derechos de propiedad intelectual</li>
+                    <li>Actividades que comprometan la seguridad o integridad del sistema</li>
+                </ul>
+                <p>
+                    El usuario puede solicitar la eliminación de su cuenta en cualquier momento. Al eliminar la cuenta, todos sus datos personales serán borrados de forma permanente según nuestra política de retención de datos, excepto aquellos que debamos conservar por obligaciones legales.
+                </p>
+
+                <h4>9. PROPIEDAD INTELECTUAL</h4>
+                <p>
+                    Todos los contenidos de Nutriet, incluyendo pero no limitados a:
+                </p>
+                <ul>
+                    <li>Código fuente y estructura de la plataforma</li>
+                    <li>Diseño gráfico, logotipos y marca Nutriet</li>
+                    <li>Contenido educativo y recursos informativos</li>
+                    <li>Algoritmos de cálculo nutricional</li>
+                    <li>Base de datos de alimentos y recetas</li>
+                </ul>
+                <p>
+                    Son propiedad exclusiva de Nutriet y están protegidos por las leyes de propiedad intelectual de Colombia. Queda estrictamente prohibida su reproducción, distribución, modificación o uso comercial sin autorización expresa.
+                </p>
+
+                <h4>10. MODIFICACIONES DE LOS TÉRMINOS</h4>
+                <p>
+                    Nutriet se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en vigor inmediatamente después de su publicación en la plataforma.
+                </p>
+                <p>
+                    Los usuarios registrados serán notificados por correo electrónico sobre cambios sustanciales. El uso continuado de la plataforma después de las modificaciones constituye la aceptación de los nuevos términos.
+                </p>
+
+                <h4>11. LEGISLACIÓN APLICABLE Y JURISDICCIÓN</h4>
+                <p>
+                    Estos Términos y Condiciones se rigen por las leyes de la <strong>República de Colombia</strong>, específicamente:
+                </p>
+                <ul>
+                    <li>Ley 1581 de 2012 - Protección de Datos Personales</li>
+                    <li>Decreto 1377 de 2013 - Reglamentación de la Ley 1581</li>
+                    <li>Ley 1266 de 2008 - Habeas Data</li>
+                    <li>Código de Comercio Colombiano</li>
+                </ul>
+                <p>
+                    Para cualquier controversia o conflicto derivado de estos términos, las partes se someten a la jurisdicción de los tribunales competentes de Colombia.
+                </p>
+
+                <h4>12. CONTACTO Y ATENCIÓN AL USUARIO</h4>
+                <p>
+                    Para consultas, sugerencias, ejercicio de derechos o reportar problemas:
+                </p>
+                <p>
+                    📧 <strong>Email:</strong> nutriet_col@gmail.com<br>
+                    📱 <strong>Soporte:</strong> Disponible dentro de la plataforma<br>
+                    🕐 <strong>Tiempo de respuesta:</strong> 48 horas hábiles
+                </p>
+
+                <div class="highlight-box" style="margin-top: 30px;">
+                    <p style="margin: 0; text-align: center;">
+                        <strong>Al marcar la casilla de aceptación, confirmas que has leído, comprendido y aceptado todos estos términos en su totalidad.</strong>
+                    </p>
+                </div>
+
+                <p style="margin-top: 20px; color: #999; font-size: 12px; text-align: center;">
+                    © 2026 NutriET. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Manejo de mensajes con SweetAlert2
+        {% if messages %}
+            {% for message in messages %}
+                Swal.fire({
+                    icon: "{% if 'success' in message.tags %}success{% else %}error{% endif %}",
+                    title: "{{ message|escapejs }}",
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            {% endfor %}
+        {% endif %}
+
+        // Animación del botón al enviar
+        const formRegistro = document.getElementById('formRegistro');
+        const submitButton = document.querySelector('.registrar');
+
+        formRegistro.addEventListener('submit', function(e) {
+            const terminos = document.getElementById('terminos');
+            if (!terminos.checked) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atención',
+                    text: 'Debes aceptar los términos y condiciones',
+                });
+                return;
+            }
+            
+            submitButton.classList.add('loading');
+            submitButton.textContent = 'Registrando...';
+            submitButton.disabled = true;
+        });
+
+        // Animaciones en los inputs
+        const inputs = document.querySelectorAll('input[type="email"], input[type="password"], input[type="text"]');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Validación visual
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value && this.validity.valid) {
+                    this.style.borderColor = '#4caf50';
+                } else if (!this.validity.valid && this.value) {
+                    this.style.borderColor = '#c62828';
+                }
+            });
+
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    this.style.borderColor = '#e0e0e0';
+                }
+            });
+        });
+
+        // Validación teléfono colombiano en tiempo real
+        const telefonoInput = document.getElementById('id_telefono');
+        const telefonoError = document.getElementById('telefono-error');
+        const phoneWrapper = telefonoInput ? telefonoInput.closest('.phone-wrapper') : null;
+
+        if (telefonoInput) {
+            telefonoInput.setAttribute('maxlength', '10');
+            telefonoInput.setAttribute('placeholder', '3001234567');
+            telefonoInput.setAttribute('inputmode', 'numeric');
+
+            telefonoInput.addEventListener('input', function () {
+                // Solo permitir dígitos
+                this.value = this.value.replace(/\D/g, '');
+
+                const val = this.value;
+                if (val.length === 0) {
+                    phoneWrapper.classList.remove('error-border', 'valid-border');
+                    telefonoError.style.display = 'none';
+                } else if (val.length === 10 && /^[3][0-9]{9}$/.test(val)) {
+                    phoneWrapper.classList.remove('error-border');
+                    phoneWrapper.classList.add('valid-border');
+                    telefonoError.style.display = 'none';
+                } else {
+                    phoneWrapper.classList.remove('valid-border');
+                    phoneWrapper.classList.add('error-border');
+                    telefonoError.style.display = 'block';
+                }
+            });
+
+            telefonoInput.addEventListener('blur', function () {
+                if (this.value && (this.value.length !== 10 || !/^[3][0-9]{9}$/.test(this.value))) {
+                    telefonoError.style.display = 'block';
+                    phoneWrapper.classList.add('error-border');
+                }
+            });
+        }
+
+        // Validación de confirmación de contraseña en tiempo real
+        const password = document.querySelector('input[name="password"]');
+        const confirmarPassword = document.querySelector('input[name="confirmar_password"]');
+
+        if (password && confirmarPassword) {
+            confirmarPassword.addEventListener('input', function() {
+                if (this.value && password.value) {
+                    if (this.value === password.value) {
+                        this.style.borderColor = '#4caf50';
+                    } else {
+                        this.style.borderColor = '#c62828';
+                    }
+                }
+            });
+        }
+        
+    </script>
+    <script>
+const passwordInput = document.getElementById('id_password');
+const confirmInput = document.getElementById('id_confirmar_password');
+const strengthIndicator = document.getElementById('strengthIndicator');
+const strengthBar = document.getElementById('strengthBar');
+const matchIndicator = document.getElementById('matchIndicator');
+const submitBtn = document.querySelector('.registrar');
+
+// Toggle password
+document.querySelectorAll('.toggle-password').forEach(toggle => {
+    toggle.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            this.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+});
+
+function checkPasswordStrength(password) {
+    let strength = 0;
+
+    const length = password.length >= 8;
+    const uppercase = /[A-Z]/.test(password);
+    const lowercase = /[a-z]/.test(password);
+    const number = /[0-9]/.test(password);
+    const special = /[\W_]/.test(password);
+
+    document.getElementById('req-length').classList.toggle('valid', length);
+    document.getElementById('req-uppercase').classList.toggle('valid', uppercase);
+    document.getElementById('req-lowercase').classList.toggle('valid', lowercase);
+    document.getElementById('req-number').classList.toggle('valid', number);
+    document.getElementById('req-special').classList.toggle('valid', special);
+
+    if (length) strength++;
+    if (uppercase) strength++;
+    if (lowercase) strength++;
+    if (number) strength++;
+    if (special) strength++;
+
+    strengthIndicator.className = 'password-strength';
+
+    if (strength <= 2) {
+        strengthIndicator.classList.add('strength-weak');
+    } else if (strength <= 4) {
+        strengthIndicator.classList.add('strength-medium');
+    } else {
+        strengthIndicator.classList.add('strength-strong');
+    }
+
+    return length && uppercase && lowercase && number && special;
+}
+
+function checkMatch() {
+    if (!confirmInput.value) return false;
+
+    if (passwordInput.value === confirmInput.value) {
+        matchIndicator.textContent = "✓ Las contraseñas coinciden";
+        matchIndicator.className = "match-indicator match";
+        return true;
+    } else {
+        matchIndicator.textContent = "✗ Las contraseñas no coinciden";
+        matchIndicator.className = "match-indicator no-match";
+        return false;
+    }
+}
+
+function updateButton() {
+    const valid = checkPasswordStrength(passwordInput.value);
+    const match = checkMatch();
+
+    submitBtn.disabled = !(valid && match);
+}
+
+passwordInput.addEventListener('input', updateButton);
+confirmInput.addEventListener('input', updateButton);
+
+// Modal de Términos y Condiciones
+const modal = document.getElementById('modalTerminos');
+const openBtn = document.getElementById('openTerminos');
+const closeBtn = document.getElementById('closeModal');
+
+openBtn.addEventListener('click', function() {
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Evitar scroll del fondo
+});
+
+closeBtn.addEventListener('click', function() {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+});
+
+// Cerrar al hacer clic fuera del modal
+window.addEventListener('click', function(event) {
+    if (event.target === modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,581 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Nutriet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffffffa2 0%, #ffffffc4 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px #cf96a9;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-container {
+            padding: 50px 40px;
+            background: white;
+        }
+
+        .logo-container {
+            background: linear-gradient(135deg, #e91e63 0%, #ffecb3 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -100px;
+            right: -100px;
+        }
+
+        .logo-container::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -80px;
+            left: -80px;
+        }
+
+        .volver {
+            background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .volver:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+        }
+
+        h2 {
+            color: #e91e63;
+            font-size: 32px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #e91e63;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .error-text {
+            color: #c62828;
+            font-size: 12px;
+            margin-top: 5px;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .terminos {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .terminos input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #e91e63;
+        }
+
+        .terminos label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .registrar {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .registrar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(253, 203, 110, 0.4);
+        }
+
+        .registrar:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .social-buttons {
+            display: grid;
+
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .social-buttons button {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .social-buttons button:hover {
+            border-color: #e91e63;
+            background: #fef5f9;
+            transform: translateY(-2px);
+        }
+
+        .social-buttons button a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .social-buttons img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .google {
+            color: #4285f4;
+        }
+
+
+
+        .login-text {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-text a {
+            color: #e91e63;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-text a:hover {
+            color: #c2185b;
+            text-decoration: underline;
+        }
+
+        .logo {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 20px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 10px 30px rgba(233, 30, 99, 0.2));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .brand-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .brand {
+            font-size: 42px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .slogan {
+            font-size: 16px;
+            color: #666;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-container {
+                padding: 30px;
+                order: -1;
+            }
+
+            .logo {
+                max-width: 250px;
+            }
+
+            .form-container {
+                padding: 30px 25px;
+            }
+
+            .brand {
+                font-size: 32px;
+            }
+        }
+
+        /* Animaciones de entrada */
+        .form-group {
+            animation: fadeInUp 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Loading state para el botón */
+        .registrar.loading {
+            background: #999;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .registrar.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes spin {
+            to { transform: translateY(-50%) rotate(360deg); }
+        }
+        /* Password container */
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            padding-right: 45px !important;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .toggle-password:hover {
+            color: #e91e63;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <a href="{% url 'home' %}" class="volver">
+                ← volver
+            </a>
+
+            <h2>Iniciar Sesión</h2>
+
+            <form method="POST" id="loginForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Correo</label>
+                    {{ form.email }} 
+                    {% if form.email.errors %}
+                        <div class="error-text">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}">Contraseña</label>
+                    <div class="password-container">
+                        {{ form.password }}
+                        <i class="fas fa-eye toggle-password" id="toggleLoginPassword"></i>
+                    </div>
+                    {% if form.password.errors %}
+                        <div class="error-text">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+
+
+                <button type="submit" class="registrar">Iniciar sesión</button> 
+            </form>
+            
+            <div class="divider">O</div>
+
+            <div class="social-buttons">
+                <button class="google">
+                <img src="https://cdn-icons-png.flaticon.com/512/720/720255.png" alt="Google"><a href="{% url 'google_login' %}">Iniciar con Google</a>
+            </button>
+                
+                
+            </div>            
+            
+            <div class="login-text">
+                ¿No tienes una cuenta? <a href="{% url 'register' %}">Regístrate</a>
+            </div>
+            <p class="login-text">
+                ¿Olvidaste tu contraseña? <a href="{% url 'recuperar' %}">Recuperar Contraseña</a>
+            </p>
+        </div>
+        
+        <div class="logo-container">
+            <img src="{% static 'images/logo.png' %}" alt="Nutriet logo" class="logo">
+            <div class="brand-text">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Manejo de mensajes con SweetAlert2
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Éxito!',
+                        text: "{{ message }}",
+                        timer: 2000,
+                        showConfirmButton: false,
+                        position: 'center'
+                    });
+                {% endif %}
+                
+                {% if message.tags == 'error' %}
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: "{{ message }}",
+                    });
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        // Animación del botón al enviar
+        const loginForm = document.getElementById('loginForm');
+        const submitButton = document.querySelector('.registrar');
+
+        loginForm.addEventListener('submit', function(e) {
+            submitButton.classList.add('loading');
+            submitButton.textContent = 'Iniciando sesión...';
+            submitButton.disabled = true;
+        });
+
+        // Ojito - toggle ver contraseña
+        const toggleLoginPassword = document.getElementById('toggleLoginPassword');
+        const loginPasswordInput = document.querySelector('input[name="password"]');
+
+        if (toggleLoginPassword && loginPasswordInput) {
+            toggleLoginPassword.addEventListener('click', function () {
+                if (loginPasswordInput.type === 'password') {
+                    loginPasswordInput.type = 'text';
+                    this.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    loginPasswordInput.type = 'password';
+                    this.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            });
+        }
+
+        // Animaciones en los inputs
+        const inputs = document.querySelectorAll('input[type="email"], input[type="password"]');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // Validación visual
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value && this.validity.valid) {
+                    this.style.borderColor = '#4caf50';
+                } else if (!this.validity.valid) {
+                    this.style.borderColor = '#c62828';
+                }
+            });
+
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    this.style.borderColor = '#e0e0e0';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
