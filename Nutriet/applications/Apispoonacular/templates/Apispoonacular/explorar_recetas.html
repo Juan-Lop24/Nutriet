@@ -781,7 +781,7 @@ body::after {
   </div>
   <div class="fav-grid">
     {% for fav in favoritos|slice:":8" %}
-    <div class="fav-card" data-fav-id="{{ fav.recipe_id }}">
+    <div class="fav-card" data-fav-id="{{ fav.recipe_id }}" onclick="abrirModal({{ fav.recipe_id }})" style="cursor:pointer;">
       <div class="fav-card-img">
         {% if fav.imagen %}
         <img src="{{ fav.imagen }}" alt="{{ fav.titulo }}" loading="lazy">
@@ -792,9 +792,9 @@ body::after {
       <div class="fav-card-body">
         <div class="fav-card-nombre">{{ fav.titulo }}</div>
         <div class="fav-card-actions">
-          <a href="{% url 'receta_detalle' fav.recipe_id %}" class="btn-ver-fav">Ver receta</a>
+          <button class="btn-ver-fav" onclick="event.stopPropagation();abrirModal({{ fav.recipe_id }})">Ver receta</button>
           <button class="btn-eliminar-fav"
-                  onclick="eliminarFavorito({{ fav.recipe_id }}, this)"
+                  onclick="event.stopPropagation();eliminarFavorito({{ fav.recipe_id }}, this)"
                   title="Quitar de favoritos">🗑</button>
         </div>
       </div>
@@ -1253,6 +1253,8 @@ function buildFavCard(id, titulo, imagen) {
   const card = document.createElement('div');
   card.className = 'fav-card';
   card.dataset.favId = id;
+  card.style.cursor = 'pointer';
+  card.onclick = () => abrirModal(id);
   card.innerHTML = `
     <div class="fav-card-img">
       ${imagen
@@ -1263,9 +1265,9 @@ function buildFavCard(id, titulo, imagen) {
     <div class="fav-card-body">
       <div class="fav-card-nombre">${titulo}</div>
       <div class="fav-card-actions">
-        <a href="/receta/${id}/" class="btn-ver-fav">Ver receta</a>
+        <button class="btn-ver-fav" onclick="event.stopPropagation();abrirModal(${id})">Ver receta</button>
         <button class="btn-eliminar-fav"
-                onclick="eliminarFavorito(${id}, this)"
+                onclick="event.stopPropagation();eliminarFavorito(${id}, this)"
                 title="Quitar de favoritos">🗑</button>
       </div>
     </div>
