@@ -237,7 +237,7 @@ def explorar_recetas(request):
     restricciones = _parsear_restricciones(
         formulario.ingredientes_excluidos or "" if formulario else ""
     )
-    tipo_dieta = formulario.tipo_dieta if formulario else "normal"
+    tipo_dieta = formulario.condicion_medica if formulario else ""
 
     busqueda  = request.GET.get("q", "").strip()
     categoria = request.GET.get("categoria")
