@@ -558,6 +558,10 @@
             <i class="fas fa-circle"></i>
             <span>Al menos un número</span>
           </div>
+          <div class="requirement-item" id="req-special">
+            <i class="fas fa-circle"></i>
+            <span>Al menos un carácter especial (!@#$%...)</span>
+          </div>
         </div>
 
         <button type="submit" class="guardar-btn" id="submitBtn" disabled>
@@ -630,6 +634,7 @@
       document.getElementById('req-uppercase').classList.toggle('valid', requirements.uppercase);
       document.getElementById('req-lowercase').classList.toggle('valid', requirements.lowercase);
       document.getElementById('req-number').classList.toggle('valid', requirements.number);
+      document.getElementById('req-special').classList.toggle('valid', requirements.special);
 
       // Calculate strength
       if (requirements.length) strength++;
@@ -653,7 +658,7 @@
         strengthText.textContent = 'Contraseña fuerte';
       }
 
-      return requirements.length && requirements.uppercase && requirements.lowercase && requirements.number;
+      return requirements.length && requirements.uppercase && requirements.lowercase && requirements.number && requirements.special;
     }
 
     // Check if passwords match

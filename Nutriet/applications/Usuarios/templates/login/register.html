@@ -577,6 +577,60 @@
             background: #c2185b;
         }
 
+        /* Teléfono con prefijo */
+        .phone-wrapper {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .phone-wrapper:focus-within {
+            border-color: #e91e63;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .phone-wrapper.error-border {
+            border-color: #c62828 !important;
+            box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1) !important;
+        }
+
+        .phone-wrapper.valid-border {
+            border-color: #4caf50 !important;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1) !important;
+        }
+
+        .phone-prefix {
+            padding: 14px 12px;
+            background: linear-gradient(135deg, #e91e63, #c2185b);
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .phone-wrapper input {
+            border: none !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            transform: none !important;
+            flex: 1;
+        }
+
+        .phone-wrapper input:focus {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
         /* Input icons */
         .input-wrapper {
             position: relative;
@@ -703,7 +757,7 @@
                 {% csrf_token %}
 
                 <div>
-                    <label for="{{ form.username.id_for_label }}">Username:</label>
+                    <label for="{{ form.username.id_for_label }}">Nombre de usuario:</label>
                     <div class="input-wrapper">
                         {{ form.username }}
                         <span class="input-icon"></span>
@@ -714,7 +768,7 @@
                 </div>
 
                 <div>
-                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    <label for="{{ form.email.id_for_label }}">Correo electrónico:</label>
                     <div class="input-wrapper">
                         {{ form.email }}
                         <span class="input-icon"></span>
@@ -726,17 +780,18 @@
 
                 <div>
                     <label for="{{ form.telefono.id_for_label }}">Teléfono:</label>
-                    <div class="input-wrapper">
+                    <div class="phone-wrapper">
+                        <span class="phone-prefix">+57</span>
                         {{ form.telefono }}
-                        
                     </div>
+                    <span class="field-error" id="telefono-error" style="display:none;">⚠ El número debe ser colombiano: +57 seguido de 10 dígitos</span>
                     {% for error in form.telefono.errors %}
                         <span class="field-error">{{ error }}</span>
                     {% endfor %}
                 </div>
 
                 <div>
-    <label>Password:</label>
+    <label>Contraseña:</label>
     <div class="password-container">
         {{ form.password }}
         <i class="fas fa-eye toggle-password" data-target="id_password"></i>
@@ -753,12 +808,13 @@
         <div class="requirement-item" id="req-uppercase">• Una letra mayúscula</div>
         <div class="requirement-item" id="req-lowercase">• Una letra minúscula</div>
         <div class="requirement-item" id="req-number">• Un número</div>
+        <div class="requirement-item" id="req-special">• Un carácter especial (!@#$%...)</div>
     </div>
 </div>
 
 
 <div>
-    <label>Confirmar password:</label>
+    <label>Confirmar contraseña:</label>
     <div class="password-container">
         {{ form.confirmar_password }}
         <i class="fas fa-eye toggle-password" data-target="id_confirmar_password"></i>
@@ -1059,6 +1115,43 @@
             });
         });
 
+        // Validación teléfono colombiano en tiempo real
+        const telefonoInput = document.getElementById('id_telefono');
+        const telefonoError = document.getElementById('telefono-error');
+        const phoneWrapper = telefonoInput ? telefonoInput.closest('.phone-wrapper') : null;
+
+        if (telefonoInput) {
+            telefonoInput.setAttribute('maxlength', '10');
+            telefonoInput.setAttribute('placeholder', '3001234567');
+            telefonoInput.setAttribute('inputmode', 'numeric');
+
+            telefonoInput.addEventListener('input', function () {
+                // Solo permitir dígitos
+                this.value = this.value.replace(/\D/g, '');
+
+                const val = this.value;
+                if (val.length === 0) {
+                    phoneWrapper.classList.remove('error-border', 'valid-border');
+                    telefonoError.style.display = 'none';
+                } else if (val.length === 10 && /^[3][0-9]{9}$/.test(val)) {
+                    phoneWrapper.classList.remove('error-border');
+                    phoneWrapper.classList.add('valid-border');
+                    telefonoError.style.display = 'none';
+                } else {
+                    phoneWrapper.classList.remove('valid-border');
+                    phoneWrapper.classList.add('error-border');
+                    telefonoError.style.display = 'block';
+                }
+            });
+
+            telefonoInput.addEventListener('blur', function () {
+                if (this.value && (this.value.length !== 10 || !/^[3][0-9]{9}$/.test(this.value))) {
+                    telefonoError.style.display = 'block';
+                    phoneWrapper.classList.add('error-border');
+                }
+            });
+        }
+
         // Validación de confirmación de contraseña en tiempo real
         const password = document.querySelector('input[name="password"]');
         const confirmarPassword = document.querySelector('input[name="confirmar_password"]');
@@ -1107,28 +1200,31 @@ function checkPasswordStrength(password) {
     const uppercase = /[A-Z]/.test(password);
     const lowercase = /[a-z]/.test(password);
     const number = /[0-9]/.test(password);
+    const special = /[\W_]/.test(password);
 
     document.getElementById('req-length').classList.toggle('valid', length);
     document.getElementById('req-uppercase').classList.toggle('valid', uppercase);
     document.getElementById('req-lowercase').classList.toggle('valid', lowercase);
     document.getElementById('req-number').classList.toggle('valid', number);
+    document.getElementById('req-special').classList.toggle('valid', special);
 
     if (length) strength++;
     if (uppercase) strength++;
     if (lowercase) strength++;
     if (number) strength++;
+    if (special) strength++;
 
     strengthIndicator.className = 'password-strength';
 
-    if (strength <= 1) {
+    if (strength <= 2) {
         strengthIndicator.classList.add('strength-weak');
-    } else if (strength <= 3) {
+    } else if (strength <= 4) {
         strengthIndicator.classList.add('strength-medium');
     } else {
         strengthIndicator.classList.add('strength-strong');
     }
 
-    return length && uppercase && lowercase && number;
+    return length && uppercase && lowercase && number && special;
 }
 
 function checkMatch() {
