@@ -707,9 +707,9 @@ body::after {
 
 <!-- NAV -->
 <div class="Men">
-  <a href="/generar-dieta/"><span class="nav-emoji"></span><span>Mi Dieta</span></a>
-  <a href="/explorar/" class="activo"><span class="nav-emoji"></span><span>Explorar</span></a>
-  <a href="{% url 'recetas_favoritas' %}"><span class="nav-emoji"></span><span>Favoritas</span></a>
+  <a href="/generar-dieta/"><span class="nav-emoji">🍱</span><span>Mi Dieta</span></a>
+  <a href="/explorar/" class="activo"><span class="nav-emoji">🔍</span><span>Explorar</span></a>
+  <a href="{% url 'recetas_favoritas' %}"><span class="nav-emoji">💗</span><span>Favoritas</span></a>
 </div>
 
 <!-- HERO -->
@@ -949,7 +949,7 @@ const TODAS_FAVORITAS = [
 <script>
 const RECETAS_DATA = {
 {% for r in recetas %}
-  {{ r.id }}: {
+  "{{ r.id }}": {
     id: {{ r.id }},
     nombre: "{{ r.nombre|default:""|escapejs }}",
     categoria: "{{ r.categoria|default:""|escapejs }}",
@@ -993,7 +993,7 @@ function _cerrar() {
 }
 
 function renderModal(id) {
-  const r = RECETAS_DATA[id];
+  const r = RECETAS_DATA[String(id)];
   if (!r) { _cerrar(); return; }
 
   const FAVORITOS_IDS = {{ favoritos_ids|safe }};
