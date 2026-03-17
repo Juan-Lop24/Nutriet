@@ -140,8 +140,8 @@ def generador_dieta(request):
         })
 
     formulario    = dieta.formulario
-    tipo_dieta    = formulario.tipo_dieta
-    restricciones = _parsear_restricciones(formulario.restricciones_alimentarias or "")
+    tipo_dieta    = getattr(formulario, "tipo_dieta", "normal") or "normal"
+    restricciones = _parsear_restricciones(formulario.condicion_medica or "")
     objetivo      = dieta.objetivo
     distribucion  = dieta.distribucion_macros_comidas or {}
 
@@ -235,9 +235,10 @@ def explorar_recetas(request):
     ).last()
 
     restricciones = _parsear_restricciones(
-        formulario.restricciones_alimentarias or "" if formulario else ""
+        formulario.ingredientes_excluidos or "" if formulario else ""
     )
-    tipo_dieta = formulario.tipo_dieta if formulario else "normal"
+    tipo_dieta = getattr(formulario, "tipo_dieta", "normal") if formulario else "normal"
+    tipo_dieta = tipo_dieta or "normal"
 
     busqueda  = request.GET.get("q", "").strip()
     categoria = request.GET.get("categoria")
@@ -422,4 +423,4 @@ def traducir_instrucciones(request):
 
         return JsonResponse({'ok': True, 'traduccion': '\n'.join(traducidas)})
     except Exception as e:
-        return JsonResponse({'ok': False, 'error': str(e)}, status=400)
+        return JsonResponse({'ok': False, 'error': str(e)}, status=400) 
