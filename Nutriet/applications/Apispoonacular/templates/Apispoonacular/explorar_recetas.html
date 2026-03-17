@@ -949,13 +949,13 @@ const RECETAS_DATA = {
 {% for r in recetas %}
   "{{ r.id }}": {
     id: {{ r.id }},
-    nombre: "{{ r.nombre|default:""|escapejs }}",
+    nombre: "{{ r.nombre|default:''|escapejs }}",
     categoria: "{{ r.categoria|default:""|escapejs }}",
     area: "{{ r.area|default:""|escapejs }}",
     imagen_url: "{{ r.imagen_url|default:""|escapejs }}",
     youtube_url: "{{ r.youtube_url|default:""|escapejs }}",
     instrucciones: "{{ r.instrucciones|default:""|escapejs }}",
-    ingredientes: {{ r.ingredientes|default:"[]"|safe }},
+    ingredientes: {{ r.ingredientes|default:'[]'|safe }},
     calorias: {{ r.calorias|default:"null" }},
     proteinas_g: {{ r.proteinas_g|default:"null" }},
     carbohidratos_g: {{ r.carbohidratos_g|default:"null" }},
@@ -1283,7 +1283,7 @@ function showToast(msg, type='success') {
   const t = document.getElementById('toastNotif');
   const m = document.getElementById('toastMsg');
   const i = document.getElementById('toastIcon');
-  m.textContent = msg;
+  m.textContent = msg
   i.textContent = type === 'success' ? '✅' : '❌';
   t.className = 'toast-notif show ' + type;
   clearTimeout(t._timer);
