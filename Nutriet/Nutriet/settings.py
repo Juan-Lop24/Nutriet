@@ -20,6 +20,12 @@ SECRET_KEY       = os.getenv("SECRET_KEY")
 DEBUG            = os.getenv("DEBUG", "False") == "True"
 ALLOWED_HOSTS    = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://nutrietcol.site',
+    'https://www.nutrietcol.site',
+    'https://nutriest.onrender.com',
+]
+
 # ─── OneSignal (reemplaza Firebase) ──────────────────────────────────────────
 ONESIGNAL_APP_ID   = os.getenv("ONESIGNAL_APP_ID")
 ONESIGNAL_REST_KEY = os.getenv("ONESIGNAL_REST_KEY")
@@ -183,7 +189,7 @@ LOGOUT_REDIRECT_URL   = 'login'
 # ─── Email — Resend API ───────────────────────────────────────────────────────
 EMAIL_BACKEND      = 'Nutriet.resend_backend.ResendEmailBackend'
 RESEND_API_KEY     = os.getenv('RESEND_API_KEY', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Nutriet <noreply@nutriet.app>')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Nutriet <noreply@nutrietcol.site>')
 # Alias usado en send_mail() con settings.EMAIL_HOST_USER
 EMAIL_HOST_USER    = DEFAULT_FROM_EMAIL
 
