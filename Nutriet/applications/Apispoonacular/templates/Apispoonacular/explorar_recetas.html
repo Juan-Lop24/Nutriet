@@ -947,7 +947,7 @@ const TODAS_FAVORITAS = [
 
 const RECETAS_DATA = {
 {% for r in recetas %}
-  "{{ r.id|default:0 }}":
+  "{{ r.id|default:0 }}": {
     id: {{ r.id|default:0 }},
     nombre: "{{ r.nombre|default:''|escapejs }}",
     categoria: "{{ r.categoria|default:''|escapejs }}",
