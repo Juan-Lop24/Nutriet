@@ -160,40 +160,72 @@ body::after {
 
 /* ── NAV secundario ── */
 .Men {
-  background:var(--white); border-bottom:2px solid rgba(245,0,87,.1);
-  padding:0 36px; display:flex; align-items:center; justify-content:center;
-  gap:6px; height:64px; z-index:100;
-  box-shadow:0 4px 20px rgba(245,0,87,.08); position:relative;
+  background:var(--white);
+  border-bottom:2px solid rgba(245,0,87,.1);
+  padding:0 36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:64px;
+  z-index:100;
+  box-shadow:0 4px 20px rgba(245,0,87,.08);
+  position:relative;
 }
 .Men::after {
-  content:''; position:absolute; bottom:0; left:0; width:100%; height:3px;
+  content:'';
+  position:absolute;
+  bottom:0; left:0; width:100%; height:3px;
   background:linear-gradient(90deg,transparent,rgba(245,0,87,.15),var(--primary-pink),rgba(245,0,87,.15),transparent);
-  background-size:200% 100%; animation:gradientShift 4s ease infinite;
+  background-size:200% 100%;
+  animation:gradientShift 4s ease infinite;
 }
 .Men a {
-  color:var(--text-muted); text-decoration:none; font-weight:700;
-  font-size:.88rem; padding:10px 22px; border-radius:14px;
+  color:var(--text-muted);
+  text-decoration:none;
+  font-weight:700;
+  font-size:.88rem;
+  padding:10px 22px;
+  border-radius:14px;
   transition:all .25s cubic-bezier(.4,0,.2,1);
-  display:inline-flex; align-items:center; gap:8px;
-  font-family:'Montserrat',sans-serif; letter-spacing:.02em;
-  position:relative; overflow:hidden;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'Montserrat',sans-serif;
+  letter-spacing:.02em;
+  position:relative;
+  overflow:hidden;
 }
 .Men a::before {
-  content:''; position:absolute; inset:0;
+  content:'';
+  position:absolute; inset:0;
   background:linear-gradient(135deg,var(--primary-pink),var(--pink-light));
-  opacity:0; transition:opacity .25s ease; border-radius:14px; z-index:0;
+  opacity:0;
+  transition:opacity .25s ease;
+  border-radius:14px;
+  z-index:0;
 }
-.Men a span, .Men a .nav-emoji { position:relative; z-index:1; transition:transform .25s ease; }
-.Men a:hover::before { opacity:1; }
-.Men a:hover { color:#fff; transform:translateY(-2px); box-shadow:0 8px 20px rgba(245,0,87,.35); }
+.Men a span, .Men a .nav-emoji {
+  position:relative; z-index:1;
+  transition:transform .25s ease;
+}
+.Men a:hover::before  { opacity:1; }
+.Men a:hover          { color:#fff; transform:translateY(-2px); box-shadow:0 8px 20px rgba(245,0,87,.35); }
 .Men a:hover .nav-emoji { transform:scale(1.3) rotate(-8deg); }
+.Men a:active         { transform:translateY(0); }
 .Men a.activo::before { opacity:1; }
-.Men a.activo { color:#fff; box-shadow:0 6px 18px rgba(245,0,87,.4); }
+.Men a.activo         { color:#fff; box-shadow:0 6px 18px rgba(245,0,87,.4); }
+.Men a.activo .nav-emoji { transform:scale(1.1); }
 .Men a.activo::after {
-  content:''; position:absolute; bottom:-2px; left:50%; transform:translateX(-50%);
-  width:6px; height:6px; background:#fff; border-radius:50%;
+  content:'';
+  position:absolute;
+  bottom:-2px; left:50%; transform:translateX(-50%);
+  width:6px; height:6px;
+  background:#fff;
+  border-radius:50%;
   box-shadow:0 0 8px rgba(255,255,255,.8);
-  animation:pulseDot 2s ease-in-out infinite; z-index:2;
+  animation:pulseDot 2s ease-in-out infinite;
+  z-index:2;
 }
 
 /* ── HERO ── */
@@ -676,9 +708,9 @@ body::after {
 
 <!-- NAV -->
 <div class="Men">
-  <a href="/generar-dieta/"><span class="nav-emoji">🍱</span><span>Mi Dieta</span></a>
-  <a href="/explorar/" class="activo"><span class="nav-emoji">🔍</span><span>Explorar</span></a>
-  <a href="{% url 'recetas_favoritas' %}"><span class="nav-emoji">💗</span><span>Favoritas</span></a>
+  <a href="/generar-dieta/"><span class="nav-emoji"></span><span>Mi Dieta</span></a>
+  <a href="/explorar/" class="activo"><span class="nav-emoji"></span><span>Explorar</span></a>
+  <a href="{% url 'recetas_favoritas' %}"><span class="nav-emoji"></span><span>Favoritas</span></a>
 </div>
 
 <!-- HERO -->
@@ -706,7 +738,7 @@ body::after {
     <select name="categoria">
       <option value="">Todas las categorías</option>
       {% for cat in categorias_disponibles %}
-      <option value="{{ cat }}" {% if categoria == cat %}selected{% endif %}>{{ cat }}</option>
+      <option value="{{ cat.valor }}" {% if categoria == cat.valor %}selected{% endif %}>{{ cat.etiqueta }}</option>
       {% endfor %}
     </select>
     <select name="ordenar">
@@ -902,7 +934,7 @@ body::after {
     <div id="modalContent" style="display:none;"></div>
   </div>
 </div>
-<script>
+  <script>
 const TOGGLE_FAV_URL = "{% url 'toggle_favorito' %}";
 const ELIMINAR_FAV_BASE = "{% url 'eliminar_favorito' 0 %}".replace('/0/', '/');
 
