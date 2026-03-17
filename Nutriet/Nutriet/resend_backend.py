@@ -11,7 +11,7 @@ from django.conf import settings
 class ResendEmailBackend(BaseEmailBackend):
 
     def open(self):
-        resend.api_key = getattr(settings, "RESEND_API_KEY", "")
+        resend.api_key = getattr(settings, "RESEND_API_KEY", "" )
 
     def close(self):
         pass
