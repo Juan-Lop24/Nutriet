@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Explorar Recetas — Nutriet</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -1374,16 +1375,14 @@ body {
     <div id="modalContent" style="display:none;"></div>
   </div>
 </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
-
-<script>
+  <script>
 const TOGGLE_FAV_URL = "{% url 'toggle_favorito' %}";
 const ELIMINAR_FAV_BASE = "{% url 'eliminar_favorito' 0 %}".replace('/0/', '/');
-</script>
-<script>
+
+
 const RECETAS_DATA = {
 {% for r in recetas %}
-  {{ r.id }}: {
+  "{{ r.id }}": {
     id: {{ r.id }},
     nombre: "{{ r.nombre|default:""|escapejs }}",
     categoria: "{{ r.categoria|default:""|escapejs }}",
@@ -1427,7 +1426,7 @@ function _cerrar() {
 }
 
 function renderModal(id) {
-  const r = RECETAS_DATA[id];
+  const r = RECETAS_DATA[String(id)];
   if (!r) { _cerrar(); return; }
 
   const FAVORITOS_IDS = {{ favoritos_ids|safe }};
@@ -1576,6 +1575,136 @@ async function toggleFavCard(id, titulo, imagen, btn) {
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') _cerrar();
 });
+
+
+// Toast helper
+function showToast(msg, type='success') {
+  let t = document.getElementById('toastNotif');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toastNotif';
+    t.className = 'toast-notif';
+    t.innerHTML = '<span class="toast-icon" id="toastIcon"></span><span id="toastMsg"></span>';
+    document.body.appendChild(t);
+  }
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = type === 'success' ? '✅' : '❌';
+  t.className = 'toast-notif show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.classList.remove('show'); }, 3000);
+}
+
+const FAV_LIMIT = 8;
+
+function agregarFavCard(id, titulo, imagen) {
+  let section = document.querySelector('.fav-section');
+  if (!section) {
+    const statsBar = document.querySelector('.stats-bar');
+    if (!statsBar) return;
+    section = document.createElement('div');
+    section.className = 'fav-section';
+    section.innerHTML = `
+      <div class="section-label">
+        <div class="section-icon" style="background:linear-gradient(135deg,#ff4081,#ff7043);">♥</div>
+        <h2>Mis Favoritas</h2>
+        <div class="section-line"></div>
+        <a href="/mis-favoritos/" style="font-size:.8rem;font-weight:700;color:var(--text-muted);text-decoration:none;white-space:nowrap;">Ver todas →</a>
+      </div>
+      <div class="fav-grid"></div>
+      <hr style="border:none;border-top:1px solid rgba(245,0,87,.1);margin:28px 0 0;">
+    `;
+    statsBar.insertAdjacentElement('afterend', section);
+  }
+  const grid = section.querySelector('.fav-grid');
+  if (grid.querySelector('[data-fav-id="'+id+'"]')) return;
+  if (grid.children.length >= FAV_LIMIT) return;
+  const card = buildFavCard(id, titulo, imagen);
+  card.style.opacity = '0'; card.style.transform = 'scale(0.85)';
+  grid.appendChild(card);
+  requestAnimationFrame(() => { card.style.transition='all .35s ease'; card.style.opacity='1'; card.style.transform='scale(1)'; });
+}
+
+function quitarFavCard(id) {
+  const idx = TODAS_FAVORITAS.findIndex(f => f.id === id);
+  if (idx !== -1) TODAS_FAVORITAS.splice(idx, 1);
+  const card = document.querySelector('.fav-card[data-fav-id="'+id+'"]');
+  if (!card) return;
+  card.style.transition = 'all .3s ease'; card.style.transform = 'scale(0.85)'; card.style.opacity = '0';
+  setTimeout(() => {
+    card.remove();
+    const grid = document.querySelector('.fav-grid');
+    if (!grid) return;
+    const visibles = grid.querySelectorAll('.fav-card').length;
+    if (visibles < FAV_LIMIT && TODAS_FAVORITAS.length > visibles) {
+      const sig = TODAS_FAVORITAS[visibles];
+      if (sig && !grid.querySelector('[data-fav-id="'+sig.id+'"]')) {
+        const c = buildFavCard(sig.id, sig.titulo, sig.imagen);
+        c.style.opacity='0'; c.style.transform='scale(0.85)'; grid.appendChild(c);
+        requestAnimationFrame(() => { c.style.transition='all .35s ease'; c.style.opacity='1'; c.style.transform='scale(1)'; });
+      }
+    }
+    if (grid.children.length === 0) document.querySelector('.fav-section')?.remove();
+  }, 300);
+}
+
+function buildFavCard(id, titulo, imagen) {
+  const card = document.createElement('div');
+  card.className = 'fav-card'; card.dataset.favId = id;
+  card.innerHTML = `
+    <div class="fav-card-img">${imagen ? '<img src="'+imagen+'" alt="'+titulo+'" loading="lazy">' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🍳</div>'}</div>
+    <div class="fav-card-body">
+      <div class="fav-card-nombre">${titulo}</div>
+      <div class="fav-card-actions">
+        <a href="/receta/${id}/" class="btn-ver-fav">Ver receta</a>
+        <button class="btn-eliminar-fav" onclick="eliminarFavorito(${id}, this)" title="Quitar">🗑</button>
+      </div>
+    </div>`;
+  return card;
+}
+
+async function eliminarFavorito(recipeId, btn) {
+  const card = btn.closest('.fav-card');
+  const titulo = card.querySelector('.fav-card-nombre')?.textContent || '';
+  const imagen = card.querySelector('img')?.src || '';
+  btn.disabled = true; btn.textContent = '⏳';
+  try {
+    const resp = await fetch(TOGGLE_FAV_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+      body: JSON.stringify({ recipe_id: recipeId, titulo, imagen }),
+    });
+    const d = await resp.json();
+    if (d.ok && !d.favorito) {
+      const idx = TODAS_FAVORITAS.findIndex(f => f.id === recipeId);
+      if (idx !== -1) TODAS_FAVORITAS.splice(idx, 1);
+      card.style.transition = 'all .3s ease'; card.style.transform = 'scale(0.85)'; card.style.opacity = '0';
+      setTimeout(() => {
+        card.remove();
+        const grid = document.querySelector('.fav-grid');
+        if (!grid) return;
+        const visibles = grid.querySelectorAll('.fav-card').length;
+        if (visibles < FAV_LIMIT && TODAS_FAVORITAS.length > visibles) {
+          const sig = TODAS_FAVORITAS[visibles];
+          if (sig && !grid.querySelector('[data-fav-id="'+sig.id+'"]')) {
+            const c = buildFavCard(sig.id, sig.titulo, sig.imagen);
+            c.style.opacity='0'; c.style.transform='scale(0.85)'; grid.appendChild(c);
+            requestAnimationFrame(() => { c.style.transition='all .35s ease'; c.style.opacity='1'; c.style.transform='scale(1)'; });
+          }
+        }
+        if (grid.children.length === 0) document.querySelector('.fav-section')?.remove();
+      }, 300);
+      showToast('Receta eliminada de favoritos');
+      const gridBtn = document.querySelector('.btn-fav-card[onclick*="toggleFavCard('+recipeId+',"]');
+      if (gridBtn) { gridBtn.textContent = '♡ Guardar'; gridBtn.classList.remove('active'); }
+    } else if (d.ok && d.favorito) {
+      btn.disabled = false; btn.textContent = '🗑'; eliminarFavorito(recipeId, btn);
+    } else {
+      btn.disabled = false; btn.textContent = '🗑'; showToast('Error al eliminar', 'error');
+    }
+  } catch(e) { btn.disabled = false; btn.textContent = '🗑'; showToast('Error de conexión', 'error'); }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') _cerrar(); });
 </script>
 <script>
 const sidebar = document.querySelector('.sidebar');
