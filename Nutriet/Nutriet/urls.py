@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
 from pathlib import Path
+from django.views.generic import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 
 def onesignal_sw_view(request):
@@ -17,6 +19,7 @@ def onesignal_sw_view(request):
     except FileNotFoundError:
         content = 'importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");'
     return HttpResponse(content, content_type='application/javascript')
+
 
 
 urlpatterns = [
@@ -43,4 +46,8 @@ urlpatterns = [
 
     # Service Worker de OneSignal — DEBE estar en la raíz del dominio
     path('OneSignalSDKWorker.js', onesignal_sw_view, name='onesignal-sw'),
+
+        path('logo.png', RedirectView.as_view(
+        url=staticfiles_storage.url('logo.png')
+    )),
 ]
