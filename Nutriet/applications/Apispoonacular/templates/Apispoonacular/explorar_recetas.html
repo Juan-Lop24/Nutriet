@@ -1375,33 +1375,20 @@ body {
     <div id="modalContent" style="display:none;"></div>
   </div>
 </div>
-  <script>
+
+{{ recetas|json_script:"recetas-data" }}
+{{ favoritos_ids|json_script:"fav-ids" }}
+
+<script>
 const TOGGLE_FAV_URL = "{% url 'toggle_favorito' %}";
 const ELIMINAR_FAV_BASE = "{% url 'eliminar_favorito' 0 %}".replace('/0/', '/');
 
-
-const RECETAS_DATA = {
-{% for r in recetas %}
-  "{{ r.id }}": {
-    id: {{ r.id }},
-    nombre: "{{ r.nombre|default:""|escapejs }}",
-    categoria: "{{ r.categoria|default:""|escapejs }}",
-    area: "{{ r.area|default:""|escapejs }}",
-    imagen_url: "{{ r.imagen_url|default:""|escapejs }}",
-    youtube_url: "{{ r.youtube_url|default:""|escapejs }}",
-    instrucciones: "{{ r.instrucciones|default:""|escapejs }}",
-    ingredientes: {{ r.ingredientes|default:"[]"|safe }},
-    calorias: {{ r.calorias|default:"null" }},
-    proteinas_g: {{ r.proteinas_g|default:"null" }},
-    carbohidratos_g: {{ r.carbohidratos_g|default:"null" }},
-    grasas_g: {{ r.grasas_g|default:"null" }},
-    fibra_g: {{ r.fibra_g|default:"null" }},
-    sodio_mg: {{ r.sodio_mg|default:"null" }},
-    dificultad: {% if r.dificultad %}"{{ r.dificultad|escapejs }}"{% else %}null{% endif %},
-    tiempo_min: {{ r.tiempo_min|default:"null" }},
-  },
-{% endfor %}
-};
+  const RECETAS_DATA = JSON.parse(
+    document.getElementById("recetas-data").textContent
+  );
+  const FAVORITOS_IDS = JSON.parse(
+  document.getElementById("fav-ids").textContent
+  ); 
 
 function abrirModal(id) {
   document.getElementById('modalOverlay').classList.add('open');
@@ -1428,9 +1415,8 @@ function _cerrar() {
 function renderModal(id) {
   const r = RECETAS_DATA[String(id)];
   if (!r) { _cerrar(); return; }
-
-  const FAVORITOS_IDS = {{ favoritos_ids|safe }};
-  const esFav = FAVORITOS_IDS.includes(id);
+ 
+  const esFav = FAVORITOS_IDS.includes(Number(id));
   const difClass = r.dificultad ? `mbadge-dif-${r.dificultad}` : '';
 
   // Macros
@@ -1533,6 +1519,12 @@ async function toggleFav(id, titulo, imagen, btnEl) {
     });
     const d = await resp.json();
     if (d.ok) {
+      if (d.favorito) {
+        if (!FAVORITOS_IDS.includes(id)) FAVORITOS_IDS.push(id);
+      } else {
+        const i = FAVORITOS_IDS.indexOf(id);
+        if (i !== -1) FAVORITOS_IDS.splice(i, 1);
+      }
       if (btn) {
         btn.textContent = d.favorito ? '♥ Guardado' : '♡ Favorito';
         btn.style.background = d.favorito ? '#fce7f3' : '#f3f4f6';
@@ -1559,16 +1551,33 @@ async function toggleFavCard(id, titulo, imagen, btn) {
       },
       body: JSON.stringify({ recipe_id: id, titulo, imagen }),
     });
+
     const d = await resp.json();
+
     if (d.ok) {
+
+      // 🔥 SINCRONIZAR
+      const idNum = Number(id);
+
+      if (d.favorito) {
+        if (!FAVORITOS_IDS.includes(idNum)) FAVORITOS_IDS.push(idNum);
+      } else {
+        const i = FAVORITOS_IDS.indexOf(idNum);
+        if (i !== -1) FAVORITOS_IDS.splice(i, 1);
+      }
+
+      // UI
       btn.textContent = d.favorito ? '♥' : '♡';
       btn.classList.toggle('active', d.favorito);
-      // Show feedback
-      const original = btn.textContent;
+
+      // animación (UNA sola vez)
       btn.style.transform = 'scale(1.4)';
       setTimeout(() => { btn.style.transform = ''; }, 300);
     }
-  } catch(e) { console.error('Error favorito card:', e); }
+
+  } catch(e) {
+    console.error('Error favorito card:', e);
+  }
 }
 
 // Cerrar con Escape
@@ -1704,7 +1713,6 @@ async function eliminarFavorito(recipeId, btn) {
   } catch(e) { btn.disabled = false; btn.textContent = '🗑'; showToast('Error de conexión', 'error'); }
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') _cerrar(); });
 </script>
 <script>
 const sidebar = document.querySelector('.sidebar');
