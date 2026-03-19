@@ -2,12 +2,14 @@ import json
 import logging
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import render, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 from .models import Actividad
 from Nutriet.utils import verificar_formulario_completo
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
+
+# ✅ FIX: eliminado el import de csrf_exempt — ya no se usa en ningún endpoint
 
 logger = logging.getLogger(__name__)
 
@@ -19,10 +21,9 @@ def calendario_view(request):
     return render(request, 'calendario.html')
 
 
-@never_cache  #  FIX CRÍTICO: evita que Render o el navegador cachee la respuesta entre usuarios
+@never_cache
 @login_required
 def obtener_eventos(request):
-    # Doble verificación: si por alguna razón el usuario no está autenticado, retornar vacío
     if not request.user.is_authenticated:
         return JsonResponse([], safe=False)
 
@@ -42,12 +43,10 @@ def obtener_eventos(request):
         })
 
     response = JsonResponse(data, safe=False)
-    # Headers explícitos para que ningún proxy/CDN/Render cachee esta respuesta
     response['Cache-Control'] = 'no-store, no-cache, must-revalidate, private'
     response['Pragma'] = 'no-cache'
     response['Vary'] = 'Cookie'
     return response
-
 
 
 def _enviar_notif_confirmacion(usuario_id, titulo_evento, fecha_str, hora_str=None):
@@ -69,8 +68,11 @@ def _enviar_notif_confirmacion(usuario_id, titulo_evento, fecha_str, hora_str=No
         logger.warning(f"No se pudo enviar notif confirmacion a usuario {usuario_id}: {e}")
 
 
-@csrf_exempt
-@login_required  #  FIX 2: proteger endpoint para que solo usuarios autenticados puedan agregar eventos
+# ✅ FIX: eliminado @csrf_exempt en los 3 endpoints de escritura.
+# El frontend debe enviar el header X-CSRFToken en cada fetch().
+# Ver instrucciones de JS al final de este archivo.
+
+@login_required
 def agregar_evento(request):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -80,14 +82,18 @@ def agregar_evento(request):
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"error": "JSON inválido"}, status=400)
 
-    titulo = data.get('title', '').strip()
-    fecha = data.get('date', '').strip()
+    titulo   = data.get('title', '').strip()
+    fecha    = data.get('date', '').strip()
     hora_str = data.get('time')
 
     if not titulo or not fecha:
         return JsonResponse({"error": "Título y fecha son obligatorios"}, status=400)
 
-    hora = None
+    # ✅ FIX: limitar longitud del título para evitar spam / datos grandes
+    if len(titulo) > 200:
+        return JsonResponse({"error": "El título es demasiado largo"}, status=400)
+
+    hora         = None
     hora_display = None
     if hora_str:
         hora_str = hora_str.strip()
@@ -107,7 +113,6 @@ def agregar_evento(request):
         usuario=request.user
     )
 
-    # Notificación de confirmación inmediata
     _enviar_notif_confirmacion(
         usuario_id=request.user.id,
         titulo_evento=titulo,
@@ -118,8 +123,7 @@ def agregar_evento(request):
     return JsonResponse({"id": actividad.id, "ok": True})
 
 
-@csrf_exempt
-@login_required  #  FIX 3: proteger endpoint
+@login_required
 def editar_evento(request, evento_id):
     if request.method != 'POST':
         return HttpResponseNotAllowed(['POST'])
@@ -129,33 +133,62 @@ def editar_evento(request, evento_id):
     except (json.JSONDecodeError, ValueError):
         return JsonResponse({"error": "JSON inválido"}, status=400)
 
-    # usuario=request.user garantiza que solo el dueño puede editar su evento
     actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
 
-    actividad.titulo = data.get('title', actividad.titulo).strip()
+    titulo_nuevo = data.get('title', actividad.titulo).strip()
+    if len(titulo_nuevo) > 200:
+        return JsonResponse({"error": "El título es demasiado largo"}, status=400)
+
+    actividad.titulo = titulo_nuevo
     hora_str = data.get('time')
     if hora_str:
         try:
             actividad.hora = datetime.strptime(hora_str.strip(), "%H:%M").time()
         except ValueError:
             pass
-    # Resetear flag para que el scheduler reenvíe notificación si corresponde
     actividad.notificacion_enviada = False
     actividad.save()
 
     return JsonResponse({"message": "Evento actualizado", "ok": True})
 
 
-@csrf_exempt
-@login_required  #  FIX 4: proteger endpoint
+@login_required
 def eliminar_evento(request, evento_id):
     if request.method != 'DELETE':
         return HttpResponseNotAllowed(['DELETE'])
 
-    #  FIX 5 (el más crítico): usuario=request.user garantiza que solo el dueño
-    # puede eliminar su propio evento. Antes faltaba este filtro y cualquier
-    # usuario podía eliminar eventos ajenos.
     actividad = get_object_or_404(Actividad, id=evento_id, usuario=request.user)
-
     actividad.delete()
     return JsonResponse({"message": "Evento eliminado", "ok": True})
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# INSTRUCCIONES PARA EL JAVASCRIPT DEL CALENDARIO
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Al eliminar @csrf_exempt, el frontend DEBE enviar el token CSRF en cada fetch.
+# Agrega esta función utilitaria en tu calendario.html o en el JS del calendario:
+#
+#   function getCookie(name) {
+#       const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+#       return v ? v[2] : null;
+#   }
+#
+# Y en cada fetch de POST/DELETE, agrega el header:
+#
+#   fetch('/calendario/agregar/', {
+#       method: 'POST',
+#       headers: {
+#           'Content-Type': 'application/json',
+#           'X-CSRFToken': getCookie('csrftoken'),   // ← ESTA LÍNEA
+#       },
+#       body: JSON.stringify({ title, date, time })
+#   })
+#
+#   fetch(`/calendario/eliminar/${id}/`, {
+#       method: 'DELETE',
+#       headers: {
+#           'X-CSRFToken': getCookie('csrftoken'),   // ← ESTA LÍNEA
+#       }
+#   })
+# ═══════════════════════════════════════════════════════════════════════════════

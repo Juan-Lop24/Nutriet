@@ -5,8 +5,13 @@
 # Entorno y secretos (NUNCA subir al repositorio)
 .env
 *.env
+
+# ✅ FIX: archivos de credenciales Firebase — nunca deben estar en el repo
 serviceAccountKey.json
 firebase_key.json
+*serviceAccount*.json
+*firebase*key*.json
+*credentials*.json
 *.pem
 *.key
 
