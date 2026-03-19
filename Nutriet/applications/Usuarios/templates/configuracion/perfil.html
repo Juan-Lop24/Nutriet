@@ -483,6 +483,110 @@ body::after {
 ::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--pink),#ff4081); border-radius:10px; }
 
 /* ══════════════════════════════════════════
+   MODALES DE ELIMINACIÓN
+══════════════════════════════════════════ */
+.modal-overlay {
+  display:none;
+  position:fixed; inset:0; z-index:9000;
+  background:rgba(26,16,37,.6);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  align-items:center; justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open { display:flex; animation:modalFadeIn .22s ease both; }
+@keyframes modalFadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+.modal-card {
+  background:var(--white);
+  border-radius:24px;
+  padding:36px 32px 30px;
+  max-width:420px; width:100%;
+  text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,.18);
+  border:1px solid var(--border);
+  position:relative; overflow:hidden;
+  animation:modalSlideUp .28s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes modalSlideUp {
+  from { opacity:0; transform:translateY(30px) scale(.97); }
+  to   { opacity:1; transform:translateY(0)    scale(1); }
+}
+.modal-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:linear-gradient(90deg,#dc3545,#ff6b6b,#dc3545);
+  background-size:200% 100%; animation:gradShift 4s ease infinite;
+}
+.modal-card--success::before {
+  background:linear-gradient(90deg,var(--pink),#ff7043,var(--pink));
+}
+.modal-icon {
+  width:64px; height:64px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; margin:0 auto 18px;
+}
+.modal-icon--danger {
+  background:linear-gradient(135deg,rgba(220,53,69,.12),rgba(255,107,107,.12));
+  color:#dc3545;
+  border:2px solid rgba(220,53,69,.2);
+  animation:pulseWarning 2s ease-in-out infinite;
+}
+@keyframes pulseWarning {
+  0%,100% { box-shadow:0 0 0 0 rgba(220,53,69,.25); }
+  50%     { box-shadow:0 0 0 10px rgba(220,53,69,.0); }
+}
+.modal-icon--bye {
+  background:linear-gradient(135deg,rgba(245,0,87,.1),rgba(255,64,129,.1));
+  color:var(--pink);
+  border:2px solid rgba(245,0,87,.18);
+}
+.modal-title {
+  font-family:'Playfair Display',serif;
+  font-size:1.45rem; font-weight:700;
+  color:var(--text-dark); margin-bottom:12px;
+}
+.modal-body {
+  font-size:.87rem; font-weight:500; color:var(--text-muted);
+  line-height:1.6; margin-bottom:10px;
+}
+.modal-body strong { color:var(--text-dark); }
+.modal-body em { color:#dc3545; font-style:normal; font-weight:700; }
+.modal-body--warning {
+  background:rgba(220,53,69,.06);
+  border:1px solid rgba(220,53,69,.14);
+  border-radius:12px; padding:10px 14px;
+  font-size:.8rem; color:#c0392b;
+  display:flex; align-items:center; justify-content:center; gap:6px;
+  margin-bottom:24px !important;
+}
+.modal-actions {
+  display:flex; gap:12px; margin-top:8px;
+  justify-content:center; flex-wrap:wrap;
+}
+.modal-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:12px 24px; border-radius:13px;
+  font-family:'Montserrat',sans-serif;
+  font-size:.84rem; font-weight:700;
+  cursor:pointer; border:none;
+  transition:all .22s ease; letter-spacing:.02em;
+}
+.modal-btn--cancel {
+  background:transparent;
+  color:var(--text-muted);
+  border:1.5px solid rgba(108,117,125,.25);
+}
+.modal-btn--cancel:hover { background:rgba(108,117,125,.08); transform:translateY(-2px); }
+.modal-btn--confirm {
+  background:linear-gradient(135deg,#dc3545,#ff6b6b);
+  color:#fff;
+  box-shadow:0 6px 20px rgba(220,53,69,.28);
+}
+.modal-btn--confirm:hover { transform:translateY(-2px); filter:brightness(1.06); box-shadow:0 10px 28px rgba(220,53,69,.35); }
+
+/* ══════════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════════ */
 @media (max-width:1024px) {
@@ -884,14 +988,59 @@ body::after {
               Elimina permanentemente tu cuenta, mediciones, favoritas y todos tus datos
             </div>
           </div>
-          <form method="POST" action="{% url 'perfil' %}" style="margin:0;"
-                onsubmit="return confirm('¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')">
+          <!-- El form real, oculto; se envía desde el modal -->
+          <form id="form-eliminar-cuenta" method="POST" action="{% url 'perfil' %}" style="margin:0;display:none;">
             {% csrf_token %}
-            <button type="submit" name="eliminar_cuenta" class="btn-danger">
-              <i class="fas fa-trash-alt"></i> Eliminar cuenta
-            </button>
+            <input type="hidden" name="eliminar_cuenta" value="1">
           </form>
+          <button type="button" class="btn-danger" onclick="abrirModalEliminar()">
+            <i class="fas fa-trash-alt"></i> Eliminar cuenta
+          </button>
         </div>
+
+      </div><!-- /.danger-block cierra aquí, los modales van fuera del flujo de contenido -->
+
+      <!-- ══ MODAL 1: CONFIRMACIÓN ══ -->
+      <div id="modal-confirmar" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-title">
+        <div class="modal-card">
+          <div class="modal-icon modal-icon--danger">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h2 class="modal-title" id="modal-confirmar-title">¿Eliminar tu cuenta?</h2>
+          <p class="modal-body">
+            Esta acción es <strong>permanente e irreversible</strong>. Se borrarán
+            tu perfil, mediciones, recetas favoritas y <em>todos</em> tus datos de Nutriet.
+          </p>
+          <p class="modal-body modal-body--warning">
+            <i class="fas fa-shield-alt"></i>&nbsp; No podrás recuperar tu cuenta después de confirmar.
+          </p>
+          <div class="modal-actions">
+            <button class="modal-btn modal-btn--cancel" onclick="cerrarModalConfirmar()">
+              <i class="fas fa-arrow-left"></i> Cancelar
+            </button>
+            <button class="modal-btn modal-btn--confirm" onclick="confirmarEliminacion()">
+              <i class="fas fa-trash-alt"></i> Sí, eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ MODAL 2: CUENTA ELIMINADA ══ -->
+      <div id="modal-eliminada" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-eliminada-title">
+        <div class="modal-card modal-card--success">
+          <div class="modal-icon modal-icon--bye">
+            <i class="fas fa-heart-broken"></i>
+          </div>
+          <h2 class="modal-title" id="modal-eliminada-title">Cuenta eliminada</h2>
+          <p class="modal-body">
+            Tu cuenta ha sido <strong>eliminada permanentemente</strong>. Todos tus datos
+            han sido borrados de nuestros servidores.
+          </p>
+          <p class="modal-body" style="font-size:.82rem;color:var(--text-muted);">
+            Esperamos verte de nuevo pronto. 💔
+          </p>
+        </div>
+      </div>
       </div>
 
     </div>
@@ -1010,6 +1159,41 @@ window.addEventListener('pageshow', function (event) {
   toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
   backdrop.addEventListener('click', closeSidebar);
   document.addEventListener('keydown', e => { if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar(); });
+</script>
+<script>
+/* ══════════════════════════════════════════
+   MODALES ELIMINAR CUENTA
+══════════════════════════════════════════ */
+function abrirModalEliminar() {
+  document.getElementById('modal-confirmar').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarModalConfirmar() {
+  document.getElementById('modal-confirmar').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function confirmarEliminacion() {
+  // Ocultar modal de confirmación y mostrar el de "eliminada"
+  document.getElementById('modal-confirmar').classList.remove('open');
+  document.getElementById('modal-eliminada').classList.add('open');
+
+  // Esperar un momento para que el usuario vea el mensaje y luego enviar el form
+  setTimeout(function () {
+    document.getElementById('form-eliminar-cuenta').submit();
+  }, 2200);
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modal-confirmar').addEventListener('click', function (e) {
+  if (e.target === this) cerrarModalConfirmar();
+});
+
+// Cerrar con Escape
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') cerrarModalConfirmar();
+});
 </script>
 </body>
 </html>
