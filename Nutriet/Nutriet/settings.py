@@ -16,16 +16,19 @@ ENV_PATH = BASE_DIR / ".env"
 load_dotenv(ENV_PATH)
 
 # ─── Seguridad ────────────────────────────────────────────────────────────────
-SECRET_KEY       = os.getenv("SECRET_KEY")
-DEBUG            = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS    = os.getenv("ALLOWED_HOSTS", "*").split(",")
+SECRET_KEY    = os.getenv("SECRET_KEY")
+DEBUG         = os.getenv("DEBUG", "False") == "True"
+
+# ✅ FIX: el default ya no es "*" — si la variable no está configurada en Render
+#         solo acepta localhost, evitando que cualquier dominio sea válido.
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 CSRF_TRUSTED_ORIGINS = [
     'https://nutrietcol.site',
     'https://www.nutrietcol.site',
     'https://nutriest.onrender.com',
     'http://nutrietcol.site',
-    'http://www.nutrietcol.site', 
+    'http://www.nutrietcol.site',
 ]
 
 # ─── OneSignal (reemplaza Firebase) ──────────────────────────────────────────
@@ -36,7 +39,7 @@ ONESIGNAL_REST_KEY = os.getenv("ONESIGNAL_REST_KEY")
 GEMINI_API_KEY       = os.getenv("GEMINI_API_KEY")
 GOOGLE_CLIENT_ID     = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback/")
+GOOGLE_REDIRECT_URI  = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback/")
 
 # ─── Apps ─────────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -208,7 +211,7 @@ REST_FRAMEWORK = {
 }
 
 # ─── Google OAuth ─────────────────────────────────────────────────────────────
-ACCOUNT_EMAIL_REQUIRED   = True
-ACCOUNT_UNIQUE_EMAIL     = True
+ACCOUNT_EMAIL_REQUIRED    = True
+ACCOUNT_UNIQUE_EMAIL      = True
 SOCIALACCOUNT_AUTO_SIGNUP = True
 SOCIALACCOUNT_QUERY_EMAIL = True

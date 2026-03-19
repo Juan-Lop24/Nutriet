@@ -3,8 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.views.decorators.http import require_POST
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST, require_GET
 from django.db.models import Q
 from django.core.paginator import Paginator
 from Nutriet.utils import verificar_formulario_completo
@@ -12,6 +11,8 @@ from applications.nutricion.models import DietaGenerada, FormularioNutricionGuar
 from applications.recetas.models import RecetaMealDB, ClasificacionReceta, RESTRICCION_KEYS
 import json
 from .models import RecetaFavorita
+
+# ✅ FIX: eliminado el import de csrf_exempt — ya no se usa en ningún endpoint
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -45,10 +46,6 @@ CONDICION_A_RESTRICCION = {
 
 
 def _parsear_restricciones_combinadas(formulario):
-    """
-    Combina restricciones médicas (condicion_medica) para aplicar los filtros
-    booleanos de ClasificacionReceta.
-    """
     restricciones = set()
     condicion = getattr(formulario, 'condicion_medica', '') or ''
     if condicion in CONDICION_A_RESTRICCION:
@@ -57,93 +54,51 @@ def _parsear_restricciones_combinadas(formulario):
 
 
 def _traducir_ingrediente_a_ingles(termino: str) -> list:
-    """
-    Dado un ingrediente en español, devuelve una lista de términos en inglés
-    para buscar en la base de datos (que usa nombres en inglés de TheMealDB).
-    Usa un diccionario de palabras comunes y, si no está, recurre a GoogleTranslator.
-    Retorna lista para cubrir variaciones (ej: "rice" puede aparecer como "rice" o "white rice").
-    """
     DICCIONARIO_ES_EN = {
-        "arroz": ["rice"],
-        "pollo": ["chicken"],
-        "carne": ["beef", "meat"],
-        "cerdo": ["pork"],
-        "cordero": ["lamb"],
+        "arroz": ["rice"], "pollo": ["chicken"], "carne": ["beef", "meat"],
+        "cerdo": ["pork"], "cordero": ["lamb"],
         "pescado": ["fish", "salmon", "tuna", "cod"],
         "atún": ["tuna"], "atun": ["tuna"],
         "salmón": ["salmon"], "salmon": ["salmon"],
         "camarones": ["shrimp", "prawn"], "camarón": ["shrimp", "prawn"],
         "mariscos": ["seafood", "shrimp", "prawn", "crab", "lobster"],
-        "huevo": ["egg"],
-        "leche": ["milk"],
-        "queso": ["cheese"],
-        "mantequilla": ["butter"],
-        "crema": ["cream"],
-        "harina": ["flour"],
-        "azúcar": ["sugar"], "azucar": ["sugar"],
-        "sal": ["salt"],
-        "aceite": ["oil"],
-        "cebolla": ["onion"],
-        "ajo": ["garlic"],
-        "tomate": ["tomato"],
-        "papa": ["potato"], "patata": ["potato"],
-        "zanahoria": ["carrot"],
-        "lechuga": ["lettuce"],
-        "espinaca": ["spinach"],
+        "huevo": ["egg"], "leche": ["milk"], "queso": ["cheese"],
+        "mantequilla": ["butter"], "crema": ["cream"], "harina": ["flour"],
+        "azúcar": ["sugar"], "azucar": ["sugar"], "sal": ["salt"],
+        "aceite": ["oil"], "cebolla": ["onion"], "ajo": ["garlic"],
+        "tomate": ["tomato"], "papa": ["potato"], "patata": ["potato"],
+        "zanahoria": ["carrot"], "lechuga": ["lettuce"], "espinaca": ["spinach"],
         "brócoli": ["broccoli"], "brocoli": ["broccoli"],
         "maíz": ["corn"], "maiz": ["corn"],
-        "frijoles": ["beans"], "frijol": ["beans"],
-        "lentejas": ["lentils"],
+        "frijoles": ["beans"], "frijol": ["beans"], "lentejas": ["lentils"],
         "garbanzos": ["chickpeas"],
-        "pasta": ["pasta", "spaghetti", "noodles"],
-        "pan": ["bread"],
-        "trigo": ["wheat"],
-        "gluten": ["gluten", "wheat", "flour"],
+        "pasta": ["pasta", "spaghetti", "noodles"], "pan": ["bread"],
+        "trigo": ["wheat"], "gluten": ["gluten", "wheat", "flour"],
         "maní": ["peanut"], "mani": ["peanut"], "cacahuate": ["peanut"],
         "nuez": ["walnut", "nut"], "nueces": ["walnut", "nut"],
-        "almendra": ["almond"],
-        "chocolate": ["chocolate"],
-        "limón": ["lemon"], "limon": ["lemon"],
-        "naranja": ["orange"],
-        "manzana": ["apple"],
-        "plátano": ["banana"], "platano": ["banana"],
+        "almendra": ["almond"], "chocolate": ["chocolate"],
+        "limón": ["lemon"], "limon": ["lemon"], "naranja": ["orange"],
+        "manzana": ["apple"], "plátano": ["banana"], "platano": ["banana"],
         "piña": ["pineapple"], "pina": ["pineapple"],
-        "fresa": ["strawberry"], "fresas": ["strawberry"],
-        "uva": ["grape"],
-        "pimiento": ["pepper", "bell pepper"],
-        "chile": ["chili", "chile"],
-        "cilantro": ["cilantro", "coriander"],
-        "perejil": ["parsley"],
-        "comino": ["cumin"],
-        "pimienta": ["pepper", "black pepper"],
-        "canela": ["cinnamon"],
-        "vainilla": ["vanilla"],
-        "vinagre": ["vinegar"],
-        "salsa": ["sauce", "salsa"],
-        "mostaza": ["mustard"],
-        "mayonesa": ["mayonnaise"],
-        "ketchup": ["ketchup"],
+        "fresa": ["strawberry"], "fresas": ["strawberry"], "uva": ["grape"],
+        "pimiento": ["pepper", "bell pepper"], "chile": ["chili", "chile"],
+        "cilantro": ["cilantro", "coriander"], "perejil": ["parsley"],
+        "comino": ["cumin"], "pimienta": ["pepper", "black pepper"],
+        "canela": ["cinnamon"], "vainilla": ["vanilla"], "vinagre": ["vinegar"],
+        "salsa": ["sauce", "salsa"], "mostaza": ["mustard"],
+        "mayonesa": ["mayonnaise"], "ketchup": ["ketchup"],
         "soya": ["soy", "soya"], "soja": ["soy", "soya"],
-        "tocino": ["bacon"],
-        "jamón": ["ham"], "jamon": ["ham"],
-        "salchicha": ["sausage"],
-        "pavo": ["turkey"],
-        "pato": ["duck"],
+        "tocino": ["bacon"], "jamón": ["ham"], "jamon": ["ham"],
+        "salchicha": ["sausage"], "pavo": ["turkey"], "pato": ["duck"],
         "conejo": ["rabbit"],
     }
 
     termino_lower = termino.strip().lower()
-
-    # Buscar en diccionario directo
     if termino_lower in DICCIONARIO_ES_EN:
         return DICCIONARIO_ES_EN[termino_lower]
-
-    # Buscar coincidencia parcial en el diccionario
     for es, en_list in DICCIONARIO_ES_EN.items():
         if es in termino_lower or termino_lower in es:
             return en_list
-
-    # Fallback: traducir con GoogleTranslator
     try:
         from .api_services import _traducir
         traducido = _traducir(termino, src="es", tgt="en")
@@ -151,18 +106,10 @@ def _traducir_ingrediente_a_ingles(termino: str) -> list:
             return [traducido.lower()]
     except Exception:
         pass
-
-    # Si no se pudo traducir, usar el término original también
     return [termino_lower]
 
 
 def _aplicar_ingredientes_excluidos(qs, ingredientes_texto):
-    """
-    Excluye recetas que contengan cualquier ingrediente escrito por el usuario.
-    Traduce los ingredientes del español al inglés antes de buscar,
-    ya que la base de datos (TheMealDB) almacena los ingredientes en inglés.
-    Ej: "arroz, pollo" → traduce a ["rice"], ["chicken"] y excluye recetas con esos términos.
-    """
     if not ingredientes_texto:
         return qs
     ingredientes_es = [
@@ -171,11 +118,9 @@ def _aplicar_ingredientes_excluidos(qs, ingredientes_texto):
         if i.strip()
     ]
     for ingrediente_es in ingredientes_es:
-        # Obtener los términos equivalentes en inglés
         terminos_en = _traducir_ingrediente_a_ingles(ingrediente_es)
         for termino_en in terminos_en:
             qs = qs.exclude(ingredientes_json__icontains=termino_en)
-        # También excluir por el término original en español (por si acaso)
         qs = qs.exclude(ingredientes_json__icontains=ingrediente_es)
     return qs
 
@@ -254,12 +199,12 @@ def generador_dieta(request):
             "error": "Primero debes completar el formulario nutricional"
         })
 
-    formulario       = dieta.formulario
-    condicion_medica = getattr(formulario, 'condicion_medica', '') or ''
+    formulario             = dieta.formulario
+    condicion_medica       = getattr(formulario, 'condicion_medica', '') or ''
     ingredientes_excluidos = getattr(formulario, 'ingredientes_excluidos', '') or ''
-    restricciones    = _parsear_restricciones_combinadas(formulario)
-    objetivo         = dieta.objetivo
-    distribucion     = dieta.distribucion_macros_comidas or {}
+    restricciones          = _parsear_restricciones_combinadas(formulario)
+    objetivo               = dieta.objetivo
+    distribucion           = dieta.distribucion_macros_comidas or {}
 
     datos_dieta = {
         "calorias_diarias":     dieta.calorias_diarias or 0,
@@ -293,7 +238,6 @@ def generador_dieta(request):
 
             recetas_qs = _shuffle_qs(qs, 6)
 
-            # Fallback sin rango calórico
             if not recetas_qs:
                 qs2 = _qs_base()
                 qs2 = _aplicar_restricciones(qs2, restricciones)
@@ -361,7 +305,7 @@ def explorar_recetas(request):
     categoria = request.GET.get("categoria")
     if not categoria or categoria == "None":
         categoria = None
-    ordenar   = request.GET.get("ordenar", "random")
+    ordenar = request.GET.get("ordenar", "random")
 
     qs = _qs_base()
     qs = _aplicar_restricciones(qs, restricciones)
@@ -390,23 +334,21 @@ def explorar_recetas(request):
 
     if ordenar in orden_map:
         qs = qs.order_by(orden_map[ordenar])
-        paginator = Paginator(qs, 8)
+        paginator   = Paginator(qs, 8)
         page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        recetas = [_receta_a_dict(r) for r in page_obj]
+        page_obj    = paginator.get_page(page_number)
+        recetas     = [_receta_a_dict(r) for r in page_obj]
     else:
-        # Para random: paginamos sobre los IDs shuffleados
         import random as _random
         ids = list(qs.values_list("id", flat=True))
         _random.shuffle(ids)
-        paginator = Paginator(ids, 8)
+        paginator   = Paginator(ids, 8)
         page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-        page_ids = list(page_obj)
-        recetas_qs = list(
+        page_obj    = paginator.get_page(page_number)
+        page_ids    = list(page_obj)
+        recetas_qs  = list(
             RecetaMealDB.objects.filter(id__in=page_ids).select_related("clasificacion")
         )
-        # Preserve shuffle order
         id_order = {id_: i for i, id_ in enumerate(page_ids)}
         recetas_qs.sort(key=lambda r: id_order.get(r.id, 999))
         recetas = [_receta_a_dict(r) for r in recetas_qs]
@@ -416,7 +358,6 @@ def explorar_recetas(request):
         .values_list("categoria", flat=True).distinct().order_by("categoria")
     )
 
-    from .models import RecetaFavorita
     favoritos_qs  = RecetaFavorita.objects.filter(usuario=request.user).order_by("-creado_en")
     favoritos_ids = set(f.recipe_id for f in favoritos_qs)
 
@@ -447,13 +388,12 @@ def receta_detalle(request, recipe_id):
     except RecetaMealDB.DoesNotExist:
         receta = None
 
-    from .models import RecetaFavorita
     es_favorita = RecetaFavorita.objects.filter(
         usuario=request.user, recipe_id=recipe_id
     ).exists() if receta else False
 
     return render(request, "Apispoonacular/receta_detalle.html", {
-        "receta": receta,
+        "receta":     receta,
         "es_favorita": es_favorita,
     })
 
@@ -471,17 +411,16 @@ def receta_info_json(request, recipe_id):
 # FAVORITOS
 # ──────────────────────────────────────────────────────────────────────────────
 
-@csrf_exempt
+# ✅ FIX: eliminado @csrf_exempt y agregado @login_required explícito
+# El frontend ya envía X-CSRFToken (igual que el calendario)
+@login_required
 @require_POST
 def toggle_favorito(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({"ok": False, "error": "no autenticado"}, status=401)
     try:
-        from .models import RecetaFavorita
         data      = json.loads(request.body)
         recipe_id = int(data.get("recipe_id"))
-        titulo    = data.get("titulo", "")
-        imagen    = data.get("imagen", "")
+        titulo    = data.get("titulo", "")[:200]   # ✅ limitar longitud
+        imagen    = data.get("imagen", "")[:500]   # ✅ limitar longitud
 
         favorito = RecetaFavorita.objects.filter(
             usuario=request.user, recipe_id=recipe_id
@@ -524,18 +463,33 @@ def eliminar_favorito(request, recipe_id):
     return redirect("recetas_favoritas")
 
 
-@csrf_exempt
+# ──────────────────────────────────────────────────────────────────────────────
+# TRADUCIR INSTRUCCIONES
+# ──────────────────────────────────────────────────────────────────────────────
+
+# ✅ FIX CRÍTICO: esta función estaba completamente abierta sin autenticación.
+# Cualquiera podía usarla para traducción masiva gratuita.
+# Ahora requiere login y método POST con CSRF.
+@login_required
+@require_POST
 def traducir_instrucciones(request):
-    if request.method != 'POST':
-        return JsonResponse({'ok': False}, status=405)
     try:
         data  = json.loads(request.body)
         texto = data.get('texto', '').strip()
         if not texto:
             return JsonResponse({'ok': False, 'error': 'Sin texto'}, status=400)
 
+        # ✅ FIX: limitar tamaño del texto a traducir (evita abuso)
+        if len(texto) > 5000:
+            return JsonResponse({'ok': False, 'error': 'Texto demasiado largo'}, status=400)
+
         from .api_services import _traducir
         lineas     = [l.strip() for l in texto.split('\n') if l.strip()]
+
+        # ✅ FIX: limitar número de líneas a traducir
+        if len(lineas) > 50:
+            lineas = lineas[:50]
+
         traducidas = [_traducir(linea, src='en', tgt='es') for linea in lineas]
 
         return JsonResponse({'ok': True, 'traduccion': '\n'.join(traducidas)})
