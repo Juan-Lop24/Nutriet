@@ -1413,7 +1413,7 @@ function _cerrar() {
 }
 
 function renderModal(id) {
-  const r = RECETAS_DATA[id] || RECETAS_DATA[String(id)];
+  const r = RECETAS_DATA.find(x => Number(x.id) === Number(id));
   if (!r) { _cerrar(); return; }
   const esFav = FAVORITOS_IDS.includes(Number(id));
   const difClass = r.dificultad ? `mbadge-dif-${r.dificultad}` : '';
