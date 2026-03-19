@@ -1012,6 +1012,23 @@
         height: 200px !important;
       }
     }
+    .card-clickable {
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border-radius: 12px;
+    }
+
+    /* Hover (cuando pasas el mouse) */
+    .card-clickable:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    /* Click (cuando presionas) */
+    .card-clickable:active {
+      transform: scale(0.98);
+    }
+
 
     /* Transiciones globales suaves */
     * { transition: background-color 0.3s ease, color 0.3s ease; }
@@ -1114,50 +1131,32 @@
         </div>
       </div>
     </div>
+    --- FILA INFERIOR: Favoritas ---
+  <a href="{% url 'recetas_favoritas' %}" class="text-decoration-none text-dark">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title mb-4">Mis favoritas</h5>
 
-    <!-- FILA INFERIOR: Favoritas | Explorar -->
-    <div class="dashboard-bottom">
-
-      <!-- FAVORITAS -->
-      <div class="grid-section">
-        <div class="section-label">
-          <div class="section-icon" style="background: linear-gradient(135deg,#ff4081,#ff7043);">
-            <i class="fas fa-heart"></i>
-          </div>
-          <h2>Mis favoritas</h2>
-          <div class="section-line"></div>
-        </div>
-
-        <div class="recetas-wrapper">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title mb-4"></h5>
-
-              {% if favoritas %}
-                <div class="row">
-                  {% for receta in favoritas %}
-                    <div class="col-md-4 mb-3">
-                      <a href="{% url 'receta_detalle' receta.recipe_id %}"
-                         class="receta-widget text-decoration-none">
-                        <div class="widget-card">
-                          <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
-                          <div class="widget-content">
-                            <h6>{{ receta.titulo }}</h6>
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  {% endfor %}
+      {% if favoritas %}
+        <div class="row">
+          {% for receta in favoritas %}
+            <div class="col-md-4 mb-3">
+              <div class="widget-card">
+                <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
+                <div class="widget-content">
+                  <h6>{{ receta.titulo }}</h6>
                 </div>
-              {% else %}
-                <p class="text-muted">No tienes recetas favoritas aún.</p>
-              {% endif %}
-
+              </div>
             </div>
-          </div>
+          {% endfor %}
         </div>
-      </div>
+      {% else %}
+        <p class="text-muted">No tienes recetas favoritas aún.</p>
+      {% endif %}
 
+    </div>
+  </div>
+</a>
       <!-- EXPLORAR RECETAS -->
       <div class="grid-section">
         <div class="section-label">
