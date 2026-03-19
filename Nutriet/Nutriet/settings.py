@@ -36,7 +36,7 @@ ONESIGNAL_REST_KEY = os.getenv("ONESIGNAL_REST_KEY")
 GEMINI_API_KEY       = os.getenv("GEMINI_API_KEY")
 GOOGLE_CLIENT_ID     = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URI  = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback/")
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "http://localhost:8000/api/auth/google/callback/")
 
 # ─── Apps ─────────────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     # Terceros
     'rest_framework',
     # Propias
-    'applications.base',
     'applications.home',
     'applications.Usuarios',
     'applications.calendario',
