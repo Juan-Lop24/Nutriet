@@ -744,11 +744,10 @@
       border-radius: 15px;
       box-shadow: 0 4px 12px var(--shadow-light);
       transition: all 0.3s ease;
-      flex: 1;
       min-height: 0;
+      height: 220px;
       display: flex;
-      flex-direction: column;
-    }
+      flex-direction: column;    }
 
     .mini-chart > div:hover {
       transform: translateY(-4px);
@@ -764,8 +763,9 @@
     }
 
     .mini-chart canvas {
-      width: 100% !important;
       flex: 1;
+      width: 100% !important;
+      height: 180px !important;
       min-height: 0;
     }
 
@@ -1486,6 +1486,5 @@
       if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
     });
   </script>
-
 </body>
 </html>
