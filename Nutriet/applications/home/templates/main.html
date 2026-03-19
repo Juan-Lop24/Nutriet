@@ -648,8 +648,9 @@
 
     .seguimiento-card {
       padding: 16px !important;
+      max-height: 500px;
       height: 100%;
-      width: 100%;
+      width: 100%; 
       flex: 1;
       min-height: 0;
       display: flex;
@@ -732,14 +733,13 @@
     }
 
     .mini-chart {
-      width: 100%;
+       width: 100%;
       margin-top: 10px;
-      flex: 1;
-      min-height: 0;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      height: 100%  ;
+      height: 100%;
+      overflow: hidden;
     }
 
     .mini-chart > div {
@@ -749,9 +749,11 @@
       border-radius: 15px;
       box-shadow: 0 4px 12px var(--shadow-light);
       transition: all 0.3s ease;
-      min-height: 0;
+      min-height: 150px;
       display: flex;
-      flex-direction: column;    
+      flex-direction: column;
+      max-height: 200px;
+      overflow: hidden;
     }
     .mini-chart > div:hover {
       transform: translateY(-4px);
@@ -769,10 +771,9 @@
     .mini-chart canvas {
       flex: 1;
       width: 100% !important;
-      height: 100px !important;
+      height: 100% !important;
       min-height: 0;
     }
-
     /* ============================================
       RECETAS CARDS
       ============================================ */
@@ -810,6 +811,7 @@
     }
     .recetas-wrapper .row > div {
       display: flex;
+      flex-direction: column;
     }
     .card-title {
       font-size: 1.5rem;
@@ -1322,10 +1324,12 @@
             tension: 0.4
           }]
         },
-        options: { maintainAspectRatio: false }
+        options: { 
+        maintainAspectRatio: false 
+        responsive: true,
+        }
       });
     }
-
     if (fechasGrasa.length === 0) {
       document.getElementById('graficaGrasa').style.display = 'none';
       document.getElementById('sinGrasa').style.display = 'block';
