@@ -1,40 +1,65 @@
 from django.shortcuts import render
-import requests
 from django.conf import settings
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
-from Nutriet.utils import verificar_formulario_completo
-
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.shortcuts import redirect
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.db import connection
+from django.utils import timezone
+from django.core.cache import cache
 
+from Nutriet.utils import verificar_formulario_completo
 from applications.seguimiento.models import MedicionFisica
 from applications.Apispoonacular.models import RecetaFavorita
 from applications.nutricion.models import FormularioNutricionGuardado
 from applications.seguimiento.engine import analizar
 import json
+import logging
+import re
+
+logger = logging.getLogger(__name__)
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _get_ip(request):
+    """IP real del cliente detrás del proxy de Render."""
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR", "0.0.0.0")
+
+
+def _rate_limited(key, max_requests, period_seconds):
+    """
+    Devuelve True si se superó el límite (bloquear).
+    Devuelve False si está dentro del límite (permitir).
+    Usa el cache de Django — Redis en producción, memoria local en dev.
+    """
+    current = cache.get(key, 0)
+    if current >= max_requests:
+        return True
+    cache.set(key, current + 1, timeout=period_seconds)
+    return False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# MAIN
+# ─────────────────────────────────────────────────────────────────────────────
 
 @never_cache
 @login_required
 @verificar_formulario_completo
 def main(request):
-
-    # =====================
-    # 🔥 MENSAJE BIENVENIDA
-    # =====================
     show_welcome = request.session.pop('show_welcome', False)
 
-    # =====================
-    # RECETAS FAVORITAS
-    # =====================
     favoritas = RecetaFavorita.objects.filter(
         usuario=request.user
     ).order_by('-id')[:3]
 
-    # =====================
-    # MEDICIONES + ANÁLISIS
-    # =====================
     formulario = FormularioNutricionGuardado.objects.filter(
         usuario=request.user
     ).last()
@@ -51,11 +76,8 @@ def main(request):
             analisis      = analizar(formulario, mediciones)
             analisis_json = json.dumps(analisis)
         except Exception as e:
-            print("Error en analisis main:", e)
+            logger.warning(f"Error en análisis main user={request.user.pk}: {e}")
 
-    # =====================
-    # PROGRESO
-    # =====================
     if analisis:
         progreso         = analisis['progress']['progreso_porcentaje']
         dias_registrados = mediciones.count()
@@ -65,9 +87,6 @@ def main(request):
         objetivo_dias    = 30
         progreso = min(int((dias_registrados / objetivo_dias) * 100), 100)
 
-    # =====================
-    # GRÁFICAS
-    # =====================
     if analisis:
         charts = analisis.get('charts', {})
 
@@ -91,9 +110,6 @@ def main(request):
                 fechas_grasa.append(m.fecha.strftime('%d %b'))
                 grasas.append(float(m.grasa_corporal))
 
-    # =====================
-    # RECETAS RANDOM
-    # =====================
     recetas_random = []
     try:
         from applications.recetas.models import RecetaMealDB
@@ -112,23 +128,21 @@ def main(request):
                     "imagen": r.imagen_url,
                 })
     except Exception as e:
-        print("Error trayendo recetas random:", e)
+        logger.warning(f"Error trayendo recetas random: {e}")
 
     context = {
-        'show_welcome': show_welcome,
+        'show_welcome':                show_welcome,
         'notificaciones_configuradas': request.user.notificaciones_configuradas,
-        'dias_registrados': dias_registrados,
-        'objetivo_dias': objetivo_dias,
-        'progreso': progreso,
-        'fechas_peso': json.dumps(fechas_peso),
-        'pesos': json.dumps(pesos),
-        'fechas_grasa': json.dumps(fechas_grasa),
-        'grasas': json.dumps(grasas),
-        'favoritas': favoritas,
-        'recetas_random': recetas_random,
+        'dias_registrados':            dias_registrados,
+        'objetivo_dias':               objetivo_dias,
+        'progreso':                    progreso,
+        'fechas_peso':                 json.dumps(fechas_peso),
+        'pesos':                       json.dumps(pesos),
+        'fechas_grasa':                json.dumps(fechas_grasa),
+        'grasas':                      json.dumps(grasas),
+        'favoritas':                   favoritas,
+        'recetas_random':              recetas_random,
     }
-    show_welcome = request.session.pop('show_welcome', False)
-    print("SHOW_WELCOME:", show_welcome)
 
     return render(request, 'main.html', context)
 
@@ -139,23 +153,66 @@ def main(request):
 class MainViews(TemplateView):
     template_name = 'main.html'
 
+
 class indexviews(TemplateView):
     template_name = 'index.html'
+
 
 class socialviews(TemplateView):
     template_name = 'redes_sociales.html'
 
-from django.core.mail import send_mail
-from django.http import JsonResponse
+
+class informacionviews(TemplateView):
+    template_name = 'informacion.html'
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONTACTO  ✅ FIX: rate limit + validación de inputs
+# ─────────────────────────────────────────────────────────────────────────────
 
 def contacto(request):
     if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        email_usuario = request.POST.get('email')
-        asunto_seleccionado = request.POST.get('asunto')
-        mensaje = request.POST.get('mensaje')
+        ip = _get_ip(request)
 
-        cuerpo = f"Has recibido un nuevo mensaje de: {nombre}\n"
+        # ✅ FIX CRÍTICO: rate limit — máx 5 mensajes por IP por hora
+        # Evita que un bot envíe miles de correos a atencionclientenutriet@gmail.com
+        rl_key = f"contacto_rl:{ip}"
+        if _rate_limited(rl_key, max_requests=5, period_seconds=3600):
+            logger.warning(f"Rate limit contacto superado — IP: {ip}")
+            return JsonResponse(
+                {'ok': False, 'error': 'Demasiados mensajes. Intenta de nuevo en una hora.'},
+                status=429
+            )
+
+        # ✅ FIX: extraer y sanitizar todos los campos
+        nombre              = request.POST.get('nombre', '').strip()[:100]
+        email_usuario       = request.POST.get('email', '').strip()[:200]
+        asunto_seleccionado = request.POST.get('asunto', '').strip()[:100]
+        mensaje             = request.POST.get('mensaje', '').strip()[:2000]
+
+        # ✅ FIX: validar que los campos requeridos no estén vacíos
+        if not nombre or not email_usuario or not asunto_seleccionado or not mensaje:
+            return JsonResponse(
+                {'ok': False, 'error': 'Todos los campos son obligatorios.'},
+                status=400
+            )
+
+        # ✅ FIX: validar formato de email básico
+        if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email_usuario):
+            return JsonResponse(
+                {'ok': False, 'error': 'El correo electrónico no es válido.'},
+                status=400
+            )
+
+        # ✅ FIX: whitelist de asuntos válidos
+        ASUNTOS_VALIDOS = {
+            'Consulta general', 'Información de pedido',
+            'Soporte técnico', 'Sugerencia', 'Reclamo', 'Otro'
+        }
+        if asunto_seleccionado not in ASUNTOS_VALIDOS:
+            asunto_seleccionado = 'Consulta general'
+
+        cuerpo  = f"Has recibido un nuevo mensaje de: {nombre}\n"
         cuerpo += f"Correo del cliente: {email_usuario}\n"
         cuerpo += f"Asunto: {asunto_seleccionado}\n\n"
         cuerpo += f"Mensaje:\n{mensaje}"
@@ -170,24 +227,19 @@ def contacto(request):
             )
             return JsonResponse({'ok': True})
         except Exception as e:
-            return JsonResponse({'ok': False, 'error': str(e)}, status=500)
+            logger.error(f"Error enviando correo de contacto: {e}")
+            return JsonResponse({'ok': False, 'error': 'Error al enviar el mensaje.'}, status=500)
 
     return render(request, 'contactos.html')
 
-class informacionviews(TemplateView):
-    template_name = 'informacion.html'
 
-
-# ── Health Check ──────────────────────────────────────────────────────────────
-from django.db import connection
-from django.utils import timezone
+# ─────────────────────────────────────────────────────────────────────────────
+# HEALTH CHECK
+# ─────────────────────────────────────────────────────────────────────────────
 
 def health_check(request):
-    """
-    Endpoint de health check para Render / Railway / uptime monitors.
-    Verifica: DB, Firebase, Scheduler.
-    """
-    status = {"status": "ok", "timestamp": timezone.now().isoformat(), "checks": {}}
+    """Endpoint de health check para Render / uptime monitors."""
+    status     = {"status": "ok", "timestamp": timezone.now().isoformat(), "checks": {}}
     http_status = 200
 
     try:
@@ -196,8 +248,8 @@ def health_check(request):
         status["checks"]["database"] = "ok"
     except Exception as e:
         status["checks"]["database"] = f"error: {str(e)}"
-        status["status"] = "degraded"
-        http_status = 503
+        status["status"]             = "degraded"
+        http_status                  = 503
 
     try:
         import firebase_admin
