@@ -461,7 +461,10 @@ function renderModal(id) {
       ${r.fibra_g?`<span class="mm-extra mm-fibra">Fibra: ${r.fibra_g}g</span>`:''}
       ${r.sodio_mg?`<span class="mm-extra mm-sodio">Sodio: ${r.sodio_mg}mg</span>`:''}
     </div>` : '';
-  const ingsHtml = (r.ingredientes||[]).map(i=>`<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`).join('');
+  let _ings = r.ingredientes || [];
+  if (typeof _ings === 'string') { try { _ings = JSON.parse(_ings); } catch { _ings = []; } }
+  if (!Array.isArray(_ings)) _ings = [];
+  const ingsHtml = _ings.map(i=>`<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`).join('');
   const instrPlaceholder = r.instrucciones ? `<h3 class="section-title">📝 Instrucciones</h3><div class="instrucciones-box" id="instr-box-${r.id}"><span style="color:#9ca3af;font-size:.85rem;">⏳ Traduciendo...</span></div>` : '';
   const esFav = FAVORITOS_IDS.has(r.id);
   document.getElementById('modalContent').innerHTML = `

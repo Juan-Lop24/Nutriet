@@ -830,10 +830,12 @@ body::after {
   </div>
   <div class="fav-grid">
     {% for fav in favoritos|slice:":8" %}
-    <div class="fav-card" data-fav-id="{{ fav.recipe_id }}">
+    <div class="fav-card" data-fav-id="{{ fav.recipe_id }}" data-id="{{ fav.recipe_id }}" data-titulo="{{ fav.titulo|escapejs }}" data-imagen="{{ fav.imagen|escapejs }}" onclick="abrirModalFav({{ fav.recipe_id }}, '{{ fav.titulo|escapejs }}', '{{ fav.imagen|escapejs }}')">
       <div class="fav-card-img">
         {% if fav.imagen %}
-        <img src="{{ fav.imagen }}" alt="{{ fav.titulo }}" loading="lazy">
+        <img src="{{ fav.imagen }}" alt="{{ fav.titulo }}" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div style="width:100%;height:100%;display:none;align-items:center;justify-content:center;font-size:2.5rem;">🍳</div>
         {% else %}
         <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">🍳</div>
         {% endif %}
@@ -841,8 +843,8 @@ body::after {
       <div class="fav-card-body">
         <div class="fav-card-nombre">{{ fav.titulo }}</div>
         <div class="fav-card-actions">
-          <a href="{% url 'receta_detalle' fav.recipe_id %}" class="btn-ver-fav">Ver receta</a>
-          <button class="btn-eliminar-fav" onclick="eliminarFavorito({{ fav.recipe_id }}, this)" title="Quitar de favoritos">🗑</button>
+          <button class="btn-ver-fav" onclick="event.stopPropagation(); abrirModalFav({{ fav.recipe_id }}, '{{ fav.titulo|escapejs }}', '{{ fav.imagen|escapejs }}')">Ver receta</button>
+          <button class="btn-eliminar-fav" onclick="event.stopPropagation(); eliminarFavorito({{ fav.recipe_id }}, this)" title="Quitar de favoritos">🗑</button>
         </div>
       </div>
     </div>
@@ -1005,6 +1007,38 @@ function abrirModal(id) {
 
   // Pequeño delay para la animación
   setTimeout(() => renderModal(id), 80);
+}
+
+const _favCache = {};
+function abrirModalFav(id, titulo, imagen) {
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('modalSpinner').style.display = 'block';
+  document.getElementById('modalContent').style.display = 'none';
+  document.body.style.overflow = 'hidden';
+
+  if (_favCache[id]) { setTimeout(() => renderModal(_favCache[id].id), 80); return; }
+
+  fetch('/receta-json/' + id + '/')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      // normalizar ingredientes por si vienen como string
+      let ings = data.ingredientes || [];
+      if (typeof ings === 'string') { try { ings = JSON.parse(ings); } catch { ings = []; } }
+      if (!Array.isArray(ings)) ings = [];
+      data.ingredientes = ings;
+      // meter en RECETAS_DATA para que renderModal lo encuentre
+      const exists = RECETAS_DATA.find(x => Number(x.id) === Number(data.id));
+      if (!exists) RECETAS_DATA.push(data);
+      _favCache[id] = data;
+      renderModal(data.id);
+    })
+    .catch(() => {
+      // fallback con datos básicos
+      const basic = { id, nombre: titulo, imagen_url: imagen, ingredientes: [] };
+      RECETAS_DATA.push(basic);
+      _favCache[id] = basic;
+      renderModal(id);
+    });
 }
 
 function cerrarModal(e) {
@@ -1372,4 +1406,4 @@ document.addEventListener('keydown', e => {
 });
 </script>
 </body>
-</html>
+</html> 
