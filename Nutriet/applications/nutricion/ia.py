@@ -17,105 +17,92 @@ def generar_explicacion_nutricional(data):
     plazo = data.get("plazo_meses", "")
 
     prompt = f"""
-Eres un nutricionista clínico profesional de alto nivel.
-Tu tarea es generar una evaluación nutricional completa, detallada y personalizada para el paciente.
+Eres un nutricionista clínico. Genera una evaluación nutricional concisa y personalizada.
 
-REGLAS CRÍTICAS:
-- No generes recetas ni planes de comidas.
-- Habla con tono profesional, clínico y empático, como en una consulta real.
-- Sé MUY específico según la condición médica del paciente — es lo más importante.
-- Incluye recomendaciones de hidratación (consumo de agua) basadas en peso, actividad y condición.
-- Cada sección debe tener contenido real, concreto y útil — no frases genéricas.
+REGLAS:
+- Sin recetas ni planes de comidas.
+- Tono profesional y directo. Máximo 2 oraciones por campo de texto.
+- Sé específico según la condición médica — es lo más importante.
 - Responde en español.
-- Responde SOLO JSON estricto (sin texto extra, sin markdown, sin ```).
+- Responde SOLO JSON estricto (sin markdown, sin ```).
 
 DATOS DEL PACIENTE:
-Sexo: {sexo}
-Edad: {edad} años
-Peso actual: {peso} kg
-Altura: {altura} cm
-Objetivo: {objetivo}
-Plazo: {plazo} meses
-Nivel de actividad: {nivel_actividad}
-Condición médica / restricción: {condicion}
+Sexo: {sexo} | Edad: {edad} años | Peso: {peso} kg | Altura: {altura} cm
+Objetivo: {objetivo} | Plazo: {plazo} meses | Actividad: {nivel_actividad}
+Condición médica: {condicion}
 
-RESULTADOS CALCULADOS:
-IMC: {data.get("imc")}
-Porcentaje de grasa corporal: {data.get("porcentaje_grasa")} %
-TMB (kcal): {data.get("tmb")}
-TDEE (kcal): {data.get("tdee")}
-Calorías recomendadas por día: {data.get("calorias_diarias")}
-Proteínas: {data.get("proteinas_gramos")} g
-Grasas: {data.get("grasas_gramos")} g
-Carbohidratos: {data.get("carbohidratos_gramos")} g
+RESULTADOS:
+IMC: {data.get("imc")} | Grasa: {data.get("porcentaje_grasa")}%
+TMB: {data.get("tmb")} kcal | TDEE: {data.get("tdee")} kcal
+Calorías/día: {data.get("calorias_diarias")} | Proteínas: {data.get("proteinas_gramos")}g | Grasas: {data.get("grasas_gramos")}g | Carbos: {data.get("carbohidratos_gramos")}g
 
-INSTRUCCIONES ESPECIALES SEGÚN CONDICIÓN MÉDICA:
-- Si la condición es "diabetes": Explica control glucémico, índice glucémico bajo, reducción de azúcares simples, carbohidratos complejos, fibra, horarios de comida estables. Alimentos permitidos y prohibidos específicos para diabéticos.
-- Si es "hipertension": Dieta DASH, reducción de sodio (<1500 mg/día), potasio, magnesio, alimentos que suben la presión, importancia de la hidratación.
-- Si es "colesterol": Grasas saturadas vs insaturadas, omega-3, fibra soluble, alimentos que suben el LDL, importancia del aceite de oliva, aguacate, pescado azul.
-- Si es "dislipidemia": Control de triglicéridos, eliminar harinas refinadas y alcohol, omega-3, fibra.
-- Si es "celiaco": Gluten oculto, cross-contamination, alimentos naturalmente sin gluten, importancia de leer etiquetas.
-- Si es "lactosa": Alternativas de calcio, alimentos con lactosa oculta, suplementación de vitamina D y calcio.
-- Si es "indigestion": Alimentos irritantes (café, picante, alcohol, grasas), frecuencia de comidas, masticación lenta, horarios.
-- Si es "hipertiroidismo": Control calórico alto, proteínas para preservar músculo, alimentos bociógenos, yodo.
-- Si es "anemia": Hierro hemo vs no hemo, vitamina C para absorción, alimentos que inhiben el hierro (café, té, calcio en exceso).
-- Si es "gota": Purinas, evitar carnes rojas, mariscos, alcohol, fructosa. Hidratación intensa.
-- Si es "alergia_mani", "alergia_mariscos" o "alergia_huevo": Alternativas proteicas, riesgo de contaminación cruzada, leer etiquetas.
-- Si es "vegetariano" o "vegano": Proteínas completas, B12, hierro no hemo, zinc, omega-3 vegetal, combinación de legumbres y cereales.
-- Si no hay condición (ninguna): Da recomendaciones generales de calidad según objetivo.
+GUÍA POR CONDICIÓN (aplica solo la que corresponde):
+- diabetes: control glucémico, IG bajo, reducir azúcares simples, carbos complejos y fibra.
+- hipertension: dieta DASH, sodio <1500mg/día, aumentar potasio y magnesio.
+- colesterol: reducir grasas saturadas, aumentar omega-3 y fibra soluble.
+- dislipidemia: eliminar harinas refinadas y alcohol, omega-3.
+- celiaco: evitar gluten oculto, contaminación cruzada, leer etiquetas.
+- lactosa: alternativas de calcio, suplementar vitamina D.
+- indigestion: evitar irritantes (café, picante, alcohol), comer despacio.
+- hipertiroidismo: alta proteína para preservar músculo, control de yodo.
+- anemia: hierro hemo, vitamina C para absorción, evitar café con comidas.
+- gota: evitar purinas, alcohol y fructosa. Hidratación alta.
+- alergia_mani / alergia_mariscos / alergia_huevo: alternativas proteicas, evitar contaminación cruzada.
+- vegetariano / vegano: proteínas completas, B12, hierro no hemo, omega-3 vegetal.
+- ninguna: recomendaciones según objetivo.
 
-Responde con este JSON exacto (todos los campos son obligatorios y deben tener contenido real y detallado):
+JSON a responder (todos los campos obligatorios, textos cortos y directos):
 {{
-  "evaluacion_inicial": "Párrafo de bienvenida clínico: estado actual del paciente basado en IMC, grasa, edad, sexo y objetivo. Mínimo 3 oraciones concretas.",
+  "evaluacion_inicial": "2 oraciones clínicas sobre el estado actual del paciente según IMC, grasa y objetivo.",
 
   "diagnostico_corporal": {{
-    "clasificacion_imc": "Clasificación exacta del IMC con lo que implica clínicamente para este paciente.",
-    "interpretacion_grasa": "Qué significa su % de grasa, si es saludable, alto o bajo para su sexo y edad.",
-    "riesgo_metabolico": "Evaluación del riesgo metabólico actual basado en todos los datos."
+    "clasificacion_imc": "Clasificación del IMC y qué implica. 1 oración.",
+    "interpretacion_grasa": "Si el % de grasa es saludable o no para su sexo/edad. 1 oración.",
+    "riesgo_metabolico": "Nivel de riesgo metabólico actual. 1 oración."
   }},
 
-  "explicacion_calorica": "Explicación detallada de por qué necesita exactamente esas calorías. Relaciona TMB, TDEE y el déficit/superávit aplicado según objetivo y plazo.",
+  "explicacion_calorica": "Por qué ese número de calorías según TMB, TDEE y objetivo. 2 oraciones.",
 
-  "explicacion_macronutrientes": "Explica para qué sirve cada macronutriente en este paciente específico, por qué esa distribución, y cómo impacta su objetivo.",
+  "explicacion_macronutrientes": "Para qué sirve cada macro en este paciente y por qué esa distribución. 2 oraciones.",
 
   "hidratacion": {{
-    "litros_recomendados": "Número exacto de litros/día recomendados (ej: 2.8 litros)",
-    "calculo_explicado": "Explica cómo se calculó: peso, actividad física y condición médica si aplica.",
-    "consejos_hidratacion": ["Consejo 1 específico", "Consejo 2 específico", "Consejo 3 específico", "Consejo 4 específico"],
+    "litros_recomendados": "Ej: 2.8 litros",
+    "calculo_explicado": "Cómo se calculó según peso y actividad. 1 oración.",
+    "consejos_hidratacion": ["Consejo breve 1", "Consejo breve 2", "Consejo breve 3"],
     "señales_deshidratacion": ["Señal 1", "Señal 2", "Señal 3"]
   }},
 
   "recomendaciones_por_condicion": {{
-    "titulo": "Recomendaciones para paciente con condición: {condicion}",
-    "explicacion_condicion": "Qué implica esta condición médica para la nutrición de este paciente. Explicación clínica seria.",
-    "impacto_en_objetivo": "Cómo afecta esta condición al objetivo nutricional del paciente y qué ajustes se hicieron.",
-    "pautas_criticas": ["Pauta clínica 1 muy específica", "Pauta clínica 2", "Pauta clínica 3", "Pauta clínica 4", "Pauta clínica 5"],
-    "nutrientes_clave": "Qué nutrientes son especialmente importantes o deben controlarse dada la condición."
+    "titulo": "Recomendaciones para: {condicion}",
+    "explicacion_condicion": "Qué implica esta condición para la nutrición. 2 oraciones.",
+    "impacto_en_objetivo": "Cómo afecta al objetivo y qué ajustes se hicieron. 1 oración.",
+    "pautas_criticas": ["Pauta clave 1", "Pauta clave 2", "Pauta clave 3", "Pauta clave 4"],
+    "nutrientes_clave": "Nutrientes importantes o a controlar según la condición. 1 oración."
   }},
 
   "alimentos": {{
-    "recomendados": ["Alimento 1 con razón breve", "Alimento 2 con razón", "Alimento 3", "Alimento 4", "Alimento 5", "Alimento 6", "Alimento 7", "Alimento 8"],
-    "a_evitar": ["Alimento 1 con razón", "Alimento 2 con razón", "Alimento 3", "Alimento 4", "Alimento 5", "Alimento 6"]
+    "recomendados": ["Alimento 1", "Alimento 2", "Alimento 3", "Alimento 4", "Alimento 5", "Alimento 6"],
+    "a_evitar": ["Alimento 1", "Alimento 2", "Alimento 3", "Alimento 4", "Alimento 5"]
   }},
 
   "habitos_clinicos": {{
-    "frecuencia_comidas": "Cuántas veces al día debe comer y por qué, según su condición y objetivo.",
-    "horarios": "Recomendación sobre horarios específicos de comida.",
-    "velocidad_comida": "Importancia de masticar despacio, duración mínima de cada comida.",
-    "suplementos": "Si necesita suplementación (vitamina D, B12, hierro, omega-3, etc.) basada en condición y dieta."
+    "frecuencia_comidas": "Cuántas veces al día y por qué. 1 oración.",
+    "horarios": "Recomendación de horarios. 1 oración.",
+    "velocidad_comida": "Consejo de masticación. 1 oración.",
+    "suplementos": "Si necesita suplementación o no. 1 oración."
   }},
 
-  "ejercicio_y_nutricion": "Cómo debe coordinar alimentación y actividad física. Qué comer antes y después del ejercicio según su nivel de actividad.",
+  "ejercicio_y_nutricion": "Cómo coordinar alimentación y ejercicio según su nivel de actividad. 2 oraciones.",
 
-  "explicacion_del_cambio_fisico": "Descripción clínica realista de cómo y cuándo verá cambios. Ritmo esperado de cambio en el plazo definido.",
+  "explicacion_del_cambio_fisico": "Cambio realista esperado en {plazo} meses. 2 oraciones.",
 
-  "recomendaciones_generales": "5 a 7 recomendaciones prácticas del día a día que un nutricionista daría en consulta. Específicas, no genéricas.",
+  "recomendaciones_generales": "4 a 5 recomendaciones prácticas concretas separadas por punto y seguido.",
 
-  "recomendaciones_profesionales": "Consejo clínico avanzado: qué exámenes de laboratorio se recomiendan, con qué frecuencia ir al nutricionista, si debe ver algún especialista según su condición.",
+  "recomendaciones_profesionales": "Qué exámenes hacerse y cada cuánto ir al nutricionista. 2 oraciones.",
 
-  "errores_comunes_a_evitar": ["Error específico 1 para esta persona", "Error 2", "Error 3", "Error 4", "Error 5"],
+  "errores_comunes_a_evitar": ["Error 1 específico", "Error 2", "Error 3", "Error 4"],
 
-  "nota_importante": "Nota clínica final: recordatorio de que este plan es orientativo y debe ser revisado por un profesional de salud, especialmente si tiene condición médica activa."
+  "nota_importante": "Recordatorio de que este plan es orientativo y debe revisarse con un profesional. 1 oración."
 }}
 """
 
