@@ -1,0 +1,131 @@
+
+{% load form_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <a href="{% url 'historial_formularios' %}" class="btn btn-secondary mb-3">
+                ← Volver al historial
+            </a>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">📝 Detalle del Formulario</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Fecha de creación:</strong> {{ formulario.creado_en|date:"d/m/Y H:i" }}</p>
+                            <p><strong>Última actualización:</strong> {{ formulario.actualizado_en|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5>📊 Datos Personales</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Edad:</strong> {{ formulario.edad }} años</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Peso actual:</strong> {{ formulario.peso }} kg</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Altura:</strong> {{ formulario.altura }} cm</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5>🎯 Objetivos</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                <strong>Objetivo:</strong>
+                                <span class="badge bg-info">{{ formulario.get_objetivo_display }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Peso objetivo:</strong> {{ formulario.peso_objetivo }} kg</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Plazo:</strong> {{ formulario.plazo_meses }} meses</p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h5>🍽️ Hábitos y Restricciones</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Comidas preferidas:</strong> {{ formulario.comidas_preferidas }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Nivel de actividad:</strong>
+                                <span class="badge bg-success">{{ formulario.get_nivel_actividad_display }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                <strong>Tipo de dieta:</strong>
+                                <span class="badge bg-secondary">{{ formulario.get_tipo_dieta_display }}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if formulario.restricciones_alimentarias %}
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Restricciones alimentarias:</strong>
+                        <p class="mb-0">{{ formulario.restricciones_alimentarias }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if dieta %}
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">🥗 Dieta Generada</h4>
+                </div>
+                <div class="card-body">
+                    <p><small class="text-muted">Generada el: {{ dieta.creado_en|date:"d/m/Y H:i" }}</small></p>
+                    
+                    <div class="dieta-contenido">
+                        {% if dieta.contenido_dieta %}
+                            {% if dieta.contenido_dieta.contenido %}
+                                {{ dieta.contenido_dieta.contenido|linebreaks }}
+                            {% else %}
+                                <pre>{{ dieta.contenido_dieta|safe }}</pre>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <strong>ℹ️ Sin dieta generada</strong>
+                <p>Este formulario aún no tiene una dieta generada.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .dieta-contenido pre {
+        background-color: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        overflow-x: auto;
+    }
+    
+    .dieta-contenido {
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
