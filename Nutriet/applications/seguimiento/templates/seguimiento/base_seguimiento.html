@@ -100,7 +100,7 @@
 
         /* Botones de navegación */
         .btn-principal {
-
+            display: inline-flex;
             align-items: center;
             gap: 8px;
             background: var(--soft-bg);
@@ -116,6 +116,7 @@
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
         }
 
         .btn-principal::before {
@@ -149,12 +150,53 @@
             box-shadow: 0 6px 18px rgba(245, 0, 87, 0.35);
         }
 
+        /* Texto del botón (se oculta en móvil) */
+        .btn-principal .btn-label {
+            display: inline;
+        }
+
+        /* Emoji siempre visible */
+        .btn-principal .btn-emoji {
+            font-style: normal;
+            font-size: 1.1rem;
+            line-height: 1;
+        }
+
+        /* Tooltip para móvil */
+        .btn-principal[data-tooltip] {
+            position: relative;
+        }
+        .btn-principal[data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.85);
+            background: var(--text-dark);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            padding: 5px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 999;
+        }
+        .btn-principal[data-tooltip]:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
         /* Separador visual en la navbar */
         .nav-divider {
             width: 1px;
             height: 24px;
             background: rgba(245, 0, 87, 0.15);
             border-radius: 2px;
+            flex-shrink: 0;
         }
 
         /* ============================================
@@ -547,6 +589,7 @@
     }
     .sidebar-backdrop.open { display: block; }
 
+    /* ── NAVBAR RESPONSIVE ── */
     @media (max-width: 768px) {
       .sidebar-toggle { display: flex; }
 
@@ -570,6 +613,7 @@
       .navbar {
         left: 0;
         padding-left: 60px !important;
+        border-radius: 0 0 16px 16px;
       }
 
       .page-title-strip,
@@ -578,23 +622,69 @@
         padding-top: 10px;
       }
 
+      /* Navbar en móvil: botones cuadrados solo-emoji, centrados */
       .navbar-inner {
-        gap: 6px;
-        padding: 10px 12px;
-        overflow-x: auto;
+        gap: 8px;
+        padding: 10px 16px;
         flex-wrap: nowrap;
-        justify-content: flex-start;
+        justify-content: center;
+        overflow: visible;
       }
 
-      .navbar-inner::-webkit-scrollbar { display: none; }
+      /* Ocultar texto, mostrar solo emoji */
+      .btn-principal .btn-label {
+        display: none;
+      }
 
+      /* Botones cuadrados con solo emoji */
       .btn-principal {
-        font-size: 0.75rem;
-        padding: 8px 14px;
-        white-space: nowrap;
+        padding: 10px;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.3rem;
+        gap: 0;
+      }
+
+      .btn-principal .btn-emoji {
+        font-size: 1.3rem;
+      }
+
+      /* Tooltip activado en touch (focus) también */
+      .btn-principal:focus::after {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+      }
+
+      /* Divider más corto en móvil */
+      .nav-divider {
+        height: 20px;
+        width: 1px;
+      }
+
+      /* Título más pequeño en móvil */
+      .page-title-strip h1 {
+        font-size: 1.5rem;
       }
     }
-    </style>
+
+    /* Pantallas muy pequeñas */
+    @media (max-width: 380px) {
+      .navbar-inner {
+        gap: 5px;
+        padding: 8px 12px;
+      }
+      .btn-principal {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+      .btn-principal .btn-emoji {
+        font-size: 1.15rem;
+      }
+    }</style>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 <body class="seguimiento-page {% block body_class %}{% endblock %}">
@@ -659,20 +749,24 @@
       ================================================ -->
     <nav class="navbar">
         <div class="navbar-inner">
-            <a href="{% url 'seguimiento:seguimiento' %}" class="btn-principal">
-                📊 Seguimiento
+            <a href="{% url 'seguimiento:seguimiento' %}" class="btn-principal" data-tooltip="Seguimiento">
+                <em class="btn-emoji">📊</em>
+                <span class="btn-label">Seguimiento</span>
             </a>
             <div class="nav-divider"></div>
-            <a href="{% url 'seguimiento:tablero' %}" class="btn-principal">
-                🗂️ Tablero
+            <a href="{% url 'seguimiento:tablero' %}" class="btn-principal" data-tooltip="Tablero">
+                <em class="btn-emoji">🗂️</em>
+                <span class="btn-label">Tablero</span>
             </a>
             <div class="nav-divider"></div>
-            <a href="{% url 'seguimiento:agregar' %}" class="btn-principal">
-                ➕ Agregar medición
+            <a href="{% url 'seguimiento:agregar' %}" class="btn-principal" data-tooltip="Agregar medición">
+                <em class="btn-emoji">➕</em>
+                <span class="btn-label">Agregar medición</span>
             </a>
             <div class="nav-divider"></div>
-            <a href="{% url 'seguimiento:recomendaciones_ia' %}" class="btn-principal">
-                🤖 Recomendaciones IA
+            <a href="{% url 'seguimiento:recomendaciones_ia' %}" class="btn-principal" data-tooltip="Recomendaciones IA">
+                <em class="btn-emoji">🤖</em>
+                <span class="btn-label">Recomendaciones IA</span>
             </a>
         </div>
     </nav>
