@@ -1039,7 +1039,10 @@ function renderModal(id) {
     </div>` : '';
 
   // Ingredientes
-  const ingsHtml = (r.ingredientes || []).map(i =>
+  let _ings = r.ingredientes || [];
+  if (typeof _ings === 'string') { try { _ings = JSON.parse(_ings); } catch { _ings = []; } }
+  if (!Array.isArray(_ings)) _ings = [];
+  const ingsHtml = _ings.map(i =>
     `<div class="ing-item"><strong>${i.medida || ''}</strong>${i.ingrediente || ''}</div>`
   ).join('');
 

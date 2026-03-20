@@ -12,183 +12,144 @@
 
 .ia-hero {
   background: linear-gradient(135deg, #1a1025 0%, #2d1b4e 100%);
-  border-radius: 24px;
-  padding: 36px 40px;
-  margin-bottom: 28px;
-  position: relative;
-  overflow: hidden;
+  border-radius: 24px; padding: 36px 40px; margin-bottom: 28px;
+  position: relative; overflow: hidden;
   box-shadow: 0 8px 32px rgba(245,0,87,.2);
 }
 .ia-hero::before {
-  content: '';
-  position: absolute;
-  top: -60px; right: -60px;
+  content: ''; position: absolute; top: -60px; right: -60px;
   width: 250px; height: 250px;
-  background: radial-gradient(circle, rgba(245,0,87,.25), transparent 70%);
-  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,0,87,.25), transparent 70%); border-radius: 50%;
 }
 .ia-hero::after {
-  content: '';
-  position: absolute;
-  bottom: -40px; left: 20%;
+  content: ''; position: absolute; bottom: -40px; left: 20%;
   width: 180px; height: 180px;
-  background: radial-gradient(circle, rgba(255,224,71,.1), transparent 70%);
-  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,224,71,.1), transparent 70%); border-radius: 50%;
 }
 .ia-hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(245,0,87,.2);
-  border: 1px solid rgba(245,0,87,.35);
-  color: #ff7eb3;
-  border-radius: 50px;
-  padding: 6px 16px;
+  background: rgba(245,0,87,.2); border: 1px solid rgba(245,0,87,.35); color: #ff7eb3;
+  border-radius: 50px; padding: 6px 16px;
   font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   margin-bottom: 14px; position: relative; z-index: 1;
 }
-.ia-hero h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.9rem; color: #fff; margin-bottom: 8px;
-  position: relative; z-index: 1;
-}
-.ia-hero p {
-  color: rgba(255,255,255,.65); font-size: .9rem;
-  position: relative; z-index: 1;
-}
-.ia-hero .meta-pills {
-  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px;
-  position: relative; z-index: 1;
-}
+.ia-hero h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: #fff; margin-bottom: 8px; position: relative; z-index: 1; }
+.ia-hero p  { color: rgba(255,255,255,.65); font-size: .9rem; position: relative; z-index: 1; }
+.ia-hero .meta-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; position: relative; z-index: 1; }
 .ia-hero .meta-pill {
-  background: rgba(255,255,255,.1);
-  border: 1px solid rgba(255,255,255,.15);
-  color: rgba(255,255,255,.8);
-  border-radius: 50px; padding: 5px 14px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.8); border-radius: 50px; padding: 5px 14px;
   font-size: .78rem; font-weight: 600;
 }
 .ia-hero .meta-pill strong { color: #ffe047; }
 
-/* METRICAS */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 14px;
-  margin-bottom: 28px;
-}
+/* MÉTRICAS */
+.metrics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
 .metric-card {
-  background: #fff;
-  border-radius: 18px;
-  padding: 22px 16px;
-  text-align: center;
-  box-shadow: 0 4px 18px rgba(0,0,0,.07);
-  border-bottom: 4px solid transparent;
+  background: #fff; border-radius: 18px; padding: 22px 16px; text-align: center;
+  box-shadow: 0 4px 18px rgba(0,0,0,.07); border-bottom: 4px solid transparent;
   transition: transform .2s, box-shadow .2s;
 }
 .metric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.12); }
-.metric-card:nth-child(1) { border-color: var(--pink); }
-.metric-card:nth-child(2) { border-color: #8b5cf6; }
-.metric-card:nth-child(3) { border-color: #f59e0b; }
-.metric-card:nth-child(4) { border-color: #059669; }
+.metric-card:nth-child(1){border-color:var(--pink)}.metric-card:nth-child(2){border-color:#8b5cf6}
+.metric-card:nth-child(3){border-color:#f59e0b}.metric-card:nth-child(4){border-color:#059669}
 .metric-ico { font-size: 1.6rem; margin-bottom: 6px; }
-.metric-val {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.9rem; font-weight: 900; color: var(--dark); line-height: 1;
-  margin-bottom: 4px;
-}
+.metric-val { font-family: 'Playfair Display', serif; font-size: 1.9rem; font-weight: 900; color: var(--dark); line-height: 1; margin-bottom: 4px; }
 .metric-lbl { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 
-/* MACROS ROW */
-.macros-row {
-  display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;
-}
-.macro-pill {
-  flex: 1; min-width: 120px;
-  border-radius: 16px; padding: 18px; text-align: center;
-}
+/* MACROS */
+.macros-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.macro-pill { flex: 1; min-width: 120px; border-radius: 16px; padding: 18px; text-align: center; }
 .macro-pill.prot { background: #fce4ef; border: 1.5px solid #f5a8c8; }
 .macro-pill.fat  { background: #fff8e6; border: 1.5px solid #ffd98a; }
 .macro-pill.carb { background: #e8f4ff; border: 1.5px solid #9dcfff; }
 .macro-val { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; line-height: 1; margin-bottom: 3px; }
-.macro-pill.prot .macro-val { color: var(--pink); }
-.macro-pill.fat  .macro-val { color: #c07a00; }
-.macro-pill.carb .macro-val { color: #0066cc; }
+.macro-pill.prot .macro-val{color:var(--pink)}.macro-pill.fat .macro-val{color:#c07a00}.macro-pill.carb .macro-val{color:#0066cc}
 .macro-lbl { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 
-/* INFO CARDS */
+/* CARDS */
 .ic {
-  background: #fff;
-  border: 1px solid rgba(0,0,0,.07);
-  border-radius: 20px;
-  padding: 28px 30px;
-  margin-bottom: 16px;
-  box-shadow: 0 3px 16px rgba(0,0,0,.05);
+  background: #fff; border: 1px solid rgba(0,0,0,.07); border-radius: 20px;
+  padding: 28px 30px; margin-bottom: 16px; box-shadow: 0 3px 16px rgba(0,0,0,.05);
 }
 .ic.soft   { background: #fce4ef; border-color: #f5a8c8; }
 .ic.warn   { background: #fff8f0; border-color: #ffd4a8; }
 .ic.danger { background: #fff0f4; border-color: #f5a8c8; }
 .ic.yellow { background: linear-gradient(135deg,#fef9e7,#fef3cd); border-color: #f4d47a; }
 .ic.green  { background: #f0fdf4; border-color: #86efac; }
+.ic.blue   { background: #e8f4ff; border-color: #9dcfff; }
+.ic.teal   { background: #e0f7fa; border-color: #7ecfdf; }
 .ic-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.05rem; font-weight: 700; color: var(--dark);
+  font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700; color: var(--dark);
   margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
 }
 .ic p, .ic li { font-size: .93rem; line-height: 1.85; color: #3a3035; }
 .ic ul { padding-left: 20px; margin: 0; }
-.ic p + p { margin-top: 8px; }
+.ic p+p { margin-top: 8px; }
 
-/* DISTRIBUCIÓN COMIDAS */
-.comidas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px; margin-top: 14px;
-}
-.comida-item {
-  background: rgba(245,0,87,.04);
-  border: 1px solid rgba(245,0,87,.12);
-  border-radius: 14px; padding: 14px;
-}
-.comida-name {
-  font-weight: 700; font-size: .87rem; color: var(--dark);
-  text-transform: capitalize; margin-bottom: 7px;
-}
+/* DIAGNÓSTICO GRID */
+.diag-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.diag-item { background: rgba(255,255,255,.6); border: 1px solid rgba(0,0,0,.07); border-radius: 12px; padding: 14px; }
+.diag-lbl { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 5px; }
+.diag-val { font-size: .9rem; line-height: 1.6; color: var(--dark); }
+
+/* AGUA */
+.agua-big { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.agua-n { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: #0e7490; line-height: 1; }
+.agua-u { font-size: 1rem; font-weight: 600; color: var(--muted); }
+.tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.tag { background: #fff; border: 1px solid rgba(0,0,0,.1); border-radius: 50px; padding: 5px 13px; font-size: .81rem; font-weight: 500; color: var(--dark); }
+.tag.teal { background: #e0f7fa; border-color: #7ecfdf; color: #0e7490; }
+.tag.red  { background: #fff0f4; border-color: #f5a8c8; color: #b0004e; }
+
+/* PAUTAS */
+.pauta-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.pauta-item { display: flex; align-items: flex-start; gap: 10px; background: rgba(255,255,255,.6); border-radius: 10px; padding: 11px 14px; border: 1px solid rgba(0,0,0,.06); }
+.pauta-num { font-weight: 800; font-size: .85rem; color: var(--pink); min-width: 22px; }
+.pauta-text { font-size: .9rem; line-height: 1.65; color: #3a3035; }
+
+/* HÁBITOS GRID */
+.habitos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.habito-item { background: rgba(255,255,255,.7); border: 1px solid rgba(0,0,0,.07); border-radius: 12px; padding: 14px; }
+.habito-icon { font-size: 1.3rem; margin-bottom: 5px; }
+.habito-lbl { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: 4px; }
+.habito-val { font-size: .88rem; line-height: 1.6; color: var(--dark); }
+
+/* COMIDAS */
+.comidas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 14px; }
+.comida-item { background: rgba(245,0,87,.04); border: 1px solid rgba(245,0,87,.12); border-radius: 14px; padding: 14px; }
+.comida-name { font-weight: 700; font-size: .87rem; color: var(--dark); text-transform: capitalize; margin-bottom: 7px; }
 .comida-details { font-size: .78rem; color: var(--muted); line-height: 1.7; }
 
-/* ALIMENTOS COLS */
-.foods-cols {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;
-}
-@media(max-width:600px) { .foods-cols { grid-template-columns: 1fr; } }
+/* ALIMENTOS */
+.foods-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+@media(max-width:600px){.foods-cols{grid-template-columns:1fr}}
 
-/* KCAL BIG */
+/* KCAL */
 .kcal-big { display: inline-flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
-.kcal-big .n {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem; font-weight: 900; color: var(--pink); line-height: 1;
-}
+.kcal-big .n { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: var(--pink); line-height: 1; }
 .kcal-big .u { font-size: 1rem; font-weight: 600; color: var(--muted); }
 
-/* NO DATA STATE */
-.no-data {
-  text-align: center; padding: 60px 20px;
-  background: #fff; border-radius: 20px;
-  box-shadow: 0 4px 18px rgba(0,0,0,.06);
+/* SECTION LABEL */
+.section-label {
+  font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .13em;
+  color: var(--muted); margin: 26px 0 10px 2px;
+  display: flex; align-items: center; gap: 8px;
 }
+.section-label::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,.08); }
+
+/* NO DATA */
+.no-data { text-align: center; padding: 60px 20px; background: #fff; border-radius: 20px; box-shadow: 0 4px 18px rgba(0,0,0,.06); }
 .no-data .ico { font-size: 3rem; margin-bottom: 16px; }
 .no-data h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--dark); margin-bottom: 8px; }
 .no-data p  { color: var(--muted); font-size: .9rem; margin-bottom: 20px; }
 .btn-go {
   display: inline-flex; align-items: center; gap: 8px;
-  background: linear-gradient(135deg, var(--pink), var(--pink2));
-  color: #fff; text-decoration: none;
-  border-radius: 50px; padding: 12px 26px;
-  font-weight: 700; font-size: .9rem;
-  box-shadow: 0 4px 18px rgba(245,0,87,.35);
-  transition: all .2s;
+  background: linear-gradient(135deg, var(--pink), var(--pink2)); color: #fff; text-decoration: none;
+  border-radius: 50px; padding: 12px 26px; font-weight: 700; font-size: .9rem;
+  box-shadow: 0 4px 18px rgba(245,0,87,.35); transition: all .2s;
 }
 .btn-go:hover { transform: translateY(-2px); box-shadow: 0 7px 26px rgba(245,0,87,.45); color: #fff; }
-
-.section-spacer { margin-bottom: 28px; }
-
 </style>
 
 {% if not dieta %}
@@ -201,7 +162,7 @@
 
 {% else %}
 
-  <!-- HERO IA -->
+  <!-- HERO -->
   <div class="ia-hero">
     <div class="ia-hero-badge">🤖 Generado por IA · Nutriet</div>
     <h2>Tu Plan Nutricional Personalizado</h2>
@@ -216,14 +177,17 @@
       {% if formulario.nivel_actividad %}
         <span class="meta-pill">⚡ Actividad: <strong>{{ formulario.get_nivel_actividad_display }}</strong></span>
       {% endif %}
+      {% if formulario.condicion_medica %}
+        <span class="meta-pill">🩺 Condición: <strong>{{ formulario.condicion_medica }}</strong></span>
+      {% endif %}
       {% if dieta.creado_en %}
         <span class="meta-pill">📆 Generado el <strong>{{ dieta.creado_en|date:"d M Y" }}</strong></span>
       {% endif %}
     </div>
   </div>
 
-  <!-- MÉTRICAS CORPORALES -->
-  <div class="metrics-grid section-spacer">
+  <!-- MÉTRICAS -->
+  <div class="metrics-grid">
     {% if dieta.imc %}
     <div class="metric-card">
       <div class="metric-ico">📊</div>
@@ -254,57 +218,69 @@
     {% endif %}
   </div>
 
-  <!-- CALORÍAS -->
+  <!-- EVALUACIÓN INICIAL -->
+  {% if texto.evaluacion_inicial %}
+  <div class="ic">
+    <div class="ic-title">📋 Evaluación Clínica</div>
+    <p>{{ texto.evaluacion_inicial }}</p>
+  </div>
+  {% endif %}
+
+  <!-- DIAGNÓSTICO CORPORAL -->
+  {% if texto.diagnostico_corporal %}
+  {% with d=texto.diagnostico_corporal %}
+  {% if d.clasificacion_imc or d.interpretacion_grasa or d.riesgo_metabolico %}
+  <div class="ic soft">
+    <div class="ic-title">🔬 Composición Corporal</div>
+    <div class="diag-grid">
+      {% if d.clasificacion_imc %}
+      <div class="diag-item"><div class="diag-lbl">📏 IMC</div><div class="diag-val">{{ d.clasificacion_imc }}</div></div>
+      {% endif %}
+      {% if d.interpretacion_grasa %}
+      <div class="diag-item"><div class="diag-lbl">💪 % Grasa</div><div class="diag-val">{{ d.interpretacion_grasa }}</div></div>
+      {% endif %}
+      {% if d.riesgo_metabolico %}
+      <div class="diag-item"><div class="diag-lbl">⚡ Riesgo Metabólico</div><div class="diag-val">{{ d.riesgo_metabolico }}</div></div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% endwith %}
+  {% endif %}
+
+  <!-- CALORÍAS Y MACROS -->
+  <div class="section-label">Energía y macronutrientes</div>
+
   {% if dieta.calorias_diarias %}
-  <div class="ic section-spacer">
-    <div class="ic-title">🔥 Calorías Diarias Recomendadas</div>
-    <div class="kcal-big">
-      <span class="n">{{ dieta.calorias_diarias }}</span>
-      <span class="u">kcal / día</span>
-    </div>
-    <p>Calculadas en base a tu TMB, nivel de actividad y objetivo. No se trata de "comer menos", sino de comer de forma estratégica.</p>
+  <div class="ic">
+    <div class="ic-title">🔥 Calorías Diarias</div>
+    <div class="kcal-big"><span class="n">{{ dieta.calorias_diarias }}</span><span class="u">kcal / día</span></div>
+    {% if texto.explicacion_calorica %}<p>{{ texto.explicacion_calorica }}</p>{% endif %}
   </div>
   {% endif %}
 
-  <!-- MACROS -->
   {% if dieta.proteinas_gramos or dieta.grasas_gramos or dieta.carbohidratos_gramos %}
-  <div class="ic section-spacer">
-    <div class="ic-title">🥗 Distribución de Macronutrientes Diarios</div>
+  <div class="ic">
+    <div class="ic-title">🥗 Macronutrientes Diarios</div>
     <div class="macros-row">
-      {% if dieta.proteinas_gramos %}
-      <div class="macro-pill prot">
-        <div class="macro-val">{{ dieta.proteinas_gramos }}g</div>
-        <div class="macro-lbl">Proteínas</div>
-      </div>
-      {% endif %}
-      {% if dieta.grasas_gramos %}
-      <div class="macro-pill fat">
-        <div class="macro-val">{{ dieta.grasas_gramos }}g</div>
-        <div class="macro-lbl">Grasas</div>
-      </div>
-      {% endif %}
-      {% if dieta.carbohidratos_gramos %}
-      <div class="macro-pill carb">
-        <div class="macro-val">{{ dieta.carbohidratos_gramos }}g</div>
-        <div class="macro-lbl">Carbohidratos</div>
-      </div>
-      {% endif %}
+      {% if dieta.proteinas_gramos %}<div class="macro-pill prot"><div class="macro-val">{{ dieta.proteinas_gramos }}g</div><div class="macro-lbl">Proteínas</div></div>{% endif %}
+      {% if dieta.grasas_gramos %}<div class="macro-pill fat"><div class="macro-val">{{ dieta.grasas_gramos }}g</div><div class="macro-lbl">Grasas</div></div>{% endif %}
+      {% if dieta.carbohidratos_gramos %}<div class="macro-pill carb"><div class="macro-val">{{ dieta.carbohidratos_gramos }}g</div><div class="macro-lbl">Carbohidratos</div></div>{% endif %}
     </div>
+    {% if texto.explicacion_macronutrientes %}<p style="margin-top:14px">{{ texto.explicacion_macronutrientes }}</p>{% endif %}
   </div>
   {% endif %}
 
-  <!-- DISTRIBUCIÓN POR COMIDA -->
   {% if dieta.distribucion_macros_comidas %}
-  <div class="ic section-spacer">
+  <div class="ic soft">
     <div class="ic-title">🍽️ Distribución por Comida</div>
-    <p style="margin-bottom:14px;color:var(--muted);font-size:.87rem">Así distribuyes tus macros durante el día para maximizar resultados:</p>
     <div class="comidas-grid">
       {% for comida, macros in dieta.distribucion_macros_comidas.items %}
       <div class="comida-item">
         <div class="comida-name">{{ comida }} {% if macros.porcentaje %}<span style="font-weight:400;color:var(--muted)">({{ macros.porcentaje|floatformat:0 }}%)</span>{% endif %}</div>
         <div class="comida-details">
           {% if macros.calorias %}{{ macros.calorias|floatformat:0 }} kcal<br>{% endif %}
-          {% if macros.proteinas_g %}Prot: {{ macros.proteinas_g|floatformat:1 }}g &nbsp;·&nbsp; {% endif %}
+          {% if macros.proteinas_g %}Prot: {{ macros.proteinas_g|floatformat:1 }}g &nbsp;·&nbsp;{% endif %}
           {% if macros.grasas_g %}Grasas: {{ macros.grasas_g|floatformat:1 }}g<br>{% endif %}
           {% if macros.carbohidratos_g %}Carbos: {{ macros.carbohidratos_g|floatformat:1 }}g{% endif %}
         </div>
@@ -314,86 +290,143 @@
   </div>
   {% endif %}
 
-  <!-- CONTENIDO TEXTO IA (contenido_dieta) -->
-  {% if texto %}
-
-    {% if texto.evaluacion_inicial %}
-    <div class="ic section-spacer">
-      <div class="ic-title">📋 Evaluación Inicial</div>
-      <p>{{ texto.evaluacion_inicial }}</p>
+  <!-- HIDRATACIÓN -->
+  {% if texto.hidratacion %}
+  {% with h=texto.hidratacion %}
+  {% if h.litros_recomendados %}
+  <div class="section-label">Hidratación</div>
+  <div class="ic teal">
+    <div class="ic-title">💧 Consumo de Agua</div>
+    <div class="agua-big"><span class="agua-n">{{ h.litros_recomendados }}</span><span class="agua-u">al día</span></div>
+    {% if h.calculo_explicado %}<p>{{ h.calculo_explicado }}</p>{% endif %}
+    {% if h.consejos_hidratacion %}
+    <div class="tag-list" style="margin-top:12px">
+      {% for c in h.consejos_hidratacion %}<span class="tag teal">💧 {{ c }}</span>{% endfor %}
     </div>
     {% endif %}
-
-    {% if texto.explicacion_calorica %}
-    <div class="ic soft section-spacer">
-      <div class="ic-title">💡 ¿Por qué estas calorías?</div>
-      <p>{{ texto.explicacion_calorica }}</p>
+    {% if h.señales_deshidratacion %}
+    <p style="margin-top:13px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#b0004e">Señales de deshidratación</p>
+    <div class="tag-list" style="margin-top:6px">
+      {% for s in h.señales_deshidratacion %}<span class="tag red">⚠️ {{ s }}</span>{% endfor %}
     </div>
     {% endif %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  {% endif %}
 
-    {% if texto.explicacion_macronutrientes %}
-    <div class="ic soft section-spacer">
-      <div class="ic-title">📊 ¿Qué son los Macronutrientes y por qué estos?</div>
-      <p>{{ texto.explicacion_macronutrientes }}</p>
+  <!-- CONDICIÓN MÉDICA -->
+  {% if texto.recomendaciones_por_condicion %}
+  {% with c=texto.recomendaciones_por_condicion %}
+  {% if c.explicacion_condicion or c.pautas_criticas %}
+  <div class="section-label">Condición médica</div>
+  <div class="ic danger">
+    <div class="ic-title">🩺 {{ c.titulo }}</div>
+    {% if c.explicacion_condicion %}<p>{{ c.explicacion_condicion }}</p>{% endif %}
+    {% if c.impacto_en_objetivo %}<p><strong>Impacto en tu objetivo:</strong> {{ c.impacto_en_objetivo }}</p>{% endif %}
+    {% if c.nutrientes_clave %}<p><strong>Nutrientes clave:</strong> {{ c.nutrientes_clave }}</p>{% endif %}
+    {% if c.pautas_criticas %}
+    <div class="pauta-list">
+      {% for p in c.pautas_criticas %}
+      <div class="pauta-item"><span class="pauta-num">{{ forloop.counter }}</span><span class="pauta-text">{{ p }}</span></div>
+      {% endfor %}
     </div>
     {% endif %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  {% endif %}
 
-    {% if texto.explicacion_del_cambio_fisico %}
-    <div class="ic section-spacer">
-      <div class="ic-title">📈 ¿Cómo Será Tu Cambio Físico?</div>
-      <p>{{ texto.explicacion_del_cambio_fisico }}</p>
+  <!-- ALIMENTOS -->
+  {% if texto.alimentos.recomendados or texto.alimentos.a_evitar %}
+  <div class="section-label">Alimentos</div>
+  <div class="foods-cols">
+    {% if texto.alimentos.recomendados %}
+    <div class="ic green">
+      <div class="ic-title">✅ Recomendados</div>
+      <ul>{% for a in texto.alimentos.recomendados %}<li>{{ a }}</li>{% endfor %}</ul>
     </div>
     {% endif %}
-
-    {% if texto.recomendaciones_generales %}
-    <div class="ic green section-spacer">
-      <div class="ic-title">✅ Recomendaciones Generales</div>
-      <p>{{ texto.recomendaciones_generales }}</p>
+    {% if texto.alimentos.a_evitar %}
+    <div class="ic danger">
+      <div class="ic-title">🚫 A Evitar</div>
+      <ul>{% for a in texto.alimentos.a_evitar %}<li>{{ a }}</li>{% endfor %}</ul>
     </div>
     {% endif %}
+  </div>
+  {% endif %}
 
-    {% if texto.recomendaciones_profesionales %}
-    <div class="ic soft section-spacer">
-      <div class="ic-title">🧠 Recomendaciones Profesionales</div>
-      <p>{{ texto.recomendaciones_profesionales }}</p>
+  <!-- HÁBITOS CLÍNICOS -->
+  {% if texto.habitos_clinicos %}
+  {% with h=texto.habitos_clinicos %}
+  {% if h.frecuencia_comidas or h.horarios or h.velocidad_comida or h.suplementos %}
+  <div class="section-label">Hábitos clínicos</div>
+  <div class="ic blue">
+    <div class="ic-title">🗓️ Hábitos Alimenticios</div>
+    <div class="habitos-grid">
+      {% if h.frecuencia_comidas %}<div class="habito-item"><div class="habito-icon">🍽️</div><div class="habito-lbl">Frecuencia</div><div class="habito-val">{{ h.frecuencia_comidas }}</div></div>{% endif %}
+      {% if h.horarios %}<div class="habito-item"><div class="habito-icon">⏰</div><div class="habito-lbl">Horarios</div><div class="habito-val">{{ h.horarios }}</div></div>{% endif %}
+      {% if h.velocidad_comida %}<div class="habito-item"><div class="habito-icon">🐢</div><div class="habito-lbl">Al comer</div><div class="habito-val">{{ h.velocidad_comida }}</div></div>{% endif %}
+      {% if h.suplementos %}<div class="habito-item"><div class="habito-icon">💊</div><div class="habito-lbl">Suplementos</div><div class="habito-val">{{ h.suplementos }}</div></div>{% endif %}
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
+  {% endwith %}
+  {% endif %}
 
-    {% if texto.errores_comunes_a_evitar %}
-    <div class="ic danger section-spacer">
-      <div class="ic-title">⚠️ Errores Comunes a Evitar</div>
-      <p>{{ texto.errores_comunes_a_evitar }}</p>
+  <!-- EJERCICIO Y CAMBIO FÍSICO -->
+  {% if texto.ejercicio_y_nutricion %}
+  <div class="ic soft">
+    <div class="ic-title">🏋️ Ejercicio y Nutrición</div>
+    <p>{{ texto.ejercicio_y_nutricion }}</p>
+  </div>
+  {% endif %}
+
+  {% if texto.explicacion_del_cambio_fisico %}
+  <div class="ic">
+    <div class="ic-title">📈 Cambio Físico Esperado</div>
+    <p>{{ texto.explicacion_del_cambio_fisico }}</p>
+  </div>
+  {% endif %}
+
+  <!-- RECOMENDACIONES -->
+  {% if texto.recomendaciones_generales %}
+  <div class="section-label">Recomendaciones</div>
+  <div class="ic green">
+    <div class="ic-title">✅ Recomendaciones del Nutricionista</div>
+    <p>{{ texto.recomendaciones_generales }}</p>
+  </div>
+  {% endif %}
+
+  {% if texto.recomendaciones_profesionales %}
+  <div class="ic warn">
+    <div class="ic-title">🧪 Seguimiento Clínico y Exámenes</div>
+    <p>{{ texto.recomendaciones_profesionales }}</p>
+  </div>
+  {% endif %}
+
+  <!-- ERRORES A EVITAR -->
+  {% if texto.errores_comunes_a_evitar %}
+  <div class="ic danger">
+    <div class="ic-title">⚠️ Errores a Evitar</div>
+    <div class="pauta-list">
+      {% for e in texto.errores_comunes_a_evitar %}
+      <div class="pauta-item"><span class="pauta-num">✗</span><span class="pauta-text">{{ e }}</span></div>
+      {% endfor %}
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
 
-    {% if texto.alimentos.recomendados or texto.alimentos.a_evitar %}
-    <div class="foods-cols section-spacer">
-      {% if texto.alimentos.recomendados %}
-      <div class="ic green">
-        <div class="ic-title">✅ Alimentos Recomendados</div>
-        <ul>{% for a in texto.alimentos.recomendados %}<li>{{ a }}</li>{% endfor %}</ul>
-      </div>
-      {% endif %}
-      {% if texto.alimentos.a_evitar %}
-      <div class="ic danger">
-        <div class="ic-title">🚫 Alimentos a Evitar</div>
-        <ul>{% for a in texto.alimentos.a_evitar %}<li>{{ a }}</li>{% endfor %}</ul>
-      </div>
-      {% endif %}
-    </div>
-    {% endif %}
-
-    {% if texto.nota_importante %}
-    <div class="ic yellow section-spacer">
-      <div class="ic-title">📌 Nota Importante</div>
-      <p>{{ texto.nota_importante }}</p>
-    </div>
-    {% endif %}
-
+  <!-- NOTA IMPORTANTE -->
+  {% if texto.nota_importante %}
+  <div class="ic yellow">
+    <div class="ic-title">📌 Nota Importante</div>
+    <p>{{ texto.nota_importante }}</p>
+  </div>
   {% endif %}
 
   <!-- ACCIÓN -->
-  <div style="margin-top:10px;margin-bottom:20px">
+  <div style="margin-top:16px;margin-bottom:24px">
     <a href="{% url 'generar_dieta' %}" class="btn-go">🍳 Ver mis recetas personalizadas</a>
   </div>
 
