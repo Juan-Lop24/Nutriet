@@ -1118,47 +1118,47 @@
 <!-- FILA INFERIOR: Favoritas | Explorar -->
 <div class="dashboard-bottom">
 
-  <!-- FAVORITAS -->
-  <div class="grid-section">
-    <div class="section-label">
-      <div class="section-icon" style="background: linear-gradient(135deg,#ff4081,#ff7043);">
-        <i class="fas fa-heart"></i>
-      </div>
-      <h2>Mis favoritas</h2>
-      <div class="section-line"></div>
-    </div>
-
-    <div class="recetas-wrapper">
-      <div class="card shadow-sm card-clickable"
-           onclick="window.location.href='{% url 'favoritos' %}'">
-
-        <div class="card-body">
-          <h5 class="card-title mb-4"></h5>
-
-          {% if favoritas %}
-            <div class="row">
-              {% for receta in favoritas %}
-                <div class="col-md-4 mb-3">
-                  <a href="{% url 'receta_detalle' receta.recipe_id %}"
-                     class="receta-widget text-decoration-none"
-                     onclick="event.stopPropagation();">
-                     
-                    <div class="widget-card">
-                      <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
-                      <div class="widget-content">
-                        <h6>{{ receta.titulo }}</h6>
-                      </div>
-                    </div>
-
-                  </a>
-                </div>
-              {% endfor %}
-            </div>
-          {% else %}
-            <p class="text-muted">No tienes recetas favoritas aún.</p>
-          {% endif %}
-
+      <!-- FAVORITAS -->
+       
+      <div class="grid-section">
+        <div class="section-label">
+          <div class="section-icon" style="background: linear-gradient(135deg,#ff4081,#ff7043);">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h2>Mis favoritas</h2>
+          <div class="section-line"></div>
         </div>
+        <a href="{% url 'recetas_favoritas' %}" class="text-decoration-none text-dark">
+
+          <div class="recetas-wrapper">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-4"></h5>
+
+                {% if favoritas %}
+                  <div class="row">
+                    {% for receta in favoritas %}
+                      <div class="col-md-4 mb-3">
+                        <a href="{% url 'receta_detalle' receta.recipe_id %}"
+                          class="receta-widget text-decoration-none">
+                          <div class="widget-card">
+                            <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
+                            <div class="widget-content">
+                              <h6>{{ receta.titulo }}</h6>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="text-muted">No tienes recetas favoritas aún.</p>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
   </div>
@@ -1487,6 +1487,5 @@
       if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
     });
   </script>
-
 </body>
 </html>
