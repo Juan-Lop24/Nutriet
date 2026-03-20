@@ -587,8 +587,65 @@ body::after {
 .modal-btn--confirm:hover { transform:translateY(-2px); filter:brightness(1.06); box-shadow:0 10px 28px rgba(220,53,69,.35); }
 
 /* ══════════════════════════════════════════
-   RESPONSIVE
+   TELÉFONO COLOMBIANO
 ══════════════════════════════════════════ */
+.phone-input-wrap {
+  display:flex; align-items:center;
+  background:rgba(245,0,87,.03); border:1.5px solid var(--border);
+  border-radius:13px; overflow:hidden;
+  transition:all .25s ease;
+}
+.phone-input-wrap:focus-within {
+  border-color:var(--pink); background:var(--pink-subtle);
+  box-shadow:0 0 0 3px rgba(245,0,87,.1);
+}
+.phone-prefix {
+  padding:12px 12px 12px 14px;
+  font-size:.82rem; font-weight:700; color:var(--pink);
+  white-space:nowrap; border-right:1.5px solid var(--border);
+  background:rgba(245,0,87,.05); user-select:none;
+  flex-shrink:0;
+}
+.phone-input-wrap input {
+  border:none !important; border-radius:0 !important;
+  background:transparent !important; box-shadow:none !important;
+  flex:1;
+}
+.phone-input-wrap input:focus {
+  border:none !important; box-shadow:none !important; background:transparent !important;
+}
+.field-hint {
+  font-size:.68rem; color:var(--text-muted); font-weight:500;
+  display:flex; align-items:center; gap:4px;
+}
+.field-hint i { color:var(--pink); font-size:.65rem; }
+
+/* ══════════════════════════════════════════
+   MEDIDOR DE FORTALEZA CONTRASEÑA
+══════════════════════════════════════════ */
+.pw-strength-bar {
+  display:flex; gap:4px; margin-top:6px;
+}
+.pw-strength-bar span {
+  flex:1; height:4px; border-radius:100px;
+  background:#e0e0e0; transition:background .3s ease;
+}
+.pw-strength-label {
+  font-size:.68rem; font-weight:700; margin-top:4px;
+  transition:color .3s;
+}
+.pw-rules {
+  margin-top:8px; display:flex; flex-direction:column; gap:3px;
+}
+.pw-rule {
+  font-size:.68rem; font-weight:600;
+  display:flex; align-items:center; gap:6px;
+  color:var(--text-muted); transition:color .25s;
+}
+.pw-rule i { font-size:.62rem; width:12px; }
+.pw-rule.ok { color:#4CAF50; }
+.pw-rule.fail { color:#dc3545; }
+
 @media (max-width:1024px) {
   .profile-header-bar { flex-direction:column; align-items:flex-start; }
   .header-quick-stats { width:100%; }
@@ -769,10 +826,15 @@ body::after {
             </div>
             <div class="form-group">
               {{ perfil_form.telefono.label_tag }}
-              {{ perfil_form.telefono }}
+              <div class="phone-input-wrap">
+                <span class="phone-prefix">🇨🇴 +57</span>
+                {{ perfil_form.telefono }}
+              </div>
+              <span class="field-hint"><i class="fas fa-info-circle"></i> 10 dígitos sin espacios (ej: 3001234567)</span>
               {% if perfil_form.telefono.errors %}
                 <span class="field-error">{{ perfil_form.telefono.errors.0 }}</span>
               {% endif %}
+              <span class="field-error" id="telefono-error" style="display:none;"></span>
             </div>
           </div>
 
@@ -822,6 +884,19 @@ body::after {
               <div class="input-icon-wrap">
                 {{ password_form.password_new }}
                 <i class="fas fa-eye toggle-pw" data-target="id_password_new"></i>
+              </div>
+              <!-- Medidor de fortaleza -->
+              <div class="pw-strength-bar" id="pw-strength-bar">
+                <span id="pwb1"></span><span id="pwb2"></span>
+                <span id="pwb3"></span><span id="pwb4"></span><span id="pwb5"></span>
+              </div>
+              <div class="pw-strength-label" id="pw-strength-label" style="color:var(--text-muted);">Escribe tu nueva contraseña</div>
+              <div class="pw-rules" id="pw-rules">
+                <div class="pw-rule" id="rule-len"><i class="fas fa-circle"></i> Mínimo 8 caracteres</div>
+                <div class="pw-rule" id="rule-lower"><i class="fas fa-circle"></i> Una letra minúscula</div>
+                <div class="pw-rule" id="rule-upper"><i class="fas fa-circle"></i> Una letra mayúscula</div>
+                <div class="pw-rule" id="rule-num"><i class="fas fa-circle"></i> Un número</div>
+                <div class="pw-rule" id="rule-special"><i class="fas fa-circle"></i> Un carácter especial (!@#$%^&*...)</div>
               </div>
               {% if password_form.password_new.errors %}
                 <span class="field-error">{{ password_form.password_new.errors.0 }}</span>
@@ -1194,6 +1269,176 @@ document.getElementById('modal-confirmar').addEventListener('click', function (e
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') cerrarModalConfirmar();
 });
+</script>
+
+<script>
+/* ══════════════════════════════════════════
+   VALIDACIÓN TELÉFONO COLOMBIANO
+   Solo números, exactamente 10 dígitos
+══════════════════════════════════════════ */
+(function () {
+  const telInput = document.getElementById('id_telefono');
+  const telError = document.getElementById('telefono-error');
+  const telForm  = telInput ? telInput.closest('form') : null;
+
+  if (!telInput) return;
+
+  // Bloquear letras y caracteres no numéricos al escribir
+  telInput.addEventListener('keypress', function (e) {
+    if (!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
+      e.preventDefault();
+    }
+  });
+
+  // Bloquear pegado de texto no numérico
+  telInput.addEventListener('paste', function (e) {
+    e.preventDefault();
+    const pasted = (e.clipboardData || window.clipboardData).getData('text');
+    const digits = pasted.replace(/\D/g, '').slice(0, 10);
+    const start  = this.selectionStart;
+    const end    = this.selectionEnd;
+    const current = this.value;
+    const next = (current.slice(0, start) + digits + current.slice(end)).slice(0, 10);
+    this.value = next;
+    this.dispatchEvent(new Event('input'));
+  });
+
+  // Limpiar si escriben +57 o espacios (el prefijo ya se muestra visualmente)
+  telInput.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    validarTelefono();
+  });
+
+  function validarTelefono() {
+    const val = telInput.value.trim();
+    if (val.length === 0) {
+      telError.style.display = 'none';
+      telInput.style.borderColor = '';
+      return true;
+    }
+    if (val.length !== 10) {
+      telError.textContent = 'El número debe tener exactamente 10 dígitos.';
+      telError.style.display = 'flex';
+      telInput.style.borderColor = '#dc3545';
+      return false;
+    }
+    telError.style.display = 'none';
+    telInput.style.borderColor = '#4CAF50';
+    return true;
+  }
+
+  telInput.addEventListener('blur', validarTelefono);
+
+  if (telForm) {
+    telForm.addEventListener('submit', function (e) {
+      if (!validarTelefono()) {
+        e.preventDefault();
+        telInput.focus();
+      }
+    });
+  }
+})();
+
+/* ══════════════════════════════════════════
+   VALIDACIÓN CONTRASEÑA
+   Mín 8 chars, minúscula, mayúscula, número, especial
+══════════════════════════════════════════ */
+(function () {
+  const pwInput   = document.getElementById('id_password_new');
+  const pwConfirm = document.getElementById('id_password_confirm');
+  const pwForm    = pwInput ? pwInput.closest('form') : null;
+
+  if (!pwInput) return;
+
+  const bars   = [1,2,3,4,5].map(i => document.getElementById('pwb'+i));
+  const label  = document.getElementById('pw-strength-label');
+  const rules  = {
+    len:     { el: document.getElementById('rule-len'),     fn: v => v.length >= 8 },
+    lower:   { el: document.getElementById('rule-lower'),   fn: v => /[a-z]/.test(v) },
+    upper:   { el: document.getElementById('rule-upper'),   fn: v => /[A-Z]/.test(v) },
+    num:     { el: document.getElementById('rule-num'),     fn: v => /[0-9]/.test(v) },
+    special: { el: document.getElementById('rule-special'), fn: v => /[^A-Za-z0-9]/.test(v) },
+  };
+
+  const levels = [
+    { color:'#dc3545', text:'Muy débil 😬' },
+    { color:'#ff7043', text:'Débil' },
+    { color:'#ffb300', text:'Regular' },
+    { color:'#7cb342', text:'Fuerte 💪' },
+    { color:'#4CAF50', text:'Muy fuerte 🔐' },
+  ];
+
+  function evaluar(val) {
+    let score = 0;
+    for (const key in rules) {
+      const ok = rules[key].fn(val);
+      if (ok) score++;
+      if (rules[key].el) {
+        rules[key].el.classList.toggle('ok',   ok);
+        rules[key].el.classList.toggle('fail', val.length > 0 && !ok);
+        const icon = rules[key].el.querySelector('i');
+        if (icon) {
+          icon.className = ok ? 'fas fa-check-circle' : (val.length > 0 ? 'fas fa-times-circle' : 'fas fa-circle');
+        }
+      }
+    }
+    bars.forEach((b, i) => {
+      if (!b) return;
+      b.style.background = i < score ? levels[score - 1].color : '#e0e0e0';
+    });
+    if (label) {
+      label.textContent  = val.length === 0 ? 'Escribe tu nueva contraseña' : levels[score - 1]?.text || '';
+      label.style.color  = val.length === 0 ? 'var(--text-muted)' : levels[score - 1]?.color || 'var(--text-muted)';
+    }
+    return score === 5;
+  }
+
+  pwInput.addEventListener('input', () => evaluar(pwInput.value));
+
+  if (pwForm) {
+    pwForm.addEventListener('submit', function (e) {
+      const val = pwInput.value;
+      if (val.length === 0) return; // Django maneja campo vacío
+
+      const ok = evaluar(val);
+      if (!ok) {
+        e.preventDefault();
+        pwInput.focus();
+        if (label) {
+          label.textContent = '⚠ Corrige los requisitos antes de continuar';
+          label.style.color = '#dc3545';
+        }
+        return;
+      }
+      if (pwConfirm && pwInput.value !== pwConfirm.value) {
+        e.preventDefault();
+        pwConfirm.style.borderColor = '#dc3545';
+        pwConfirm.focus();
+        // Mostrar error bajo confirmación si no existe
+        let errConfirm = pwConfirm.parentElement.nextElementSibling;
+        if (!errConfirm || !errConfirm.classList.contains('field-error')) {
+          errConfirm = document.createElement('span');
+          errConfirm.className = 'field-error';
+          errConfirm.id = 'confirm-mismatch-err';
+          pwConfirm.parentElement.insertAdjacentElement('afterend', errConfirm);
+        }
+        errConfirm.textContent = 'Las contraseñas no coinciden.';
+      }
+    });
+  }
+
+  if (pwConfirm) {
+    pwConfirm.addEventListener('input', function () {
+      const err = document.getElementById('confirm-mismatch-err');
+      if (this.value === pwInput.value) {
+        this.style.borderColor = '#4CAF50';
+        if (err) err.textContent = '';
+      } else {
+        this.style.borderColor = '#dc3545';
+      }
+    });
+  }
+})();
 </script>
 </body>
 </html>
