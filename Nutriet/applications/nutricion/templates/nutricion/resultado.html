@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Dieta Personalizada — NUTRIET</title>
+    <title>Tu Evaluación Nutricional — NUTRIET</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -13,23 +13,28 @@
             --pink:#E8175D;--pink-h:#c41250;--pink-soft:#fce4ef;--pink-mid:#f5a8c8;
             --cream:#FAF5EF;--cream2:#f3ece2;--text:#1C1C1E;--muted:#7a6f6a;
             --border:#eeddd4;--white:#ffffff;--r-lg:18px;--r-md:12px;--r-sm:8px;
+            --blue:#0066cc;--blue-soft:#e8f4ff;--blue-mid:#9dcfff;
+            --green:#1a7a4a;--green-soft:#e8f5ee;--green-mid:#7ac9a0;
+            --yellow:#c07a00;--yellow-soft:#fef9e7;--yellow-mid:#f4d47a;
+            --red-soft:#fff0f4;--red-mid:#f5a8c8;
+            --teal:#0e7490;--teal-soft:#e0f7fa;--teal-mid:#7ecfdf;
         }
-        body{font-family:"DM Sans",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;
+        body{font-family:"Inter",sans-serif;background:var(--cream);color:var(--text);min-height:100vh;
              background-image:radial-gradient(var(--border) 1px,transparent 1px);background-size:28px 28px}
 
         /* NAV */
         .nav{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
              padding:0 32px;display:flex;align-items:center;height:58px;position:sticky;top:0;z-index:100}
-        .nav-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:1.45rem;color:var(--pink);
+        .nav-logo{font-family:"Montserrat",sans-serif;font-weight:800;font-size:1.45rem;color:var(--pink);
                   letter-spacing:-.03em;text-decoration:none}
         .nav-actions{margin-left:auto;display:flex;gap:10px}
-        .nav-btn{font-family:"DM Sans",sans-serif;font-weight:600;font-size:.83rem;padding:8px 18px;
+        .nav-btn{font-family:"Inter",sans-serif;font-weight:600;font-size:.83rem;padding:8px 18px;
                  border-radius:50px;border:none;cursor:pointer;text-decoration:none;transition:all .2s;
                  display:inline-flex;align-items:center;gap:6px}
         .nav-btn.out{background:transparent;border:1.5px solid var(--border);color:var(--muted)}
         .nav-btn.out:hover{border-color:var(--pink);color:var(--pink);background:var(--pink-soft)}
 
-        /* HERO STRIP */
+        /* HERO */
         .hero-strip{background:var(--pink);background-image:radial-gradient(ellipse at 80% 50%,rgba(255,255,255,.1) 0%,transparent 60%);
                     padding:52px 24px 80px;position:relative;overflow:hidden}
         .hero-strip::before,.hero-strip::after{content:"";position:absolute;border-radius:50%;border-style:solid;border-color:rgba(255,255,255,.08)}
@@ -39,36 +44,49 @@
                            background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);
                            font-size:.73rem;font-weight:700;color:white;letter-spacing:.1em;
                            text-transform:uppercase;margin-bottom:12px}
-        .hero-strip h1{font-family:"Syne",sans-serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;color:white;margin-bottom:6px}
+        .hero-strip h1{font-family:"Montserrat",sans-serif;font-size:clamp(1.7rem,4vw,2.6rem);font-weight:800;color:white;margin-bottom:6px}
         .hero-strip p{color:rgba(255,255,255,.7);font-size:.95rem}
 
-        /* PULL UP */
-        .pullup{margin-top:-40px;position:relative;z-index:2;padding:0 24px 60px;max-width:900px;margin-left:auto;margin-right:auto;margin-top:-40px}
+        /* LAYOUT */
+        .pullup{margin-top:-40px;position:relative;z-index:2;padding:0 24px 60px;max-width:920px;margin-left:auto;margin-right:auto}
+
+        /* CARDS */
+        .ic{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);
+            padding:26px 28px;margin-bottom:14px;box-shadow:0 1px 12px rgba(232,23,93,.04)}
+        .ic.soft{background:var(--pink-soft);border-color:var(--pink-mid)}
+        .ic.warn{background:#fff8f0;border-color:#ffd4a8}
+        .ic.danger{background:var(--red-soft);border-color:var(--red-mid)}
+        .ic.yellow{background:var(--yellow-soft);border-color:var(--yellow-mid)}
+        .ic.green{background:var(--green-soft);border-color:var(--green-mid)}
+        .ic.blue{background:var(--blue-soft);border-color:var(--blue-mid)}
+        .ic.teal{background:var(--teal-soft);border-color:var(--teal-mid)}
+        .ic.dark{background:#1C1C1E;border-color:#333}
+        .ic.dark .ic-title{color:white}
+        .ic.dark p,.ic.dark li{color:#ccc}
+
+        .ic-title{font-family:"Montserrat",sans-serif;font-size:1rem;font-weight:800;color:var(--text);
+                  margin-bottom:13px;display:flex;align-items:center;gap:9px}
+        .ic p,.ic li{font-size:.95rem;line-height:1.85;color:#3a3035}
+        .ic ul{padding-left:18px;margin:0}
+        .ic p+p{margin-top:8px}
+
+        /* SECTION HEADER */
+        .section-head{font-family:"Montserrat",sans-serif;font-size:.7rem;font-weight:800;
+                      text-transform:uppercase;letter-spacing:.15em;color:var(--muted);
+                      margin:28px 0 10px;padding-left:4px;display:flex;align-items:center;gap:8px}
+        .section-head::after{content:"";flex:1;height:1px;background:var(--border)}
 
         /* METRIC STRIP */
         .mstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:22px}
         .mc{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 14px;
             text-align:center;box-shadow:0 2px 14px rgba(232,23,93,.07);transition:transform .2s,box-shadow .2s}
         .mc:hover{transform:translateY(-3px);box-shadow:0 6px 22px rgba(232,23,93,.13)}
-        .mc .val{font-family:"Syne",sans-serif;font-size:1.9rem;font-weight:800;color:var(--pink);line-height:1;margin-bottom:4px}
+        .mc .val{font-family:"Montserrat",sans-serif;font-size:1.9rem;font-weight:800;color:var(--pink);line-height:1;margin-bottom:4px}
         .mc .lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-
-        /* INFO CARDS */
-        .ic{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);
-            padding:26px 28px;margin-bottom:14px;box-shadow:0 1px 12px rgba(232,23,93,.04)}
-        .ic.soft{background:var(--pink-soft);border-color:var(--pink-mid)}
-        .ic.warn{background:#fff8f0;border-color:#ffd4a8}
-        .ic.danger{background:#fff0f4;border-color:var(--pink-mid)}
-        .ic.yellow{background:linear-gradient(135deg,#fef9e7 0%,#fef3cd 100%);border-color:#f4d47a}
-        .ic-title{font-family:"Syne",sans-serif;font-size:1rem;font-weight:800;color:var(--text);
-                  margin-bottom:13px;display:flex;align-items:center;gap:9px}
-        .ic p,.ic li{font-size:.96rem;line-height:1.85;color:#3a3035}
-        .ic ul{padding-left:18px;margin:0}
-        .ic p+p{margin-top:8px}
 
         /* KCAL BIG */
         .kcal{display:inline-flex;align-items:baseline;gap:5px;margin-bottom:9px}
-        .kcal .n{font-family:"Syne",sans-serif;font-size:2.8rem;font-weight:800;color:var(--pink);line-height:1}
+        .kcal .n{font-family:"Montserrat",sans-serif;font-size:2.8rem;font-weight:800;color:var(--pink);line-height:1}
         .kcal .u{font-size:.95rem;font-weight:600;color:var(--muted)}
 
         /* MACROS */
@@ -76,10 +94,54 @@
         .mp{flex:1;min-width:105px;border-radius:var(--r-md);padding:16px;text-align:center}
         .mp.prot{background:var(--pink-soft);border:1.5px solid var(--pink-mid)}
         .mp.fat{background:#fff8e6;border:1.5px solid #ffd98a}
-        .mp.carb{background:#e8f4ff;border:1.5px solid #9dcfff}
-        .mp .mv{font-family:"Syne",sans-serif;font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:3px}
+        .mp.carb{background:var(--blue-soft);border:1.5px solid var(--blue-mid)}
+        .mp .mv{font-family:"Montserrat",sans-serif;font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:3px}
         .mp.prot .mv{color:var(--pink)}.mp.fat .mv{color:#c07a00}.mp.carb .mv{color:#0066cc}
         .mp .ml{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+
+        /* DIAGNÓSTICO GRID */
+        .diag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+        .diag-item{background:var(--cream2);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
+        .diag-item .di-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+                              color:var(--muted);margin-bottom:6px}
+        .diag-item .di-val{font-size:.93rem;line-height:1.6;color:var(--text)}
+
+        /* AGUA */
+        .agua-big{display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+        .agua-num{font-family:"Montserrat",sans-serif;font-size:3.2rem;font-weight:800;
+                  color:var(--teal);line-height:1}
+        .agua-unit{font-size:1rem;font-weight:600;color:var(--muted)}
+        .tag-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+        .tag{background:var(--white);border:1px solid var(--border);border-radius:50px;
+             padding:5px 14px;font-size:.82rem;color:var(--text);font-weight:500}
+        .tag.teal{background:var(--teal-soft);border-color:var(--teal-mid);color:var(--teal)}
+        .tag.red{background:var(--red-soft);border-color:var(--red-mid);color:#b0004e}
+
+        /* CONDICIÓN BADGE */
+        .condicion-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 18px;
+                          border-radius:50px;background:var(--pink);color:white;
+                          font-size:.8rem;font-weight:700;text-transform:uppercase;
+                          letter-spacing:.08em;margin-bottom:14px}
+
+        /* PAUTAS */
+        .pauta-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+        .pauta-item{display:flex;align-items:flex-start;gap:10px;background:rgba(255,255,255,.6);
+                    border-radius:var(--r-sm);padding:11px 14px;border:1px solid rgba(0,0,0,.06)}
+        .pauta-num{font-family:"Montserrat",sans-serif;font-size:.85rem;font-weight:800;
+                   color:var(--pink);min-width:22px}
+        .pauta-text{font-size:.91rem;line-height:1.65;color:#3a3035}
+
+        /* ALIMENTOS 2 COL */
+        .fcols{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:14px}
+        @media(max-width:540px){.fcols{grid-template-columns:1fr}}
+
+        /* HÁBITOS GRID */
+        .habitos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+        .habito-item{background:var(--cream2);border:1px solid var(--border);border-radius:var(--r-md);padding:15px}
+        .habito-icon{font-size:1.4rem;margin-bottom:6px}
+        .habito-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+                       color:var(--muted);margin-bottom:5px}
+        .habito-val{font-size:.88rem;line-height:1.6;color:var(--text)}
 
         /* COMIDA GRID */
         .cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:10px}
@@ -87,19 +149,15 @@
         .ci .cn{font-weight:700;font-size:.86rem;color:var(--text);text-transform:capitalize;margin-bottom:6px}
         .ci .cd{font-size:.78rem;color:var(--muted);line-height:1.6}
 
-        /* FOODS 2-COL */
-        .fcols{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-        @media(max-width:540px){.fcols{grid-template-columns:1fr}}
-
         /* BTN */
-        .btn-p{font-family:"Syne",sans-serif;font-weight:800;font-size:.92rem;
+        .btn-p{font-family:"Montserrat",sans-serif;font-weight:800;font-size:.92rem;
                background:linear-gradient(135deg,var(--pink) 0%,#ff5a8a 100%);color:white;border:none;
                padding:13px 28px;border-radius:50px;text-decoration:none;display:inline-flex;
                align-items:center;gap:8px;box-shadow:0 4px 18px rgba(232,23,93,.35);
                cursor:pointer;transition:all .2s}
         .btn-p:hover{transform:translateY(-2px);box-shadow:0 7px 26px rgba(232,23,93,.45);color:white}
 
-        /* SECTION REVEAL */
+        /* ANIM */
         .ic,.mc{animation:reveal .5s ease both}
         @keyframes reveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
     </style>
@@ -110,7 +168,7 @@
 <nav class="nav">
     <a class="nav-logo" href="#">NUTRIET</a>
     <div class="nav-actions">
-        <a href="{% url "generar_dieta" %}" class="nav-btn out">🍳 Generar Recetas</a>
+        <a href="{% url 'generar_dieta' %}" class="nav-btn out">🍳 Generar Recetas</a>
     </div>
 </nav>
 
@@ -119,7 +177,7 @@
     <div style="max-width:860px;margin:0 auto">
         <div class="badge">✦ Resultado listo</div>
         <h1>Tu Evaluación Nutricional<br>Personalizada</h1>
-        <p>Análisis basado en tus datos físicos, hábitos y objetivo.</p>
+        <p>Análisis clínico basado en tus datos físicos, hábitos, objetivo y condición de salud.</p>
     </div>
 </div>
 
@@ -133,7 +191,7 @@
 
     {% else %}
 
-    <!-- ── MÉTRICAS ── -->
+    <!-- ── MÉTRICAS TOP ── -->
     <div class="mstrip">
         {% if dieta.calculos.imc %}
         <div class="mc"><div class="val">{{ dieta.calculos.imc }}</div><div class="lbl">IMC</div></div>
@@ -149,39 +207,44 @@
         {% endif %}
     </div>
 
-    <!-- ── QUÉ ES UNA DIETA ── -->
-    <div class="ic">
-        <div class="ic-title">🥗 ¿Qué es una dieta?</div>
-        <p>Una dieta no es "comer poquito" ni privarse de lo que te gusta. Es la forma en la que te alimentas cada día, con el objetivo de darle a tu cuerpo la energía y nutrientes que necesita para funcionar y rendir al máximo.</p>
-        <p>No solo importa cuánto comes, sino también <strong>qué comes</strong> y <strong>cómo lo distribuyes</strong> a lo largo del día. Por eso se calculan tus calorías y macronutrientes (proteínas, grasas y carbohidratos).</p>
-    </div>
-
-    <!-- ── EXPLICACIÓN MÉTRICAS ── -->
-    <div class="ic soft">
-        <div class="ic-title">📌 ¿Qué significa cada cálculo?</div>
-        {% if dieta.calculos.imc %}
-        <p><strong>IMC (Índice de Masa Corporal):</strong> Relación entre tu peso y tu altura. Rangos: bajo (&lt;18.5), normal (18.5–24.9), sobrepeso (25–29.9), obesidad (&gt;30). No diferencia músculo y grasa.</p>
-        {% endif %}
-        {% if dieta.calculos.porcentaje_grasa %}
-        <p><strong>% Grasa Corporal:</strong> Qué parte de tu peso corresponde a grasa. Clave para definir si el enfoque es quemar grasa, ganar músculo o mantener.</p>
-        {% endif %}
-        {% if dieta.calculos.tmb %}
-        <p><strong>TMB (Tasa Metabólica Basal):</strong> Calorías mínimas que tu cuerpo necesita en reposo total (respirar, corazón, temperatura). Es la base del cálculo.</p>
-        {% endif %}
-        {% if dieta.calculos.tdee %}
-        <p><strong>TDEE (Gasto Calórico Diario Total):</strong> Gasto real considerando tu actividad física. Desde aquí se define tu déficit, mantenimiento o superávit calórico.</p>
-        {% endif %}
-    </div>
-
     <!-- ── EVALUACIÓN INICIAL ── -->
     {% if dieta.texto.evaluacion_inicial %}
     <div class="ic">
-        <div class="ic-title">📋 Evaluación Inicial</div>
+        <div class="ic-title">📋 Evaluación Clínica Inicial</div>
         <p>{{ dieta.texto.evaluacion_inicial }}</p>
     </div>
     {% endif %}
 
+    <!-- ── DIAGNÓSTICO CORPORAL ── -->
+    {% if dieta.texto.diagnostico_corporal %}
+    <div class="section-head">Diagnóstico corporal</div>
+    <div class="ic soft">
+        <div class="ic-title">🔬 Análisis de Composición Corporal</div>
+        <div class="diag-grid">
+            {% if dieta.texto.diagnostico_corporal.clasificacion_imc %}
+            <div class="diag-item">
+                <div class="di-label">📏 Clasificación IMC</div>
+                <div class="di-val">{{ dieta.texto.diagnostico_corporal.clasificacion_imc }}</div>
+            </div>
+            {% endif %}
+            {% if dieta.texto.diagnostico_corporal.interpretacion_grasa %}
+            <div class="diag-item">
+                <div class="di-label">💪 % Grasa Corporal</div>
+                <div class="di-val">{{ dieta.texto.diagnostico_corporal.interpretacion_grasa }}</div>
+            </div>
+            {% endif %}
+            {% if dieta.texto.diagnostico_corporal.riesgo_metabolico %}
+            <div class="diag-item">
+                <div class="di-label">⚡ Riesgo Metabólico</div>
+                <div class="di-val">{{ dieta.texto.diagnostico_corporal.riesgo_metabolico }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- ── CALORÍAS ── -->
+    <div class="section-head">Energía y macronutrientes</div>
     {% if dieta.calculos.calorias_diarias %}
     <div class="ic">
         <div class="ic-title">🔥 Calorías Diarias Recomendadas</div>
@@ -189,39 +252,30 @@
             <span class="n">{{ dieta.calculos.calorias_diarias }}</span>
             <span class="u">kcal / día</span>
         </div>
-        <p>No se trata de "comer menos", sino de comer de forma estratégica: manteniendo tu metabolismo, rendimiento y masa muscular activos.</p>
-    </div>
-    {% endif %}
-
-    {% if dieta.texto.explicacion_calorica %}
-    <div class="ic soft">
-        <div class="ic-title">💡 ¿Por qué estas calorías?</div>
+        {% if dieta.texto.explicacion_calorica %}
         <p>{{ dieta.texto.explicacion_calorica }}</p>
+        {% endif %}
     </div>
     {% endif %}
 
     <!-- ── MACROS ── -->
     {% if dieta.calculos.macros %}
     <div class="ic">
-        <div class="ic-title">🥗 Distribución de Macronutrientes Diarios</div>
+        <div class="ic-title">🥗 Macronutrientes Diarios</div>
         <div class="macrow">
             <div class="mp prot"><div class="mv">{{ dieta.calculos.macros.proteinas }}g</div><div class="ml">Proteínas</div></div>
             <div class="mp fat"> <div class="mv">{{ dieta.calculos.macros.grasas }}g</div><div class="ml">Grasas</div></div>
             <div class="mp carb"><div class="mv">{{ dieta.calculos.macros.carbohidratos }}g</div><div class="ml">Carbohidratos</div></div>
         </div>
-    </div>
-    {% endif %}
-
-    {% if dieta.texto.explicacion_macronutrientes %}
-    <div class="ic soft">
-        <div class="ic-title">📊 ¿Qué son los Macronutrientes y por qué estos?</div>
-        <p>{{ dieta.texto.explicacion_macronutrientes }}</p>
+        {% if dieta.texto.explicacion_macronutrientes %}
+        <p style="margin-top:16px">{{ dieta.texto.explicacion_macronutrientes }}</p>
+        {% endif %}
     </div>
     {% endif %}
 
     <!-- ── DISTRIBUCIÓN POR COMIDA ── -->
     {% if dieta.calculos.distribucion_macros_comidas %}
-    <div class="ic">
+    <div class="ic soft">
         <div class="ic-title">🍽️ Distribución por Comida</div>
         <p style="margin-bottom:13px;color:var(--muted);font-size:.87rem">Así distribuyes tus macros durante el día:</p>
         <div class="cg">
@@ -240,42 +294,81 @@
     </div>
     {% endif %}
 
-    <!-- ── CAMBIO FÍSICO ── -->
-    {% if dieta.texto.explicacion_del_cambio_fisico %}
-    <div class="ic soft">
-        <div class="ic-title">📈 ¿Cómo Será Tu Cambio Físico?</div>
-        <p>{{ dieta.texto.explicacion_del_cambio_fisico }}</p>
+    <!-- ── HIDRATACIÓN ── -->
+    {% if dieta.texto.hidratacion %}
+    <div class="section-head">Hidratación</div>
+    <div class="ic teal">
+        <div class="ic-title">💧 Consumo de Agua Recomendado</div>
+        <div class="agua-big">
+            <span class="agua-num">{{ dieta.texto.hidratacion.litros_recomendados }}</span>
+            <span class="agua-unit">al día</span>
+        </div>
+        {% if dieta.texto.hidratacion.calculo_explicado %}
+        <p>{{ dieta.texto.hidratacion.calculo_explicado }}</p>
+        {% endif %}
+        {% if dieta.texto.hidratacion.consejos_hidratacion %}
+        <p style="margin-top:13px;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.07em;color:var(--teal)">
+            Consejos de hidratación
+        </p>
+        <div class="tag-list" style="margin-top:8px">
+            {% for consejo in dieta.texto.hidratacion.consejos_hidratacion %}
+            <span class="tag teal">💧 {{ consejo }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if dieta.texto.hidratacion.señales_deshidratacion %}
+        <p style="margin-top:13px;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.07em;color:#b0004e">
+            Señales de deshidratación a vigilar
+        </p>
+        <div class="tag-list" style="margin-top:8px">
+            {% for señal in dieta.texto.hidratacion.señales_deshidratacion %}
+            <span class="tag red">⚠️ {{ señal }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 
-    <!-- ── RECOMENDACIONES ── -->
-    {% if dieta.texto.recomendaciones_generales %}
-    <div class="ic">
-        <div class="ic-title">✅ Recomendaciones Generales</div>
-        <p>{{ dieta.texto.recomendaciones_generales }}</p>
-    </div>
-    {% endif %}
-
-    {% if dieta.texto.recomendaciones_profesionales %}
-    <div class="ic soft">
-        <div class="ic-title">🧠 Recomendaciones Profesionales</div>
-        <p>{{ dieta.texto.recomendaciones_profesionales }}</p>
-    </div>
-    {% endif %}
-
-    <!-- ── ERRORES A EVITAR ── -->
-    {% if dieta.texto.errores_comunes_a_evitar %}
+    <!-- ── CONDICIÓN MÉDICA ── -->
+    {% if dieta.texto.recomendaciones_por_condicion %}
+    {% with cond=dieta.texto.recomendaciones_por_condicion %}
+    {% if cond.explicacion_condicion or cond.pautas_criticas %}
+    <div class="section-head">Condición médica</div>
     <div class="ic danger">
-        <div class="ic-title">⚠️ Errores Comunes a Evitar</div>
-        <p>{{ dieta.texto.errores_comunes_a_evitar }}</p>
+        <div class="ic-title">🩺 {{ cond.titulo }}</div>
+        {% if cond.explicacion_condicion %}
+        <p>{{ cond.explicacion_condicion }}</p>
+        {% endif %}
+        {% if cond.impacto_en_objetivo %}
+        <p style="margin-top:10px"><strong>Impacto en tu objetivo:</strong> {{ cond.impacto_en_objetivo }}</p>
+        {% endif %}
+        {% if cond.nutrientes_clave %}
+        <p style="margin-top:10px"><strong>Nutrientes clave:</strong> {{ cond.nutrientes_clave }}</p>
+        {% endif %}
+        {% if cond.pautas_criticas %}
+        <p style="margin-top:16px;font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.07em;color:#b0004e">
+            Pautas clínicas esenciales
+        </p>
+        <div class="pauta-list" style="margin-top:10px">
+            {% for pauta in cond.pautas_criticas %}
+            <div class="pauta-item">
+                <span class="pauta-num">{{ forloop.counter }}</span>
+                <span class="pauta-text">{{ pauta }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
+    {% endif %}
+    {% endwith %}
     {% endif %}
 
     <!-- ── ALIMENTOS ── -->
     {% if dieta.texto.alimentos.recomendados or dieta.texto.alimentos.a_evitar %}
+    <div class="section-head">Alimentos</div>
     <div class="fcols">
         {% if dieta.texto.alimentos.recomendados %}
-        <div class="ic soft">
+        <div class="ic green">
             <div class="ic-title">✅ Alimentos Recomendados</div>
             <ul>{% for a in dieta.texto.alimentos.recomendados %}<li>{{ a }}</li>{% endfor %}</ul>
         </div>
@@ -286,6 +379,97 @@
             <ul>{% for a in dieta.texto.alimentos.a_evitar %}<li>{{ a }}</li>{% endfor %}</ul>
         </div>
         {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- ── HÁBITOS CLÍNICOS ── -->
+    {% if dieta.texto.habitos_clinicos %}
+    {% with h=dieta.texto.habitos_clinicos %}
+    {% if h.frecuencia_comidas or h.horarios or h.velocidad_comida or h.suplementos %}
+    <div class="section-head">Hábitos clínicos</div>
+    <div class="ic blue">
+        <div class="ic-title">🗓️ Hábitos Alimenticios Recomendados</div>
+        <div class="habitos-grid">
+            {% if h.frecuencia_comidas %}
+            <div class="habito-item">
+                <div class="habito-icon">🍽️</div>
+                <div class="habito-label">Frecuencia de comidas</div>
+                <div class="habito-val">{{ h.frecuencia_comidas }}</div>
+            </div>
+            {% endif %}
+            {% if h.horarios %}
+            <div class="habito-item">
+                <div class="habito-icon">⏰</div>
+                <div class="habito-label">Horarios</div>
+                <div class="habito-val">{{ h.horarios }}</div>
+            </div>
+            {% endif %}
+            {% if h.velocidad_comida %}
+            <div class="habito-item">
+                <div class="habito-icon">🐢</div>
+                <div class="habito-label">Velocidad al comer</div>
+                <div class="habito-val">{{ h.velocidad_comida }}</div>
+            </div>
+            {% endif %}
+            {% if h.suplementos %}
+            <div class="habito-item">
+                <div class="habito-icon">💊</div>
+                <div class="habito-label">Suplementación</div>
+                <div class="habito-val">{{ h.suplementos }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% endif %}
+
+    <!-- ── EJERCICIO Y NUTRICIÓN ── -->
+    {% if dieta.texto.ejercicio_y_nutricion %}
+    <div class="ic soft">
+        <div class="ic-title">🏋️ Ejercicio y Nutrición</div>
+        <p>{{ dieta.texto.ejercicio_y_nutricion }}</p>
+    </div>
+    {% endif %}
+
+    <!-- ── CAMBIO FÍSICO ── -->
+    {% if dieta.texto.explicacion_del_cambio_fisico %}
+    <div class="section-head">Proyección de cambio</div>
+    <div class="ic">
+        <div class="ic-title">📈 ¿Cómo Será Tu Cambio Físico?</div>
+        <p>{{ dieta.texto.explicacion_del_cambio_fisico }}</p>
+    </div>
+    {% endif %}
+
+    <!-- ── RECOMENDACIONES GENERALES ── -->
+    {% if dieta.texto.recomendaciones_generales %}
+    <div class="section-head">Recomendaciones</div>
+    <div class="ic">
+        <div class="ic-title">✅ Recomendaciones del Nutricionista</div>
+        <p>{{ dieta.texto.recomendaciones_generales }}</p>
+    </div>
+    {% endif %}
+
+    <!-- ── RECOMENDACIONES PROFESIONALES ── -->
+    {% if dieta.texto.recomendaciones_profesionales %}
+    <div class="ic warn">
+        <div class="ic-title">🧪 Seguimiento Clínico y Exámenes</div>
+        <p>{{ dieta.texto.recomendaciones_profesionales }}</p>
+    </div>
+    {% endif %}
+
+    <!-- ── ERRORES A EVITAR ── -->
+    {% if dieta.texto.errores_comunes_a_evitar %}
+    <div class="ic danger">
+        <div class="ic-title">⚠️ Errores Comunes a Evitar</div>
+        <div class="pauta-list">
+            {% for error in dieta.texto.errores_comunes_a_evitar %}
+            <div class="pauta-item">
+                <span class="pauta-num">✗</span>
+                <span class="pauta-text">{{ error }}</span>
+            </div>
+            {% endfor %}
+        </div>
     </div>
     {% endif %}
 
@@ -301,7 +485,7 @@
 
     <!-- ACCIÓN -->
     <div style="margin-top:28px">
-        <a href="{% url "generar_dieta" %}" class="btn-p">✦ Generar Recetas Personalizadas</a>
+        <a href="{% url 'generar_dieta' %}" class="btn-p">✦ Generar Recetas Personalizadas</a>
     </div>
 
 </div>
