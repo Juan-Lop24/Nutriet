@@ -28,9 +28,17 @@ TEXTO_A_RESTRICCION = {
     "maní": "alergia_mani", "mani": "alergia_mani", "cacahuate": "alergia_mani",
     "fructosa": "intolerancia_fructosa",
     "hipertension": "hipertension", "hipertensión": "hipertension",
-    "colesterol": "hipercolesterolemia",
+    "presion alta": "hipertension", "presión alta": "hipertension",
+    "colesterol": "hipercolesterolemia", "hipercolesterol": "hipercolesterolemia",
+    "dislipidemia": "dislipidemia", "trigliceridos": "dislipidemia", "triglicéridos": "dislipidemia",
+    "indigestion": "indigestion", "indigestión": "indigestion",
+    "gastritis": "indigestion", "reflujo": "indigestion",
+    "hipertiroidismo": "hipertiroidismo", "tiroides": "hipertiroidismo",
+    "anemia": "anemia_ferropenica", "anemia ferropenica": "anemia_ferropenica",
     "huevo": "alergia_huevo",
     "marisco": "alergia_marisco", "mariscos": "alergia_marisco",
+    "crustaceo": "alergia_marisco", "crustáceo": "alergia_marisco",
+    "camaron": "alergia_marisco", "camarón": "alergia_marisco",
 }
 
 CONDICION_A_RESTRICCION = {
@@ -42,6 +50,12 @@ CONDICION_A_RESTRICCION = {
     "alergia_mani":     "alergia_mani",
     "alergia_mariscos": "alergia_marisco",
     "alergia_huevo":    "alergia_huevo",
+    # Nuevas condiciones del formulario
+    "gota":             "hipertension",   # La gota comparte restricciones con HTA (sodio, purinas)
+    "dislipidemia":     "dislipidemia",
+    "indigestion":      "indigestion",
+    "hipertiroidismo":  "hipertiroidismo",
+    "anemia":           "anemia_ferropenica",
 }
 
 
@@ -273,15 +287,23 @@ def generador_dieta(request):
         RecetaFavorita.objects.filter(usuario=request.user).values_list("recipe_id", flat=True)
     )
 
+    from applications.recetas.models import RESTRICCIONES as RESTRICCIONES_LIST
+    restricciones_labels = dict(RESTRICCIONES_LIST)
+    restricciones_con_labels = [
+        {"key": r, "label": restricciones_labels.get(r, r.replace("_", " ").capitalize())}
+        for r in restricciones
+    ]
+
     return render(request, "Apispoonacular/dieta_generada.html", {
-        "datos_dieta":             datos_dieta,
-        "dieta":                   dieta,
-        "formulario":              formulario,
-        "distribucion":            distribucion,
-        "recetas_por_comida":      recetas_por_comida,
-        "objetivo":                objetivo,
-        "restricciones_aplicadas": restricciones,
-        "favoritos_ids":           favoritos_ids,
+        "datos_dieta":              datos_dieta,
+        "dieta":                    dieta,
+        "formulario":               formulario,
+        "distribucion":             distribucion,
+        "recetas_por_comida":       recetas_por_comida,
+        "objetivo":                 objetivo,
+        "restricciones_aplicadas":  restricciones,
+        "restricciones_con_labels": restricciones_con_labels,
+        "favoritos_ids":            favoritos_ids,
     })
 
 
@@ -361,18 +383,26 @@ def explorar_recetas(request):
     favoritos_qs  = RecetaFavorita.objects.filter(usuario=request.user).order_by("-creado_en")
     favoritos_ids = set(f.recipe_id for f in favoritos_qs)
 
+    from applications.recetas.models import RESTRICCIONES as RESTRICCIONES_LIST
+    restricciones_labels = dict(RESTRICCIONES_LIST)
+    restricciones_con_labels = [
+        {"key": r, "label": restricciones_labels.get(r, r.replace("_", " ").capitalize())}
+        for r in restricciones
+    ]
+
     return render(request, "Apispoonacular/explorar_recetas.html", {
-        "recetas":                 recetas,
-        "total_recetas":           total,
-        "page_obj":                page_obj,
-        "query":                   busqueda,
-        "categoria":               categoria,
-        "ordenar":                 ordenar,
-        "restricciones_aplicadas": restricciones,
-        "categorias_disponibles":  list(categorias_disponibles),
-        "total_bd":                RecetaMealDB.objects.filter(clasificado=True).count(),
-        "favoritos_ids":           list(favoritos_ids),
-        "favoritos":               list(favoritos_qs),
+        "recetas":                  recetas,
+        "total_recetas":            total,
+        "page_obj":                 page_obj,
+        "query":                    busqueda,
+        "categoria":                categoria,
+        "ordenar":                  ordenar,
+        "restricciones_aplicadas":  restricciones,
+        "restricciones_con_labels": restricciones_con_labels,
+        "categorias_disponibles":   list(categorias_disponibles),
+        "total_bd":                 RecetaMealDB.objects.filter(clasificado=True).count(),
+        "favoritos_ids":            list(favoritos_ids),
+        "favoritos":                list(favoritos_qs),
     })
 
 

@@ -771,11 +771,11 @@ body::after {
   <div class="hero-inner">
     <h1>Explora <span>Recetas</span><br>hechas para ti</h1>
     <p>Filtradas automáticamente según tu perfil nutricional y condiciones de salud.</p>
-    {% if restricciones_aplicadas %}
+    {% if restricciones_con_labels %}
     <div>
-      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">Filtros activos por tu perfil:</small><br>
-      {% for r in restricciones_aplicadas %}
-        <span class="restriccion-pill">🚫 Sin {{ r|capfirst }}</span>
+      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">🛡️ Filtros activos por tu perfil:</small><br>
+      {% for item in restricciones_con_labels %}
+        <span class="restriccion-pill">🚫 {{ item.label }}</span>
       {% endfor %}
     </div>
     {% endif %}
@@ -812,9 +812,9 @@ body::after {
   <div class="stat-chip">
     <strong>{{ total_recetas }}</strong> recetas aptas para ti
   </div>
-  {% if restricciones_aplicadas %}
+  {% if restricciones_con_labels %}
   <div class="stat-chip">
-    🛡️ <strong>{{ restricciones_aplicadas|length }}</strong> filtros aplicados
+    🛡️ <strong>{{ restricciones_con_labels|length }}</strong> filtros aplicados
   </div>
   {% endif %}
   <div class="stat-chip" style="margin-left:auto;">

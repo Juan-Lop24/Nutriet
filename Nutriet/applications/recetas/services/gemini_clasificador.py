@@ -12,8 +12,8 @@ def _get_client():
     return _client
 
 
-# ── Prompt (versión v1) ───────────────────────────────────────────────────────
-VERSION_PROMPT = "v1"
+# ── Prompt (versión v2) ───────────────────────────────────────────────────────
+VERSION_PROMPT = "v2"
 
 PROMPT_TEMPLATE = """
 Eres un nutricionista clínico experto. Analiza la siguiente receta y responde SOLO con JSON válido, sin markdown, sin texto extra.
@@ -34,6 +34,10 @@ Para cada restricción, indica true si la receta es INCOMPATIBLE (no apta) para 
 - intolerancia_fructosa: Contiene fructosa libre alta (miel, jarabe de maíz, frutas en grandes cantidades, HFCS)
 - hipertension: Contiene sodio alto (sal en exceso, salsa de soya, embutidos, quesos curados, snacks salados)
 - hipercolesterolemia: Contiene grasas saturadas altas o trans (mantequilla, crema, carnes grasas, aceite de palma)
+- dislipidemia: Contiene grasas saturadas o trans, colesterol alto o azúcares que elevan triglicéridos
+- indigestion: Contiene ingredientes irritantes gástricos (picante, ajo crudo en exceso, fritura abundante, acidez alta)
+- hipertiroidismo: Contiene ingredientes que estimulan la tiroides o interfieren (soya, algas marinas, yodo alto)
+- anemia_ferropenica: Contiene inhibidores de la absorción de hierro (té, café, lácteos en exceso) o es bajo en hierro biodisponible
 - alergia_huevo: Contiene huevo o derivados del huevo (mayonesa, claras, yemas, etc.)
 - alergia_marisco: Contiene mariscos, crustáceos o moluscos (camarones, cangrejo, mejillones, almejas, calamares, etc.)
 
@@ -57,6 +61,10 @@ RESPONDE EXACTAMENTE con este JSON (sin nada más):
     "intolerancia_fructosa": false,
     "hipertension": false,
     "hipercolesterolemia": false,
+    "dislipidemia": false,
+    "indigestion": false,
+    "hipertiroidismo": false,
+    "anemia_ferropenica": false,
     "alergia_huevo": false,
     "alergia_marisco": false
   }},
@@ -68,6 +76,10 @@ RESPONDE EXACTAMENTE con este JSON (sin nada más):
     "intolerancia_fructosa": "Razón breve",
     "hipertension": "Razón breve",
     "hipercolesterolemia": "Razón breve",
+    "dislipidemia": "Razón breve",
+    "indigestion": "Razón breve",
+    "hipertiroidismo": "Razón breve",
+    "anemia_ferropenica": "Razón breve",
     "alergia_huevo": "Razón breve",
     "alergia_marisco": "Razón breve"
   }},
@@ -158,6 +170,10 @@ def aplicar_clasificacion(receta, resultado: dict):
             "intolerancia_fructosa": bool(restricciones.get("intolerancia_fructosa", False)),
             "hipertension":          bool(restricciones.get("hipertension", False)),
             "hipercolesterolemia":   bool(restricciones.get("hipercolesterolemia", False)),
+            "dislipidemia":          bool(restricciones.get("dislipidemia", False)),
+            "indigestion":           bool(restricciones.get("indigestion", False)),
+            "hipertiroidismo":       bool(restricciones.get("hipertiroidismo", False)),
+            "anemia_ferropenica":    bool(restricciones.get("anemia_ferropenica", False)),
             "alergia_huevo":         bool(restricciones.get("alergia_huevo", False)),
             "alergia_marisco":       bool(restricciones.get("alergia_marisco", False)),
             "justificacion":         resultado.get("justificacion", {}),

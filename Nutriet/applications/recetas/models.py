@@ -11,17 +11,21 @@ Flujo:
 from django.db import models
 
 
-# ── Restricciones soportadas (8 condiciones clínicas + alergias) ──────────────
+# ── Restricciones soportadas (13 condiciones clínicas + alergias) ─────────────
 RESTRICCIONES = [
-    ("diabetes",          "Diabetes mellitus"),
+    ("diabetes",             "Diabetes mellitus"),
     ("intolerancia_lactosa", "Intolerancia a la lactosa"),
-    ("celiaca",           "Enfermedad celíaca"),
-    ("alergia_mani",      "Alergia al maní"),
-    ("intolerancia_fructosa", "Intolerancia a la fructosa"),
-    ("hipertension",      "Hipertensión arterial"),
-    ("hipercolesterolemia", "Hipercolesterolemia"),
-    ("alergia_huevo",     "Alergia al huevo"),
-    ("alergia_marisco",   "Alergia al marisco"),
+    ("celiaca",              "Enfermedad celíaca"),
+    ("alergia_mani",         "Alergia al maní"),
+    ("intolerancia_fructosa","Intolerancia a la fructosa"),
+    ("hipertension",         "Hipertensión arterial"),
+    ("hipercolesterolemia",  "Hipercolesterolemia"),
+    ("dislipidemia",         "Dislipidemias"),
+    ("indigestion",          "Indigestión / gastritis"),
+    ("hipertiroidismo",      "Hipertiroidismo"),
+    ("anemia_ferropenica",   "Anemia ferropénica"),
+    ("alergia_huevo",        "Alergia al huevo"),
+    ("alergia_marisco",      "Alergia al marisco"),
 ]
 
 RESTRICCION_KEYS = [r[0] for r in RESTRICCIONES]
@@ -112,6 +116,10 @@ class ClasificacionReceta(models.Model):
     intolerancia_fructosa = models.BooleanField(default=False)
     hipertension          = models.BooleanField(default=False)
     hipercolesterolemia   = models.BooleanField(default=False)
+    dislipidemia          = models.BooleanField(default=False)
+    indigestion           = models.BooleanField(default=False)
+    hipertiroidismo       = models.BooleanField(default=False)
+    anemia_ferropenica    = models.BooleanField(default=False)
     alergia_huevo         = models.BooleanField(default=False)
     alergia_marisco       = models.BooleanField(default=False)
 

@@ -63,7 +63,13 @@ class ClasificacionRecetaAdmin(admin.ModelAdmin):
         "clasificado_en",
     )
 
-    list_filter = ("dificultad",)
+    list_filter = (
+        "dificultad",
+        "diabetes", "intolerancia_lactosa", "celiaca",
+        "hipertension", "hipercolesterolemia", "dislipidemia",
+        "indigestion", "hipertiroidismo", "anemia_ferropenica",
+        "alergia_huevo", "alergia_marisco", "alergia_mani",
+    )
 
     search_fields = ("receta__nombre",)
 

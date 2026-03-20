@@ -291,10 +291,11 @@ body::after  { content:''; position:fixed; bottom:-20%; left:5%; width:500px; he
       <p class="hero-sub">Recetas personalizadas • {{ dieta.plazo_meses }} meses • {{ formulario.get_tipo_dieta_display }}</p>
       <span class="objetivo-pill">🎯 Objetivo: {{ objetivo }}</span>
     {% endif %}
-    {% if restricciones_aplicadas %}
+    {% if restricciones_con_labels %}
       <div style="margin-top:12px;">
-        {% for r in restricciones_aplicadas %}
-          <span style="display:inline-block;background:rgba(245,0,87,.15);border:1px solid rgba(245,0,87,.3);color:#ffb3c6;border-radius:20px;padding:3px 11px;font-size:.72rem;font-weight:600;margin:3px;">🚫 Sin {{ r|capfirst }}</span>
+        <span style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px;">🛡️ Filtros activos por tu perfil médico</span>
+        {% for item in restricciones_con_labels %}
+          <span style="display:inline-block;background:rgba(245,0,87,.15);border:1px solid rgba(245,0,87,.3);color:#ffb3c6;border-radius:20px;padding:4px 13px;font-size:.74rem;font-weight:600;margin:3px;">🚫 {{ item.label }}</span>
         {% endfor %}
       </div>
     {% endif %}
