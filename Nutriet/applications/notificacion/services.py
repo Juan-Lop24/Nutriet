@@ -61,7 +61,6 @@ def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -
             return {"ok": True, "id": data.get("id")}
 
         errors = data.get("errors", [])
-        # Player ID ya no existe en OneSignal
         if "InvalidPlayerIds" in str(errors):
             return {"ok": False, "invalid": True, "error": str(errors)}
 
@@ -78,11 +77,42 @@ def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -
 
 # ── API pública ────────────────────────────────────────────────────────────────
 
-def enviar_notificacion_a_usuario(usuario, titulo: str, cuerpo: str, url: str = "/") -> dict:
+def enviar_notificacion_a_usuario(
+    usuario=None,
+    titulo: str = "",
+    cuerpo: str = "",
+    url: str = "/",
+    # Aliases usados en tasks.py y calendario/views.py
+    usuario_id=None,
+    mensaje: str = "",
+    link: str = None,
+    data: dict = None,
+) -> dict:
     """
     Envía notificación a todos los dispositivos activos de un usuario.
+    Acepta tanto (usuario, titulo, cuerpo, url)
+    como  (usuario_id, titulo, mensaje, link, data).
     """
+    from django.contrib.auth import get_user_model
     from .models import DispositivoUsuario
+
+    # Resolver aliases
+    if usuario is None and usuario_id is not None:
+        try:
+            usuario = get_user_model().objects.get(pk=usuario_id)
+        except get_user_model().DoesNotExist:
+            logger.warning("[OneSignal] Usuario id=%s no existe", usuario_id)
+            return {"enviados": 0, "errores": 0}
+
+    if not cuerpo and mensaje:
+        cuerpo = mensaje
+
+    if link is not None:
+        url = link
+
+    if usuario is None:
+        logger.error("[OneSignal] Se llamó sin usuario ni usuario_id")
+        return {"enviados": 0, "errores": 0}
 
     dispositivos = DispositivoUsuario.objects.filter(usuario=usuario, activo=True)
 
