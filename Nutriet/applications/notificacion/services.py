@@ -1,6 +1,7 @@
 # applications/notificacion/services.py
 """
 Servicio de envío de notificaciones push vía OneSignal REST API.
+Reemplaza completamente Firebase Cloud Messaging (FCM).
 """
 
 import logging
@@ -10,11 +11,22 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 ONESIGNAL_URL = "https://onesignal.com/api/v1/notifications"
+SITE_URL = "https://nutrietcol.site"
+
+
+def _url_absoluta(url: str) -> str:
+    """Convierte una URL relativa en absoluta. OneSignal exige https://."""
+    if not url:
+        return SITE_URL
+    if url.startswith(('http://', 'https://')):
+        return url
+    return SITE_URL + url
 
 
 def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -> dict:
     """
     Envía una notificación a un Player ID de OneSignal.
+    Retorna dict con resultado.
     """
     if not getattr(settings, 'ONESIGNAL_APP_ID', None):
         logger.error("[OneSignal] ONESIGNAL_APP_ID no configurado")
@@ -29,8 +41,7 @@ def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -
         "include_player_ids": [player_id],
         "headings": {"en": title, "es": title},
         "contents": {"en": body, "es": body},
-        "url": url,
-        "web_url": url,
+        "web_url": _url_absoluta(url),
     }
 
     try:
@@ -50,6 +61,7 @@ def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -
             return {"ok": True, "id": data.get("id")}
 
         errors = data.get("errors", [])
+        # Player ID ya no existe en OneSignal
         if "InvalidPlayerIds" in str(errors):
             return {"ok": False, "invalid": True, "error": str(errors)}
 
@@ -66,42 +78,11 @@ def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -
 
 # ── API pública ────────────────────────────────────────────────────────────────
 
-def enviar_notificacion_a_usuario(
-    usuario=None,
-    titulo: str = "",
-    cuerpo: str = "",
-    url: str = "/",
-    # Aliases usados en tasks.py y calendario/views.py
-    usuario_id=None,
-    mensaje: str = "",
-    link: str = None,
-    data: dict = None,
-) -> dict:
+def enviar_notificacion_a_usuario(usuario, titulo: str, cuerpo: str, url: str = "/") -> dict:
     """
     Envía notificación a todos los dispositivos activos de un usuario.
-    Acepta tanto (usuario, titulo, cuerpo, url)
-    como  (usuario_id, titulo, mensaje, link, data).
     """
-    from django.contrib.auth import get_user_model
     from .models import DispositivoUsuario
-
-    # Resolver aliases
-    if usuario is None and usuario_id is not None:
-        try:
-            usuario = get_user_model().objects.get(pk=usuario_id)
-        except get_user_model().DoesNotExist:
-            logger.warning("[OneSignal] Usuario id=%s no existe", usuario_id)
-            return {"enviados": 0, "errores": 0}
-
-    if not cuerpo and mensaje:
-        cuerpo = mensaje
-
-    if link is not None:
-        url = link
-
-    if usuario is None:
-        logger.error("[OneSignal] Se llamó sin usuario ni usuario_id")
-        return {"enviados": 0, "errores": 0}
 
     dispositivos = DispositivoUsuario.objects.filter(usuario=usuario, activo=True)
 
