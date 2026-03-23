@@ -1,7 +1,6 @@
 # applications/notificacion/services.py
 """
 Servicio de envío de notificaciones push vía OneSignal REST API.
-Reemplaza completamente Firebase Cloud Messaging (FCM).
 """
 
 import logging
@@ -16,7 +15,6 @@ ONESIGNAL_URL = "https://onesignal.com/api/v1/notifications"
 def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -> dict:
     """
     Envía una notificación a un Player ID de OneSignal.
-    Retorna dict con resultado.
     """
     if not getattr(settings, 'ONESIGNAL_APP_ID', None):
         logger.error("[OneSignal] ONESIGNAL_APP_ID no configurado")
@@ -52,7 +50,6 @@ def _enviar_a_player_id(player_id: str, title: str, body: str, url: str = "/") -
             return {"ok": True, "id": data.get("id")}
 
         errors = data.get("errors", [])
-        # Player ID ya no existe en OneSignal
         if "InvalidPlayerIds" in str(errors):
             return {"ok": False, "invalid": True, "error": str(errors)}
 
@@ -74,7 +71,7 @@ def enviar_notificacion_a_usuario(
     titulo: str = "",
     cuerpo: str = "",
     url: str = "/",
-    # Aliases usados en tasks.py
+    # Aliases usados en tasks.py y calendario/views.py
     usuario_id=None,
     mensaje: str = "",
     link: str = None,
@@ -82,18 +79,18 @@ def enviar_notificacion_a_usuario(
 ) -> dict:
     """
     Envía notificación a todos los dispositivos activos de un usuario.
-
-    Acepta tanto la firma original (usuario, titulo, cuerpo, url)
-    como la firma usada en tasks.py (usuario_id, titulo, mensaje, link, data).
+    Acepta tanto (usuario, titulo, cuerpo, url)
+    como  (usuario_id, titulo, mensaje, link, data).
     """
     from django.contrib.auth import get_user_model
+    from .models import DispositivoUsuario
 
     # Resolver aliases
     if usuario is None and usuario_id is not None:
         try:
             usuario = get_user_model().objects.get(pk=usuario_id)
         except get_user_model().DoesNotExist:
-            logger.warning("[OneSignal] Usuario con id=%s no existe", usuario_id)
+            logger.warning("[OneSignal] Usuario id=%s no existe", usuario_id)
             return {"enviados": 0, "errores": 0}
 
     if not cuerpo and mensaje:
@@ -102,7 +99,9 @@ def enviar_notificacion_a_usuario(
     if link is not None:
         url = link
 
-    from .models import DispositivoUsuario
+    if usuario is None:
+        logger.error("[OneSignal] Se llamó sin usuario ni usuario_id")
+        return {"enviados": 0, "errores": 0}
 
     dispositivos = DispositivoUsuario.objects.filter(usuario=usuario, activo=True)
 
