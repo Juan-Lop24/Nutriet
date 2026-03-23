@@ -1016,8 +1016,6 @@
     /* Transiciones globales suaves */
     * { transition: background-color 0.3s ease, color 0.3s ease; }
   </style>
-  <!-- OneSignal Web Push SDK v16 -->
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 </head>
 <body>
 
@@ -1359,6 +1357,8 @@
     {% endfor %}
   {% endif %}
 
+  <!-- OneSignal Web Push SDK v16 — debe cargar ANTES del handler -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"></script>
   <script src="{% static 'js/onesignal-handler.js' %}"></script>
   <script>
     window.ONESIGNAL_APP_ID = "{{ ONESIGNAL_APP_ID }}";
@@ -1399,9 +1399,10 @@
         window.history.replaceState({}, '', newUrl);
 
         const userConfirmed = await showNotificationPrompt();
-        await marcarNotificacionesConfiguradas();
 
         if (userConfirmed) {
+          // Solo marcar como configuradas si el usuario ACEPTÓ
+          await marcarNotificacionesConfiguradas();
           const success = await setupNotifications();
           if (success) {
             Swal.fire({
@@ -1413,8 +1414,9 @@
             });
           }
         }
+        // Si rechazó: no marcar → la próxima vez verá el prompt de nuevo
       } else {
-        // Sin parámetro en URL: si ya tiene permiso, sincronizar silenciosamente
+        // Sin parámetro en URL: sincronizar si ya tiene permiso del navegador
         if (Notification.permission === 'granted') {
           await autoSyncToken();
         }
