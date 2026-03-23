@@ -746,7 +746,6 @@
       transition: all 0.3s ease;
       flex: 1;
       min-height: 0;
-      max-height: 260px;
       display: flex;
       flex-direction: column;
     }
@@ -768,7 +767,6 @@
       width: 100% !important;
       flex: 1;
       min-height: 0;
-      max-height: 200px;
     }
 
     /* ============================================
@@ -1130,8 +1128,7 @@
           <div class="section-line"></div>
         </div>
 
-        <a href="{% url 'recetas_favoritas' %}" class="text-decoration-none text-dark d-flex flex-column" style="flex:1;">
-        <div class="recetas-wrapper" style="cursor:pointer;flex:1;">
+        <div class="recetas-wrapper">
           <div class="card shadow-sm">
             <div class="card-body">
               <h5 class="card-title mb-4"></h5>
@@ -1139,26 +1136,26 @@
               {% if favoritas %}
                 <div class="row">
                   {% for receta in favoritas %}
-                    <div class="col-md-4">
-                      <div class="receta-widget">
+                    <div class="col-md-4 mb-3">
+                      <a href="{% url 'receta_detalle' receta.recipe_id %}"
+                         class="receta-widget text-decoration-none">
                         <div class="widget-card">
                           <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
                           <div class="widget-content">
                             <h6>{{ receta.titulo }}</h6>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     </div>
                   {% endfor %}
                 </div>
               {% else %}
-                <p class="text-muted text-center">No tienes recetas favoritas aún.</p>
+                <p class="text-muted">No tienes recetas favoritas aún.</p>
               {% endif %}
 
             </div>
           </div>
         </div>
-        </a>
       </div>
 
       <!-- EXPLORAR RECETAS -->
@@ -1365,13 +1362,6 @@
   <script src="{% static 'js/onesignal-handler.js' %}"></script>
   <script>
     window.ONESIGNAL_APP_ID = "{{ ONESIGNAL_APP_ID }}";
-
-    (async () => {
-      if (window.ONESIGNAL_APP_ID) {
-        await initOneSignal(window.ONESIGNAL_APP_ID);
-      }
-    })();
-
     const isAuthenticated = {{ user.is_authenticated|lower }};
 
     async function marcarNotificacionesConfiguradas() {
@@ -1385,12 +1375,17 @@
 
     async function requestNotificationSetup() {
       if (!isAuthenticated) return;
+      if (!window.ONESIGNAL_APP_ID) return;
+
+      // Esperar a que el SDK esté realmente listo antes de hacer cualquier cosa
+      await initOneSignal(window.ONESIGNAL_APP_ID);
 
       const yaConfiguradas = {{ notificaciones_configuradas|lower }};
+
       if (yaConfiguradas) {
-        if (Notification.permission === 'granted') {
-          await setupNotifications();
-        }
+        // El usuario ya aceptó antes: sincronizar token automáticamente
+        // (cubre el caso donde el token no llegó al servidor la primera vez)
+        await autoSyncToken();
         return;
       }
 
@@ -1419,8 +1414,9 @@
           }
         }
       } else {
+        // Sin parámetro en URL: si ya tiene permiso, sincronizar silenciosamente
         if (Notification.permission === 'granted') {
-          await setupNotifications();
+          await autoSyncToken();
         }
       }
     }
