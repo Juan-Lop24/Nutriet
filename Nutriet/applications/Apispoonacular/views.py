@@ -395,6 +395,14 @@ def explorar_recetas(request):
         .values_list("categoria", flat=True).distinct().order_by("categoria")
     )
 
+    categorias_traducidas = [
+        {
+            "original": cat,
+            "nombre": TRADUCCIONES_CATEGORIAS.get(cat, cat)
+        }
+        for cat in categorias_disponibles if cat
+    ]
+
     favoritos_qs  = RecetaFavorita.objects.filter(usuario=request.user).order_by("-creado_en")
     favoritos_ids = set(f.recipe_id for f in favoritos_qs)
 
@@ -414,7 +422,7 @@ def explorar_recetas(request):
         "ordenar":                  ordenar,
         "restricciones_aplicadas":  restricciones,
         "restricciones_con_labels": restricciones_con_labels,
-        "categorias_disponibles":   list(categorias_disponibles),
+        "categorias_disponibles": categorias_traducidas,
         "total_bd":                 RecetaMealDB.objects.filter(clasificado=True).count(),
         "favoritos_ids":            list(favoritos_ids),
         "favoritos":                list(favoritos_qs),
