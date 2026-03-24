@@ -225,7 +225,7 @@ body::after {
 }
 .hero-inner { max-width:1100px; margin:0 auto; position:relative; }
 .hero h1 {
-  font-family:'Playfair Display',serif; font-size:2.6rem; color:white;
+  font-family:'Playfair Display',serif; font-size:2.6rem; color:#fff;
   line-height:1.15; margin-bottom:8px;
 }
 .hero h1 span {
@@ -773,7 +773,7 @@ body::after {
     <p>Filtradas automáticamente según tu perfil nutricional y condiciones de salud.</p>
     {% if restricciones_con_labels %}
     <div>
-      <small style="color:rgb(255, 255, 255);font-weight:600;font-size:.74rem;">🛡️ Filtros activos por tu perfil:</small><br>
+      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">🛡️ Filtros activos por tu perfil:</small><br>
       {% for item in restricciones_con_labels %}
         <span class="restriccion-pill">🚫 {{ item.label }}</span>
       {% endfor %}
@@ -789,11 +789,9 @@ body::after {
            value="{{ query }}">
     <select name="categoria">
       <option value="">Todas las categorías</option>
-    {% for cat in categorias_disponibles %}
-    <option value="{{ cat.original }}" {% if categoria == cat.original %}selected{% endif %}>
-      {{ cat.nombre }}
-    </option>
-    {% endfor %}    
+      {% for cat in categorias_disponibles %}
+      <option value="{{ cat }}" {% if categoria == cat %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
     </select>
     <select name="ordenar">
       <option value="random"    {% if ordenar == "random"    %}selected{% endif %}>🎲 Variadas</option>
@@ -987,6 +985,7 @@ body::after {
 <script>
 const TOGGLE_FAV_URL = "{% url 'toggle_favorito' %}";
 const ELIMINAR_FAV_BASE = "{% url 'eliminar_favorito' 0 %}".replace('/0/', '/');
+const TRAD_ING_URL = "{% url 'traducir_ingredientes' %}";
 
   const RECETAS_DATA = JSON.parse(
     document.getElementById("recetas-data").textContent
@@ -1078,9 +1077,9 @@ function renderModal(id) {
   let _ings = r.ingredientes || [];
   if (typeof _ings === 'string') { try { _ings = JSON.parse(_ings); } catch { _ings = []; } }
   if (!Array.isArray(_ings)) _ings = [];
-  const ingsHtml = _ings.map(i =>
-    `<div class="ing-item"><strong>${i.medida || ''}</strong>${i.ingrediente || ''}</div>`
-  ).join('');
+  const ingsPlaceholder = _ings.length
+    ? `<h3 class="section-title">🛒 Ingredientes</h3><div class="ingredientes-grid" id="ings-grid-${r.id}"><span style="color:#9ca3af;font-size:.83rem;">⏳ Traduciendo ingredientes...</span></div>`
+    : '';
 
   // Instrucciones - mostrar placeholder y traducir async
   let instrHtml = '';
@@ -1108,7 +1107,7 @@ function renderModal(id) {
         ${r.dificultad? `<span class="mbadge ${difClass}">${r.dificultad.charAt(0).toUpperCase()+r.dificultad.slice(1)}</span>` : ''}
       </div>
       ${macrosHtml}
-      ${ingsHtml ? `<h3 class="section-title">🛒 Ingredientes</h3><div class="ingredientes-grid">${ingsHtml}</div>` : ''}
+      ${ingsPlaceholder}
       ${instrHtml}
       <div class="modal-actions">
         ${r.youtube_url ? `<a href="${r.youtube_url}" target="_blank" class="btn-yt">▶️ Ver en YouTube</a>` : ''}
@@ -1122,9 +1121,36 @@ function renderModal(id) {
   document.getElementById('modalContent').innerHTML = html;
   document.getElementById('modalContent').style.display = 'block';
 
-  // Traducir instrucciones si hay
+  // Traducir ingredientes e instrucciones async
+  if (_ings.length) traducirIngredientes(r.id, _ings);
   if (r.instrucciones) {
     traducirInstrucciones(r.id, r.instrucciones);
+  }
+}
+
+const _ingCache = {};
+async function traducirIngredientes(id, ings) {
+  const grid = document.getElementById('ings-grid-' + id);
+  if (!grid) return;
+  if (_ingCache[id]) { grid.innerHTML = _ingCache[id]; return; }
+  try {
+    const resp = await fetch(TRAD_ING_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+      body: JSON.stringify({ ingredientes: ings })
+    });
+    const d = await resp.json();
+    const lista = (d.ok && d.ingredientes) ? d.ingredientes : ings;
+    const html = lista.map(i =>
+      `<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`
+    ).join('');
+    _ingCache[id] = html;
+    grid.innerHTML = html;
+  } catch {
+    const html = ings.map(i =>
+      `<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`
+    ).join('');
+    grid.innerHTML = html;
   }
 }
 

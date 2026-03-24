@@ -57,22 +57,7 @@ CONDICION_A_RESTRICCION = {
     "hipertiroidismo":  "hipertiroidismo",
     "anemia":           "anemia_ferropenica",
 }
-TRADUCCIONES_CATEGORIAS = {
-    "Beef": "Carne de res",
-    "Breakfast": "Desayuno",
-    "Chicken": "Pollo",
-    "Dessert": "Postre",
-    "Goat": "Cabra",
-    "Lamb": "Cordero",
-    "Miscellaneous": "Misceláneo",
-    "Pasta": "Pasta",
-    "Pork": "Cerdo",
-    "Seafood": "Mariscos",
-    "Side": "Acompañamiento",
-    "Starter": "Entrada",
-    "Vegan": "Vegano",
-    "Vegetarian": "Vegetariano"
-}
+
 
 def _parsear_restricciones_combinadas(formulario):
     restricciones = set()
@@ -395,14 +380,6 @@ def explorar_recetas(request):
         .values_list("categoria", flat=True).distinct().order_by("categoria")
     )
 
-    categorias_traducidas = [
-        {
-            "original": cat,
-            "nombre": TRADUCCIONES_CATEGORIAS.get(cat, cat)
-        }
-        for cat in categorias_disponibles if cat
-    ]
-
     favoritos_qs  = RecetaFavorita.objects.filter(usuario=request.user).order_by("-creado_en")
     favoritos_ids = set(f.recipe_id for f in favoritos_qs)
 
@@ -422,7 +399,7 @@ def explorar_recetas(request):
         "ordenar":                  ordenar,
         "restricciones_aplicadas":  restricciones,
         "restricciones_con_labels": restricciones_con_labels,
-        "categorias_disponibles": categorias_traducidas,
+        "categorias_disponibles":   list(categorias_disponibles),
         "total_bd":                 RecetaMealDB.objects.filter(clasificado=True).count(),
         "favoritos_ids":            list(favoritos_ids),
         "favoritos":                list(favoritos_qs),
@@ -546,5 +523,39 @@ def traducir_instrucciones(request):
         traducidas = [_traducir(linea, src='en', tgt='es') for linea in lineas]
 
         return JsonResponse({'ok': True, 'traduccion': '\n'.join(traducidas)})
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TRADUCIR INGREDIENTES (batch)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def traducir_ingredientes(request):
+    """
+    Recibe una lista de ingredientes [{medida, ingrediente}, ...]
+    y devuelve la misma lista con los textos traducidos al español.
+    """
+    try:
+        data = json.loads(request.body)
+        ingredientes = data.get('ingredientes', [])
+
+        if not isinstance(ingredientes, list) or len(ingredientes) > 60:
+            return JsonResponse({'ok': False, 'error': 'Datos inválidos'}, status=400)
+
+        from .api_services import _traducir
+
+        traducidos = []
+        for item in ingredientes:
+            medida     = (item.get('medida') or '').strip()
+            ingrediente = (item.get('ingrediente') or '').strip()
+            traducidos.append({
+                'medida':      _traducir(medida, src='en', tgt='es') if medida else '',
+                'ingrediente': _traducir(ingrediente, src='en', tgt='es') if ingrediente else '',
+            })
+
+        return JsonResponse({'ok': True, 'ingredientes': traducidos})
+    except Exception as e:
+        return JsonResponse({'ok': False, 'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'ok': False, 'error': str(e)}, status=400)

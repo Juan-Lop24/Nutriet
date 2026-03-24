@@ -432,6 +432,7 @@ body::after  { content:''; position:fixed; bottom:-20%; left:5%; width:500px; he
 <script>
 const _recetasRaw = JSON.parse(document.getElementById('recetas-data').textContent);
 const FAVORITOS_IDS = new Set(JSON.parse(document.getElementById('favoritos-data').textContent));
+const TRAD_ING_URL = "{% url 'traducir_ingredientes' %}";
 const RECETAS = {};
 for (const [comida, datos] of Object.entries(_recetasRaw)) {
   for (const r of (datos.recetas || [])) { RECETAS[r.id] = r; }
@@ -464,7 +465,7 @@ function renderModal(id) {
   let _ings = r.ingredientes || [];
   if (typeof _ings === 'string') { try { _ings = JSON.parse(_ings); } catch { _ings = []; } }
   if (!Array.isArray(_ings)) _ings = [];
-  const ingsHtml = _ings.map(i=>`<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`).join('');
+  const ingsPlaceholder = _ings.length ? `<h3 class="section-title">🛒 Ingredientes</h3><div class="ingredientes-grid" id="ings-grid-${r.id}"><span style="color:#9ca3af;font-size:.83rem;">⏳ Traduciendo ingredientes...</span></div>` : '';
   const instrPlaceholder = r.instrucciones ? `<h3 class="section-title">📝 Instrucciones</h3><div class="instrucciones-box" id="instr-box-${r.id}"><span style="color:#9ca3af;font-size:.85rem;">⏳ Traduciendo...</span></div>` : '';
   const esFav = FAVORITOS_IDS.has(r.id);
   document.getElementById('modalContent').innerHTML = `
@@ -481,7 +482,7 @@ function renderModal(id) {
         ${difBadge}
       </div>
       ${macrosHtml}
-      ${ingsHtml?`<h3 class="section-title">🛒 Ingredientes</h3><div class="ingredientes-grid">${ingsHtml}</div>`:''}
+      ${ingsPlaceholder}
       ${instrPlaceholder}
       <div class="modal-actions">
         ${r.youtube_url?`<a href="${r.youtube_url}" target="_blank" class="btn-yt">▶️ Ver en YouTube</a>`:''}
@@ -492,7 +493,34 @@ function renderModal(id) {
     </div>`;
   document.getElementById('modalSpinner').style.display = 'none';
   document.getElementById('modalContent').style.display = 'block';
+  if (_ings.length) { traducirIngredientes(r.id, _ings); }
   if (r.instrucciones) { traducirInstrucciones(r.id, r.instrucciones); }
+}
+
+const _ingCache = {};
+async function traducirIngredientes(id, ings) {
+  const grid = document.getElementById('ings-grid-' + id);
+  if (!grid) return;
+  if (_ingCache[id]) { grid.innerHTML = _ingCache[id]; return; }
+  try {
+    const resp = await fetch(TRAD_ING_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+      body: JSON.stringify({ ingredientes: ings })
+    });
+    const d = await resp.json();
+    const lista = (d.ok && d.ingredientes) ? d.ingredientes : ings;
+    const html = lista.map(i =>
+      `<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`
+    ).join('');
+    _ingCache[id] = html;
+    grid.innerHTML = html;
+  } catch {
+    const html = ings.map(i =>
+      `<div class="ing-item"><strong>${i.medida||''}</strong> ${i.ingrediente||''}</div>`
+    ).join('');
+    grid.innerHTML = html;
+  }
 }
 
 const _traduccionCache = {};

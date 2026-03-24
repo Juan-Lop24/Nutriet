@@ -15,7 +15,7 @@ function mostrarNotificacion(payload) {
     const data = payload.data || {};
     const notif = payload.notification || {};
 
-    const title = notif.title || data.title || 'NutriET';
+    const title = notif.title || data.title || 'Nutriet';
     const body  = notif.body  || data.body  || '';
     const url   = data.url || notif.click_action || '/';
 
