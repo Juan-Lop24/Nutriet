@@ -490,7 +490,7 @@
     .dashboard-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-auto-rows: 820px;
+      grid-auto-rows: auto;
       gap: 30px;
       margin-bottom: 30px;
       align-items: stretch;
@@ -732,7 +732,7 @@
     .mini-chart {
       width: 100%;
       margin-top: 15px;
-      flex: 1;
+      flex: none;
       min-height: 0;
       display: flex;
       flex-direction: column;
@@ -745,10 +745,11 @@
       border-radius: 15px;
       box-shadow: 0 4px 12px var(--shadow-light);
       transition: all 0.3s ease;
-      flex: 1;
+      flex: none;
       min-height: 0;
       display: flex;
       flex-direction: column;
+      height: 200px;
     }
 
     .mini-chart > div:hover {
@@ -766,8 +767,8 @@
 
     .mini-chart canvas {
       width: 100% !important;
-      flex: 1;
-      min-height: 0;
+      height: 100% !important;
+      max-height:200px;
     }
 
     /* ============================================
@@ -1318,7 +1319,8 @@
           }]
         },
         options: {
-          maintainAspectRatio: false,
+          maintainAspectRatio: true,
+          aspectsRatio: 2,
           responsive: true
         }
       });
@@ -1341,7 +1343,11 @@
             tension: 0.4
           }]
         },
-        options: { maintainAspectRatio: false }
+        options: {
+          maintainAspectRatio: true,   
+          aspectRatio: 2,               
+          responsive: true
+        }
       });
     }
   </script>
