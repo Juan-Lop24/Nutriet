@@ -546,5 +546,39 @@ def traducir_instrucciones(request):
         traducidas = [_traducir(linea, src='en', tgt='es') for linea in lineas]
 
         return JsonResponse({'ok': True, 'traduccion': '\n'.join(traducidas)})
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# TRADUCIR INGREDIENTES (batch)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@login_required
+@require_POST
+def traducir_ingredientes(request):
+    """
+    Recibe una lista de ingredientes [{medida, ingrediente}, ...]
+    y devuelve la misma lista con los textos traducidos al español.
+    """
+    try:
+        data = json.loads(request.body)
+        ingredientes = data.get('ingredientes', [])
+
+        if not isinstance(ingredientes, list) or len(ingredientes) > 60:
+            return JsonResponse({'ok': False, 'error': 'Datos inválidos'}, status=400)
+
+        from .api_services import _traducir
+
+        traducidos = []
+        for item in ingredientes:
+            medida     = (item.get('medida') or '').strip()
+            ingrediente = (item.get('ingrediente') or '').strip()
+            traducidos.append({
+                'medida':      _traducir(medida, src='en', tgt='es') if medida else '',
+                'ingrediente': _traducir(ingrediente, src='en', tgt='es') if ingrediente else '',
+            })
+
+        return JsonResponse({'ok': True, 'ingredientes': traducidos})
+    except Exception as e:
+        return JsonResponse({'ok': False, 'error': str(e)}, status=400)
     except Exception as e:
         return JsonResponse({'ok': False, 'error': str(e)}, status=400)
