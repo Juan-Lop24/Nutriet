@@ -490,14 +490,14 @@
     .dashboard-top {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-auto-rows: 820px;
+      grid-auto-rows: auto;
       gap: 30px;
       margin-bottom: 30px;
       align-items: stretch;
     }
 
     /* Fila inferior: Favoritas | Explorar */
-    .dashboard-bottom {
+    .dashboard-bottom { 
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 30px;
@@ -749,6 +749,7 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
+      height: 250px;
     }
 
     .mini-chart > div:hover {
@@ -868,6 +869,10 @@
       background: var(--white);
       position: relative;
       z-index: 1;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .widget-content h6 {
@@ -879,6 +884,8 @@
       -webkit-box-orient: vertical;
       transition: color 0.3s ease;
       line-height: 1.4;
+      display: -webkit-box;
+      overflow: hidden;
     }
 
     .widget-card:hover .widget-content h6 { color: var(--primary-pink); }
@@ -1144,7 +1151,7 @@
                   <div class="row">
                     {% for receta in favoritas %}
                       <div class="col-md-4 mb-3">
-                        <a href="{% url 'receta_detalle' receta.recipe_id %}"
+                        <a href="{% url 'recetas_favoritas' receta.recipe_id %}"
                           class="receta-widget text-decoration-none">
                           <div class="widget-card">
                             <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
@@ -1341,7 +1348,10 @@
             tension: 0.4
           }]
         },
-        options: { maintainAspectRatio: false }
+        options: {
+          maintainAspectRatio: false,
+          responsive: true
+        }
       });
     }
   </script>
