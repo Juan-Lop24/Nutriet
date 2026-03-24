@@ -523,7 +523,12 @@ def traducir_instrucciones(request):
         traducidas = [_traducir(linea, src='en', tgt='es') for linea in lineas]
 
         return JsonResponse({'ok': True, 'traduccion': '\n'.join(traducidas)})
-
+    
+    except Exception as e:
+        return JsonResponse({
+            'ok': False,
+            'error': str(e)
+        }, status=500)
 
 # ──────────────────────────────────────────────────────────────────────────────
 # TRADUCIR INGREDIENTES (batch)
