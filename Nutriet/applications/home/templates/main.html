@@ -493,6 +493,7 @@
       grid-auto-rows: 820px;
       gap: 30px;
       margin-bottom: 30px;
+      align-items: stretch;
     }
 
     /* Fila inferior: Favoritas | Explorar */
@@ -832,6 +833,8 @@
       height: 100%;
       position: relative;
       border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
     }
 
     .widget-card::before {
@@ -872,6 +875,8 @@
       font-weight: 700;
       color: var(--text-dark);
       margin: 0;
+      -webkit-line-clamp: 2;   
+      -webkit-box-orient: vertical;
       transition: color 0.3s ease;
       line-height: 1.4;
     }
@@ -1004,12 +1009,12 @@
       }
       .mini-chart > div {
         flex: none;
-        height: auto;
+        height: 250px;
         margin-bottom: 16px;
       }
       .mini-chart canvas {
-        flex: none;
-        height: 200px !important;
+        width: 100% !important;
+        height: 100% !important;
       }
     }
 
@@ -1312,7 +1317,10 @@
             tension: 0.4
           }]
         },
-        options: { maintainAspectRatio: false }
+        options: {
+          maintainAspectRatio: false,
+          responsive: true
+        }
       });
     }
 
