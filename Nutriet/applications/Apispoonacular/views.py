@@ -57,7 +57,22 @@ CONDICION_A_RESTRICCION = {
     "hipertiroidismo":  "hipertiroidismo",
     "anemia":           "anemia_ferropenica",
 }
-
+TRADUCCIONES_CATEGORIAS = {
+    "Beef": "Carne de res",
+    "Breakfast": "Desayuno",
+    "Chicken": "Pollo",
+    "Dessert": "Postre",
+    "Goat": "Cabra",
+    "Lamb": "Cordero",
+    "Miscellaneous": "Misceláneo",
+    "Pasta": "Pasta",
+    "Pork": "Cerdo",
+    "Seafood": "Mariscos",
+    "Side": "Acompañamiento",
+    "Starter": "Entrada",
+    "Vegan": "Vegano",
+    "Vegetarian": "Vegetariano"
+}
 
 def _parsear_restricciones_combinadas(formulario):
     restricciones = set()
