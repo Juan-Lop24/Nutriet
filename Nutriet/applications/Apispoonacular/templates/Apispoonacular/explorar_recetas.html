@@ -225,7 +225,7 @@ body::after {
 }
 .hero-inner { max-width:1100px; margin:0 auto; position:relative; }
 .hero h1 {
-  font-family:'Playfair Display',serif; font-size:2.6rem; color:white;
+  font-family:'Playfair Display',serif; font-size:2.6rem; color:#fff;
   line-height:1.15; margin-bottom:8px;
 }
 .hero h1 span {
@@ -773,7 +773,7 @@ body::after {
     <p>Filtradas automáticamente según tu perfil nutricional y condiciones de salud.</p>
     {% if restricciones_con_labels %}
     <div>
-      <small style="color:rgb(255, 255, 255);font-weight:600;font-size:.74rem;">🛡️ Filtros activos por tu perfil:</small><br>
+      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">🛡️ Filtros activos por tu perfil:</small><br>
       {% for item in restricciones_con_labels %}
         <span class="restriccion-pill">🚫 {{ item.label }}</span>
       {% endfor %}
@@ -789,11 +789,9 @@ body::after {
            value="{{ query }}">
     <select name="categoria">
       <option value="">Todas las categorías</option>
-    {% for cat in categorias_disponibles %}
-    <option value="{{ cat.original }}" {% if categoria == cat.original %}selected{% endif %}>
-      {{ cat.nombre }}
-    </option>
-    {% endfor %}    
+      {% for cat in categorias_disponibles %}
+      <option value="{{ cat }}" {% if categoria == cat %}selected{% endif %}>{{ cat }}</option>
+      {% endfor %}
     </select>
     <select name="ordenar">
       <option value="random"    {% if ordenar == "random"    %}selected{% endif %}>🎲 Variadas</option>
