@@ -783,14 +783,14 @@ body::after {
 </div>
 
 <!-- BÚSQUEDA -->
-<div class="search-wrap">
+<div style="max-width:1100px;margin:0 auto;padding:0 16px;">
   <form method="GET" class="search-box">
     <input type="text" name="q" placeholder="🔍 Buscar receta, ingrediente, cocina..."
            value="{{ query }}">
     <select name="categoria">
       <option value="">Todas las categorías</option>
       {% for cat in categorias_disponibles %}
-      <option value="{{ cat.valor }}" {% if categoria == cat.valor %}selected{% endif %}>{{ cat.etiqueta }}</option>
+      <option value="{{ cat }}" {% if categoria == cat %}selected{% endif %}>{{ cat }}</option>
       {% endfor %}
     </select>
     <select name="ordenar">
