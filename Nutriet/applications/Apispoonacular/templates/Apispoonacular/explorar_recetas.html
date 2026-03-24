@@ -790,7 +790,9 @@ body::after {
     <select name="categoria">
       <option value="">Todas las categorías</option>
       {% for cat in categorias_disponibles %}
-      <option value="{{ cat }}" {% if categoria == cat %}selected{% endif %}>{{ cat }}</option>
+      <option value="{{ cat.original }}" {% if categoria == cat.original %}selected{% endif %}>
+        {{ cat.nombre }}
+      </option>
       {% endfor %}
     </select>
     <select name="ordenar">
