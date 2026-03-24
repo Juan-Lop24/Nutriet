@@ -27,7 +27,7 @@ from applications.Apispoonacular.models import RecetaFavorita
 
 @login_required
 def verificacion_login(request):
-    
+   
 
     verificacion = VerificacionCodigo.objects.filter(usuario=request.user).first()
 
@@ -144,7 +144,7 @@ def reenviar_codigo(request):
     verificacion = VerificacionCodigo.objects.filter(usuario=user).first()
 
     if not verificacion:
-        return redirect('/main/?setup_notifications=true')
+        return redirect('main')
 
     # 🔒 Anti spam 60 segundos
     if timezone.now() < verificacion.creado + timedelta(seconds=60):
@@ -257,33 +257,36 @@ class LoginView(FormView):
 
             nombre = user.first_name if user.first_name else user.username
 
-            # ── Generar y enviar código de verificación ──────────────
+            messages.success(
+                self.request,
+                f"¡Bienvenido a Nutriet, {nombre}! 👋"
+            )
+
+            # Si el usuario ya verificó su código alguna vez (ya está registrado),
+            # lo dejamos pasar directo sin pedir código de nuevo.
+            verificacion = VerificacionCodigo.objects.filter(usuario=user).first()
+            if verificacion and verificacion.verificado:
+                return redirect('/main/?setup_notifications=true')
+
+            # Usuario sin verificación previa → mandar a verificar
             try:
                 verificacion, _ = VerificacionCodigo.objects.get_or_create(usuario=user)
                 verificacion.generar_codigo()
 
                 send_mail(
                     'Código de acceso - NUTRIET',
-                    f'Hola {nombre} 👋\n\nTu código de acceso es: {verificacion.codigo}\n\nEste código expira en 5 minutos.',
+                    f'Hola 👋\n\nTu código de acceso es: {verificacion.codigo}\n\nEste código expira en 5 minutos.',
                     settings.EMAIL_HOST_USER,
                     [user.email],
                     fail_silently=False,
                 )
-
-                messages.info(
-                    self.request,
-                    f"¡Bienvenido a Nutriet, {nombre}! 👋 Te enviamos un código de verificación a tu correo."
-                )
                 return redirect('verificacion_login')
-
             except Exception:
-                # Si el correo falla → entrar sin verificación
-                messages.success(self.request, f"¡Bienvenido a Nutriet, {nombre}! 👋")
                 return redirect('/main/?setup_notifications=true')
 
         messages.error(self.request, 'Correo o contraseña incorrectos.')
         return self.form_invalid(form)
-        
+       
 
 # ─────────────────────────────────────────────────────
 # PERFIL DE USUARIO
