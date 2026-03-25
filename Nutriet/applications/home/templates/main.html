@@ -1085,7 +1085,7 @@
             <h4 class="fw-bold text-center text-danger"></h4>
 
             <p class="text-center text-muted">
-              progreso: {{ dias_registrados }}/{{ objetivo_dias }}
+              {{ dias_registrados }} de {{ objetivo_dias|default:"30" }} días registrados
             </p>
 
             <br>
