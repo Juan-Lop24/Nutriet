@@ -467,8 +467,8 @@
                     </p>
                     <div class="cond-g">
                         {% for val, display in form.condicion_medica.field.choices %}
-                        <input type="radio" name="condicion_medica" id="cm_{{ val|default:'ninguna' }}" value="{{ val }}"
-                               {% if form.condicion_medica.value == val %}checked{% endif %}>
+                        <input type="checkbox" name="condicion_medica" id="cm_{{ val|default:'ninguna' }}" value="{{ val }}"
+                            {% if val in form.condicion_medica.value %}checked{% endif %}>
                         <label for="cm_{{ val|default:'ninguna' }}" class="dp-l">{{ display }}</label>
                         {% endfor %}
                     </div>

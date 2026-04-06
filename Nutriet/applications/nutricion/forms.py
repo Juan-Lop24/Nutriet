@@ -63,7 +63,7 @@ class FormularioNutricionForm(forms.ModelForm):
         required=False
     )
 
-    condicion_medica = forms.ChoiceField(
+    condicion_medica = forms.MultipleChoiceField(
         label="Condición médica o alergia",
         choices=CONDICIONES_MEDICAS,
         required=False,
