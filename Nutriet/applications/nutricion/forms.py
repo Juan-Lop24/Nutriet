@@ -63,10 +63,11 @@ class FormularioNutricionForm(forms.ModelForm):
         required=False
     )
 
-    # ✅ Campo libre — clean_condicion_medica lee los checkboxes manualmente
-    condicion_medica = forms.CharField(
+    condicion_medica = forms.ChoiceField(
         label="Condición médica o alergia",
+        choices=CONDICIONES_MEDICAS,
         required=False,
+        widget=forms.Select(attrs={"class": "form-control"}),
         help_text="Si tienes una condición, excluiremos automáticamente los ingredientes no recomendados."
     )
 
@@ -106,13 +107,6 @@ class FormularioNutricionForm(forms.ModelForm):
                 "class": "form-control"
             }),
         }
-
-    def clean_condicion_medica(self):
-        # Lee todos los valores marcados (checkboxes con name="condicion_medica")
-        valores = self.data.getlist('condicion_medica')
-        # Filtra vacíos (el choice "Sin condición médica" tiene value="")
-        condiciones = [v for v in valores if v and v.strip()]
-        return ", ".join(condiciones)  # Ej: "diabetes, hipertension"
 
     def clean(self):
         cleaned_data = super().clean()

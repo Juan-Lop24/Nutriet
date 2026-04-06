@@ -28,8 +28,7 @@ def formulario_view(request):
             formulario = form.save(commit=False)
             formulario.usuario = request.user
             # Guardar condicion_medica (campo extra del form, no del model directamente)
-            condiciones = form.cleaned_data.get('condicion_medica', [])
-            formulario.condicion_medica = ", ".join(condiciones) if condiciones else ''
+            formulario.condicion_medica = form.cleaned_data.get('condicion_medica', '')
             formulario.save()
 
             MedicionFisica.objects.create(
@@ -85,7 +84,7 @@ def cargando_view(request):
 
         # Condición médica (puede ser string vacío o una condición)
         condicion_medica = datos.get('condicion_medica', '')
-        condiciones_medicas = [c.strip() for c in condicion_medica.split(',') if c.strip()]
+        condiciones_medicas = [condicion_medica] if condicion_medica else []
 
         # Construir DatosEntrada para el procesador
         datos_entrada = DatosEntrada(
