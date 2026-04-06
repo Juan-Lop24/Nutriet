@@ -457,8 +457,8 @@
                 </div>
 
                 <!-- CONDICIÓN MÉDICA / ALERGIA -->
-                <div class="fg" style="margin-bottom:16px">
-                    <label class="fl" for="id_condicion_medica">
+                <div class="fg" style="margin-bottom:16px">-
+                    <label class="fl">
                         Condición médica o alergia
                         <span style="font-weight:400;color:var(--muted);font-size:.76rem">(opcional)</span>
                     </label>
@@ -466,15 +466,48 @@
                         Si tienes una condición, excluiremos automáticamente los ingredientes no recomendados de tus recetas.
                     </p>
                     <div class="cond-g">
-                        {% for val, display in form.condicion_medica.field.choices %}
-                        <input type="checkbox" name="condicion_medica" id="cm_{{ val|default:'ninguna' }}" value="{{ val }}"
-                            {% if val in form.condicion_medica.value %}checked{% endif %}>
-                        <label for="cm_{{ val|default:'ninguna' }}" class="dp-l">{{ display }}</label>
-                        {% endfor %}
-                    </div>
-                    {% if form.condicion_medica.errors %}<div class="ferr show">{{ form.condicion_medica.errors.0 }}</div>{% endif %}
-                </div>
+                        {% with condiciones_val=form.condicion_medica.value|default:"" %}
+                        <input type="checkbox" name="condicion_medica" id="cm_diabetes" value="diabetes" {% if "diabetes" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_diabetes" class="dp-l">Diabetes</label>
 
+                        <input type="checkbox" name="condicion_medica" id="cm_celiaco" value="celiaco" {% if "celiaco" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_celiaco" class="dp-l">Celiaco / Sin gluten</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_lactosa" value="lactosa" {% if "lactosa" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_lactosa" class="dp-l">Intolerancia a la lactosa</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_hipertension" value="hipertension" {% if "hipertension" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_hipertension" class="dp-l">Hipertensión</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_colesterol" value="colesterol" {% if "colesterol" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_colesterol" class="dp-l">Colesterol alto</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_dislipidemia" value="dislipidemia" {% if "dislipidemia" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_dislipidemia" class="dp-l">Dislipidemias / Triglicéridos altos</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_indigestion" value="indigestion" {% if "indigestion" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_indigestion" class="dp-l">Indigestión / Gastritis / Reflujo</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_hipertiroidismo" value="hipertiroidismo" {% if "hipertiroidismo" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_hipertiroidismo" class="dp-l">Hipertiroidismo</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_anemia" value="anemia" {% if "anemia" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_anemia" class="dp-l">Anemia ferropénica</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_gota" value="gota" {% if "gota" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_gota" class="dp-l">Gota</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_alergia_mani" value="alergia_mani" {% if "alergia_mani" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_alergia_mani" class="dp-l">Alergia al maní / cacahuate</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_alergia_mariscos" value="alergia_mariscos" {% if "alergia_mariscos" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_alergia_mariscos" class="dp-l">Alergia a mariscos</label>
+
+                        <input type="checkbox" name="condicion_medica" id="cm_alergia_huevo" value="alergia_huevo" {% if "alergia_huevo" in condiciones_val %}checked{% endif %}>
+                        <label for="cm_alergia_huevo" class="dp-l">Alergia al huevo</label>
+                        {% endwith %}
+                    </div>
+                </div>
                 <!-- INGREDIENTES A EXCLUIR -->
                 <div class="fg" id="ing-wrapper">
                     <label class="fl">
