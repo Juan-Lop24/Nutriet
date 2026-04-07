@@ -56,6 +56,8 @@ def _rate_limited(key, max_requests, period_seconds):
 def main(request):
     show_welcome = request.session.pop('show_welcome', False)
 
+    mostrar_advertencia = request.session.pop('mostrar_advertencia', False)
+    
     favoritas = RecetaFavorita.objects.filter(
         usuario=request.user
     ).order_by('-id')[:3]
@@ -132,6 +134,7 @@ def main(request):
 
     context = {
         'show_welcome':                show_welcome,
+        'mostrar_advertencia':         mostrar_advertencia,
         'notificaciones_configuradas': request.user.notificaciones_configuradas,
         'dias_registrados':            dias_registrados,
         'objetivo_dias':               objetivo_dias,
