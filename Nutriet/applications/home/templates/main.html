@@ -301,6 +301,11 @@
         transform: translateX(-100%);
         width: 260px !important;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex !important;
+        flex-direction: column !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: 100vh !important;
       }
       .sidebar:hover { width: 260px; }
 
@@ -314,12 +319,20 @@
         transform: translateX(0);
       }
 
+      .logout {
+        position: relative !important;
+        bottom: auto !important;
+        margin-top: auto !important;
+        width: 100% !important;
+        padding: 16px 10px 40px !important;
+        flex-shrink: 0 !important;
+      }
+
       main {
         margin-left: 0 !important;
         padding-top: 70px !important;
       }
     }
-
     /* ============================================
       MAIN CONTENT
       ============================================ */
