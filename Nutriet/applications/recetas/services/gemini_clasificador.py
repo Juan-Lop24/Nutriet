@@ -21,7 +21,7 @@ Eres un nutricionista clínico experto. Analiza la siguiente receta y responde S
 RECETA:
 Nombre: {nombre}
 Categoría: {categoria}
-Área/Cocina: {area}
+Área/Cocina: {area} 
 Ingredientes: {ingredientes}
 Instrucciones (resumen): {instrucciones}
 
