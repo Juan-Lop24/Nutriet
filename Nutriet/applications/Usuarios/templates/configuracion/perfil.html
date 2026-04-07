@@ -1073,54 +1073,59 @@ body::after {
           </button>
         </div>
 
-      </div><!-- /.danger-block cierra aquí, los modales van fuera del flujo de contenido -->
-
-      <!-- ══ MODAL 1: CONFIRMACIÓN ══ -->
-      <div id="modal-confirmar" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-title">
-        <div class="modal-card">
-          <div class="modal-icon modal-icon--danger">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <h2 class="modal-title" id="modal-confirmar-title">¿Eliminar tu cuenta?</h2>
-          <p class="modal-body">
-            Esta acción es <strong>permanente e irreversible</strong>. Se borrarán
-            tu perfil, mediciones, recetas favoritas y <em>todos</em> tus datos de Nutriet.
-          </p>
-          <p class="modal-body modal-body--warning">
-            <i class="fas fa-shield-alt"></i>&nbsp; No podrás recuperar tu cuenta después de confirmar.
-          </p>
-          <div class="modal-actions">
-            <button class="modal-btn modal-btn--cancel" onclick="cerrarModalConfirmar()">
-              <i class="fas fa-arrow-left"></i> Cancelar
-            </button>
-            <button class="modal-btn modal-btn--confirm" onclick="confirmarEliminacion()">
-              <i class="fas fa-trash-alt"></i> Sí, eliminar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ══ MODAL 2: CUENTA ELIMINADA ══ -->
-      <div id="modal-eliminada" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-eliminada-title">
-        <div class="modal-card modal-card--success">
-          <div class="modal-icon modal-icon--bye">
-            <i class="fas fa-heart-broken"></i>
-          </div>
-          <h2 class="modal-title" id="modal-eliminada-title">Cuenta eliminada</h2>
-          <p class="modal-body">
-            Tu cuenta ha sido <strong>eliminada permanentemente</strong>. Todos tus datos
-            han sido borrados de nuestros servidores.
-          </p>
-          <p class="modal-body" style="font-size:.82rem;color:var(--text-muted);">
-            Esperamos verte de nuevo pronto. 💔
-          </p>
-        </div>
-      </div>
       </div>
 
     </div>
+
   </div><!-- /.right-col -->
 </div><!-- /.page-wrap -->
+
+<!-- ══════════════════════════════════════════
+     MODALES — fuera del page-wrap para que
+     position:fixed cubra toda la pantalla
+══════════════════════════════════════════ -->
+
+<!-- ══ MODAL 1: CONFIRMACIÓN ══ -->
+<div id="modal-confirmar" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-title">
+  <div class="modal-card">
+    <div class="modal-icon modal-icon--danger">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h2 class="modal-title" id="modal-confirmar-title">¿Eliminar tu cuenta?</h2>
+    <p class="modal-body">
+      Esta acción es <strong>permanente e irreversible</strong>. Se borrarán
+      tu perfil, mediciones, recetas favoritas y <em>todos</em> tus datos de Nutriet.
+    </p>
+    <p class="modal-body modal-body--warning">
+      <i class="fas fa-shield-alt"></i>&nbsp; No podrás recuperar tu cuenta después de confirmar.
+    </p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn--cancel" onclick="cerrarModalConfirmar()">
+        <i class="fas fa-arrow-left"></i> Cancelar
+      </button>
+      <button class="modal-btn modal-btn--confirm" onclick="confirmarEliminacion()">
+        <i class="fas fa-trash-alt"></i> Sí, eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL 2: CUENTA ELIMINADA ══ -->
+<div id="modal-eliminada" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-eliminada-title">
+  <div class="modal-card modal-card--success">
+    <div class="modal-icon modal-icon--bye">
+      <i class="fas fa-heart-broken"></i>
+    </div>
+    <h2 class="modal-title" id="modal-eliminada-title">Cuenta eliminada</h2>
+    <p class="modal-body">
+      Tu cuenta ha sido <strong>eliminada permanentemente</strong>. Todos tus datos
+      han sido borrados de nuestros servidores.
+    </p>
+    <p class="modal-body" style="font-size:.82rem;color:var(--text-muted);">
+      Esperamos verte de nuevo pronto. 💔
+    </p>
+  </div>
+</div>
 
 <script>
 /* ══════════════════════════════════════════
