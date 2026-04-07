@@ -817,42 +817,23 @@ body::after {
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     SIDEBAR — igual al resto del proyecto
-══════════════════════════════════════════ -->
-<!-- Botón hamburguesa (solo móvil) -->
-<button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
-  <i class="fas fa-bars" id="toggleIcon"></i>
-</button>
-
-<!-- Backdrop -->
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
-
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <img src="{% static 'images/logo.png' %}" class="logo" alt="Nutriet">
   <ul class="menu">
-    <li><a href="{% url 'main' %}">
-      <i class="fas fa-home"></i><span>Inicio</span></a></li>
-    <li><a href="{% url 'explorar_recetas' %}">
-      <i class="fas fa-apple-alt"></i><span>Recetas</span></a></li>
-    <li><a href="{% url 'seguimiento:seguimiento' %}">
-      <i class="fas fa-chart-line"></i><span>Seguimiento</span></a></li>
-    <li><a href="{% url 'calendario' %}">
-      <i class="fas fa-calendar-alt"></i><span>Calendario</span></a></li>
-    <li><a href="{% url 'perfil' %}">
-      <i class="fas fa-cog"></i><span>Configuración</span></a></li>
+    <li><a href="{% url 'main' %}"><i class="fas fa-home"></i><span>Inicio</span></a></li>
+    <li><a href="{% url 'explorar_recetas' %}"><i class="fas fa-apple-alt"></i><span>Recetas</span></a></li>
+    <li><a href="{% url 'seguimiento:seguimiento' %}"><i class="fas fa-chart-line"></i><span>Seguimiento</span></a></li>
+    <li><a href="{% url 'calendario' %}"><i class="fas fa-calendar-alt"></i><span>Calendario</span></a></li>
+    <li><a href="{% url 'perfil' %}"><i class="fas fa-cog"></i><span>Configuración</span></a></li>
   </ul>
   <div class="logout">
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
-      <button type="submit">
-        <i class="fas fa-right-from-bracket"></i>
-        <span>Cerrar sesión</span>
-      </button>
+      <button type="submit"><i class="fas fa-right-from-bracket"></i><span>Cerrar sesión</span></button>
     </form>
   </div>
 </aside>
-
 <!-- ══════════════════════════════════════════
      PÁGINA
 ══════════════════════════════════════════ -->
