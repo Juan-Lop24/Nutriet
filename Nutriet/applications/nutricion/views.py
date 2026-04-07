@@ -168,6 +168,8 @@ def resultado_view(request):
     if not dieta:
         messages.error(request, "No hay dieta generada.")
         return redirect("nutricion:formulario")
+    
+    request.session['mostrar_advertencia'] = True
 
     return render(request, "nutricion/resultado.html", {
         "dieta": dieta
