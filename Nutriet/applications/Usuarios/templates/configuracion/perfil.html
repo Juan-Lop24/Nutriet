@@ -64,106 +64,261 @@ body::after {
   50%     { transform:translateY(-25px) scale(1.04); }
 }
 
-/* ══════════════════════════════════════════
-   SIDEBAR — idéntico al resto del proyecto
-══════════════════════════════════════════ */
-.sidebar {
-  position:fixed; top:0; left:0;
-  height:100vh; width:80px;
-  background:linear-gradient(180deg,var(--soft-yellow) 0%,#fff8dc 100%);
-  transition:all .3s cubic-bezier(.4,0,.2,1);
-  overflow:hidden;
-  box-shadow:4px 0 20px var(--shadow-lt);
-  z-index:1000;
-  border-right:2px solid rgba(245,0,87,.1);
-}
-.sidebar:hover { width:260px; box-shadow:6px 0 30px var(--shadow-md2); }
-.sidebar::before {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(180deg,transparent 0%,rgba(245,0,87,.02) 100%);
-  pointer-events:none;
-}
-.sidebar .logo {
-  width:55px; margin:25px auto 50px; display:block;
-  transition:all .3s ease;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,.1));
-}
-.sidebar:hover .logo { transform:scale(1.1); filter:drop-shadow(0 6px 12px rgba(245,0,87,.3)); }
-.menu { list-style:none; padding:0; margin:10px; }
-.menu li {
-  display:flex; align-items:center;
-  margin-bottom:8px; border-radius:12px;
-  overflow:hidden; position:relative;
-}
-.menu li::before {
-  content:''; position:absolute; left:0; top:0; height:100%; width:0;
-  background:linear-gradient(90deg,var(--pink),rgba(245,0,87,.7));
-  transition:width .3s ease; border-radius:12px;
-}
-.menu li:hover::before { width:4px; }
-.menu li:hover { background:transparent; transform:translateX(4px); }
-.menu a {
-  display:flex; align-items:center; gap:18px;
-  padding:16px 22px; text-decoration:none; width:100%;
-  color:var(--pink); transition:all .2s ease; position:relative; z-index:1;
-}
-.menu i { font-size:22px; min-width:28px; text-align:center; transition:all .3s ease; color:var(--pink); }
-.menu li:hover i { transform:scale(1.15); filter:drop-shadow(0 2px 4px rgba(245,0,87,.3)); }
-.menu span {
-  font-size:15px; font-weight:600; color:var(--text-dark);
-  white-space:nowrap; opacity:0; transform:translateX(-10px); transition:all .3s ease;
-}
-.sidebar:hover .menu span { opacity:1; transform:translateX(0); }
-.logout { position:absolute; bottom:25px; width:100%; padding:0 10px; }
-.logout button {
-  all:unset; width:100%; display:flex; align-items:center;
-  gap:18px; padding:16px 22px; cursor:pointer;
-  border-radius:12px; transition:all .3s ease; position:relative; overflow:hidden;
-}
-.logout button::before {
-  content:''; position:absolute; top:50%; left:50%; width:0; height:0;
-  background:radial-gradient(circle,rgba(245,0,87,.2),transparent);
-  transform:translate(-50%,-50%); transition:width .4s,height .4s; border-radius:50%;
-}
-.logout button:hover::before { width:300px; height:300px; }
-.logout button:hover { background:linear-gradient(135deg,#ffe0e0,#ffcdd2); transform:translateX(4px); }
-.logout i { font-size:22px; color:var(--pink); min-width:28px; text-align:center; transition:all .3s ease; position:relative; z-index:1; }
-.logout button:hover i { transform:rotate(15deg) scale(1.1); }
-.logout span { font-weight:600; color:var(--text-dark); opacity:0; transform:translateX(-10px); transition:all .3s ease; position:relative; z-index:1; }
-.sidebar:hover .logout span { opacity:1; transform:translateX(0); }
+    /* ============================================
+      SIDEBAR
+      ============================================ */
 
-/* ── SIDEBAR RESPONSIVE ── */
-.sidebar-toggle {
-  display:none;
-  position:fixed; top:14px; left:14px;
-  z-index:1100;
-  background:linear-gradient(135deg,var(--pink),var(--pink-light));
-  border:none; border-radius:12px;
-  width:44px; height:44px;
-  cursor:pointer; align-items:center; justify-content:center;
-  box-shadow:0 4px 14px var(--pink-glow); transition:transform .2s;
-}
-.sidebar-toggle:hover { transform:scale(1.08); }
-.sidebar-toggle i { font-size:20px; color:#fff; }
-.sidebar-backdrop {
-  display:none; position:fixed; inset:0;
-  background:rgba(26,16,37,.55); backdrop-filter:blur(3px); z-index:999;
-}
-.sidebar-backdrop.open { display:block; }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 80px;
+      background: linear-gradient(180deg, var(--soft-yellow) 0%, #fff8dc 100%);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      box-shadow: 4px 0 20px var(--shadow-light);
+      z-index: 1000;
+      border-right: 2px solid rgba(245, 0, 87, 0.1);
+    }
 
-@media (max-width:768px) {
-  .sidebar-toggle { display:flex; }
-  .sidebar {
-    transform:translateX(-100%);
-    width:260px !important;
-    transition:transform .3s cubic-bezier(.4,0,.2,1);
-  }
-  .sidebar:hover { width:260px; }
-  .sidebar.open { transform:translateX(0); }
-  .sidebar.open .menu span,
-  .sidebar.open .logout span { opacity:1; transform:translateX(0); }
-  .page-wrap { margin-left:0 !important; padding:70px 16px 48px !important; }
-}
+    .sidebar:hover {
+      width: 260px;
+      box-shadow: 6px 0 30px var(--shadow-medium);
+    }
+
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(180deg, transparent 0%, rgba(245, 0, 87, 0.02) 100%);
+      pointer-events: none;
+    }
+
+    .sidebar .logo {
+      width: 55px;
+      margin: 25px auto 50px;
+      display: block;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    .sidebar:hover .logo {
+      transform: scale(1.1);
+      filter: drop-shadow(0 6px 12px rgba(245, 0, 87, 0.3));
+    }
+
+    .menu {
+      list-style: none;
+      padding: 0;
+      margin: 10px;
+    }
+
+    .menu li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .menu li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--primary-pink), rgba(245, 0, 87, 0.7));
+      transition: width 0.3s ease;
+      border-radius: 12px;
+    }
+
+    .menu li:hover::before { width: 4px; }
+    .menu li:hover {
+      background: var(--hover-yellow);
+      transform: translateX(4px);
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 22px;
+      text-decoration: none;
+      width: 100%;
+      color: var(--primary-pink);
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .menu i {
+      font-size: 22px;
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .menu li:hover i {
+      transform: scale(1.15);
+      filter: drop-shadow(0 2px 4px rgba(245, 0, 87, 0.3));
+    }
+
+    .menu span {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .sidebar:hover .menu span {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .logout {
+      position: absolute;
+      bottom: 25px;
+      width: 100%;
+      padding: 0 10px;
+    }
+
+    .logout button {
+      all: unset;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 22px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logout button::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: radial-gradient(circle, rgba(245, 0, 87, 0.2), transparent);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+      border-radius: 50%;
+    }
+
+    .logout button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .logout button:hover {
+      background: linear-gradient(135deg, #ffe0e0 0%, #ffcdd2 100%);
+      transform: translateX(4px);
+    }
+
+    .logout i {
+      font-size: 22px;
+      color: var(--primary-pink);
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logout button:hover i { transform: rotate(15deg) scale(1.1); }
+
+    .logout span {
+      font-weight: 600;
+      color: var(--text-dark);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar:hover .logout span {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ── SIDEBAR RESPONSIVE ── */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 1100;
+      background: linear-gradient(135deg, var(--primary-pink), var(--pink-light));
+      border: none;
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(245, 0, 87, 0.35);
+      transition: transform .2s;
+    }
+    .sidebar-toggle:hover { transform: scale(1.08); }
+    .sidebar-toggle i { font-size: 20px; color: #fff; }
+
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 16, 37, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+    }
+    .sidebar-backdrop.open { display: block; }
+
+    @media (max-width: 768px) {
+      .sidebar-toggle { display: flex; }
+
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex !important;
+        flex-direction: column !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: 100vh !important;
+      }
+      .sidebar:hover { width: 260px; }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar.open .menu span,
+      .sidebar.open .logout span {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .logout {
+        position: relative !important;
+        bottom: auto !important;
+        margin-top: auto !important;
+        width: 100% !important;
+        padding: 16px 10px 40px !important;
+        flex-shrink: 0 !important;
+      }
+
+      main {
+        margin-left: 0 !important;
+        padding-top: 70px !important;
+      }
+    }
 
 /* ══════════════════════════════════════════
    LAYOUT PRINCIPAL
