@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import  FormularioNutricionForm
+from .forms import FormularioNutricionForm
 from .models import FormularioNutricionGuardado, DietaGenerada
 from .ia import generar_explicacion_nutricional
 from ..seguimiento.models import MedicionFisica
@@ -10,16 +10,13 @@ from ..ai.dtos.entrada import DatosEntrada
 import json
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
 @login_required(login_url='login')
 def formulario_view(request):
-
-    # 🔹 Verificar si ya existe un formulario para este usuario
     if FormularioNutricionGuardado.objects.filter(usuario=request.user).exists():
-        return redirect("main")  # o a donde tú quieras enviarlo
+        return redirect("main")
 
     if request.method == "POST":
         form = FormularioNutricionForm(request.POST)
@@ -27,8 +24,12 @@ def formulario_view(request):
         if form.is_valid():
             formulario = form.save(commit=False)
             formulario.usuario = request.user
-            # Guardar condicion_medica (campo extra del form, no del model directamente)
-            formulario.condicion_medica = form.cleaned_data.get('condicion_medica', '')
+
+            # ✅ Guardar múltiples condiciones médicas
+            condiciones_lista = form.cleaned_data.get('condiciones_medicas', [])
+            formulario.condiciones_medicas_json = list(condiciones_lista)
+            # Campo legado: guardar la primera condición para compatibilidad
+            formulario.condicion_medica = condiciones_lista[0] if condiciones_lista else ""
             formulario.save()
 
             MedicionFisica.objects.create(
@@ -48,7 +49,10 @@ def formulario_view(request):
                 "plazo_meses": formulario.plazo_meses,
                 "comidas_preferidas": formulario.comidas_preferidas,
                 "ejercicio": formulario.nivel_actividad,
-                "condicion_medica": formulario.condicion_medica or "",
+                # ✅ Guardamos lista completa de condiciones en sesión
+                "condiciones_medicas": condiciones_lista,
+                # legado para compatibilidad con ia.py (toma la primera)
+                "condicion_medica": condiciones_lista[0] if condiciones_lista else "",
                 "ingredientes_excluidos": formulario.ingredientes_excluidos or ""
             }
 
@@ -73,20 +77,20 @@ def cargando_view(request):
         return redirect("nutricion:formulario")
 
     try:
-        # Procesador de IA para calculos
         procesador = ProcesadorNutricion()
-        
-        # Parsear ingredientes excluidos del texto (separados por coma)
+
         ingredientes_excluidos_raw = datos.get('ingredientes_excluidos', '')
         ingredientes_excluidos = [
             i.strip().lower() for i in ingredientes_excluidos_raw.split(',') if i.strip()
         ] if ingredientes_excluidos_raw else []
 
-        # Condición médica (puede ser string vacío o una condición)
-        condicion_medica = datos.get('condicion_medica', '')
-        condiciones_medicas = [condicion_medica] if condicion_medica else []
+        # ✅ Obtener lista completa de condiciones médicas
+        condiciones_lista = datos.get('condiciones_medicas', [])
+        if not condiciones_lista:
+            # fallback al campo legado
+            condicion_medica = datos.get('condicion_medica', '')
+            condiciones_lista = [condicion_medica] if condicion_medica else []
 
-        # Construir DatosEntrada para el procesador
         datos_entrada = DatosEntrada(
             edad_anos=datos.get('edad'),
             peso_kg=datos.get('peso'),
@@ -96,18 +100,20 @@ def cargando_view(request):
             nivel_actividad=datos.get('ejercicio', 'sedentario').lower(),
             comidas_preferidas=datos.get('comidas_preferidas', []),
             restricciones_ingredientes=ingredientes_excluidos,
-            condiciones_medicas=condiciones_medicas,
+            condiciones_medicas=condiciones_lista,  # ✅ lista completa
         )
-        
-        # Procesar con IA para obtener calculos y distribucion
+
         resultado_ia = procesador.procesar(datos_entrada)
-        
-        # Generar texto explicativo con OpenAI
-        texto_openai = generar_explicacion_nutricional(datos)
+
+        # ✅ Pasar condiciones múltiples a la IA generativa
+        datos_para_ia = dict(datos)
+        datos_para_ia['condicion_medica'] = (
+            ", ".join(condiciones_lista) if condiciones_lista else "ninguna"
+        )
+        texto_openai = generar_explicacion_nutricional(datos_para_ia)
 
         formulario = FormularioNutricionGuardado.objects.get(id=formulario_id)
 
-        # Guardar todo en el modelo
         dieta = DietaGenerada.objects.create(
             formulario=formulario,
             usuario=request.user,
@@ -125,7 +131,6 @@ def cargando_view(request):
             contenido_dieta=texto_openai
         )
 
-        # Guardar en sesion para mostrar
         request.session["dieta_generada"] = {
             "calculos": {
                 "imc": resultado_ia.imc,
@@ -198,11 +203,10 @@ def detalle_formulario_view(request, id):
         "dieta": dieta
     })
 
+
 def extraer_calculos(dieta_json: dict) -> dict:
     calculos = dieta_json.get("calculos", {})
-
     macros = calculos.get("macros", {})
-
     return {
         "tmb": calculos.get("tmb"),
         "tdee": calculos.get("tdee"),

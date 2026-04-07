@@ -456,23 +456,23 @@
                     </div>
                 </div>
 
-                <!-- CONDICIÓN MÉDICA / ALERGIA -->
+                <!-- CONDICIÓN MÉDICA / ALERGIA - ✅ Selección múltiple -->
                 <div class="fg" style="margin-bottom:16px">
-                    <label class="fl" for="id_condicion_medica">
+                    <label class="fl">
                         Condición médica o alergia
-                        <span style="font-weight:400;color:var(--muted);font-size:.76rem">(opcional)</span>
+                        <span style="font-weight:400;color:var(--muted);font-size:.76rem">(opcional — puedes elegir varias)</span>
                     </label>
                     <p style="font-size:.8rem;color:var(--muted);margin-bottom:8px">
-                        Si tienes una condición, excluiremos automáticamente los ingredientes no recomendados de tus recetas.
+                        Selecciona todas las condiciones que apliquen. Excluiremos automáticamente los ingredientes no recomendados de tus recetas.
                     </p>
                     <div class="cond-g">
-                        {% for val, display in form.condicion_medica.field.choices %}
-                        <input type="radio" name="condicion_medica" id="cm_{{ val|default:'ninguna' }}" value="{{ val }}"
-                               {% if form.condicion_medica.value == val %}checked{% endif %}>
-                        <label for="cm_{{ val|default:'ninguna' }}" class="dp-l">{{ display }}</label>
+                        {% for val, display in form.condiciones_medicas.field.choices %}
+                        <input type="checkbox" name="condiciones_medicas" id="cm_{{ val }}" value="{{ val }}"
+                               {% if val in form.condiciones_medicas.value %}checked{% endif %}>
+                        <label for="cm_{{ val }}" class="dp-l">{{ display }}</label>
                         {% endfor %}
                     </div>
-                    {% if form.condicion_medica.errors %}<div class="ferr show">{{ form.condicion_medica.errors.0 }}</div>{% endif %}
+                    {% if form.condiciones_medicas.errors %}<div class="ferr show">{{ form.condiciones_medicas.errors.0 }}</div>{% endif %}
                 </div>
 
                 <!-- INGREDIENTES A EXCLUIR -->

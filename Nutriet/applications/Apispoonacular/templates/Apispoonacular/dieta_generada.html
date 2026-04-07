@@ -291,12 +291,20 @@ body::after  { content:''; position:fixed; bottom:-20%; left:5%; width:500px; he
       <p class="hero-sub">Recetas personalizadas • {{ dieta.plazo_meses }} meses • {{ formulario.get_tipo_dieta_display }}</p>
       <span class="objetivo-pill">🎯 Objetivo: {{ objetivo }}</span>
     {% endif %}
-    {% if restricciones_con_labels %}
-      <div style="margin-top:12px;">
-        <span style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px;">🛡️ Filtros activos por tu perfil médico</span>
-        {% for item in restricciones_con_labels %}
-          <span style="display:inline-block;background:rgba(245,0,87,.15);border:1px solid rgba(245,0,87,.3);color:#ffb3c6;border-radius:20px;padding:4px 13px;font-size:.74rem;font-weight:600;margin:3px;">🚫 {{ item.label }}</span>
-        {% endfor %}
+    {% if condiciones_con_labels or restricciones_con_labels %}
+      <div style="margin-top:14px;">
+        {% if condiciones_con_labels %}
+          <span style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px;">🏥 Condiciones médicas aplicadas</span>
+          {% for item in condiciones_con_labels %}
+            <span style="display:inline-block;background:rgba(100,180,255,.12);border:1px solid rgba(100,180,255,.3);color:#90caf9;border-radius:20px;padding:4px 13px;font-size:.74rem;font-weight:600;margin:3px;">🏥 {{ item.label }}</span>
+          {% endfor %}
+        {% endif %}
+        {% if restricciones_con_labels %}
+          <span style="color:rgba(255,255,255,.45);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;display:block;margin-top:8px;margin-bottom:6px;">🛡️ Ingredientes excluidos automáticamente</span>
+          {% for item in restricciones_con_labels %}
+            <span style="display:inline-block;background:rgba(245,0,87,.15);border:1px solid rgba(245,0,87,.3);color:#ffb3c6;border-radius:20px;padding:4px 13px;font-size:.74rem;font-weight:600;margin:3px;">🚫 {{ item.label }}</span>
+          {% endfor %}
+        {% endif %}
       </div>
     {% endif %}
   </div>

@@ -7,7 +7,12 @@ client = genai.Client(api_key=settings.GEMINI_API_KEY)
 
 
 def generar_explicacion_nutricional(data):
-    condicion = data.get("condicion_medica", "") or "ninguna"
+    # ✅ Soporte para múltiples condiciones médicas
+    condiciones_lista = data.get("condiciones_medicas", [])
+    if condiciones_lista:
+        condicion = ", ".join(condiciones_lista)
+    else:
+        condicion = data.get("condicion_medica", "") or "ninguna"
     objetivo = data.get("objetivo", "No definido")
     sexo = data.get("sexo", "M")
     edad = data.get("edad", "")
@@ -36,7 +41,7 @@ IMC: {data.get("imc")} | Grasa: {data.get("porcentaje_grasa")}%
 TMB: {data.get("tmb")} kcal | TDEE: {data.get("tdee")} kcal
 Calorías/día: {data.get("calorias_diarias")} | Proteínas: {data.get("proteinas_gramos")}g | Grasas: {data.get("grasas_gramos")}g | Carbos: {data.get("carbohidratos_gramos")}g
 
-GUÍA POR CONDICIÓN (aplica solo la que corresponde):
+GUÍA POR CONDICIÓN (aplica TODAS las que correspondan, ya que el paciente puede tener varias):
 - diabetes: control glucémico, IG bajo, reducir azúcares simples, carbos complejos y fibra.
 - hipertension: dieta DASH, sodio <1500mg/día, aumentar potasio y magnesio.
 - colesterol: reducir grasas saturadas, aumentar omega-3 y fibra soluble.

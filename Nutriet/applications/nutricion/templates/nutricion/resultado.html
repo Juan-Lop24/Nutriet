@@ -333,7 +333,7 @@
     {% if dieta.texto.recomendaciones_por_condicion %}
     {% with cond=dieta.texto.recomendaciones_por_condicion %}
     {% if cond.explicacion_condicion or cond.pautas_criticas %}
-    <div class="section-head">Condición médica</div>
+    <div class="section-head">Condiciones médicas y recomendaciones</div>
     <div class="ic danger">
         <div class="ic-title">🩺 {{ cond.titulo }}</div>
         {% if cond.explicacion_condicion %}

@@ -27,8 +27,8 @@ SEXO = [
     ("F", "Femenino"),
 ]
 
+# ✅ Lista de condiciones disponibles para selección múltiple
 CONDICIONES_MEDICAS = [
-    ("", "Sin condición médica"),
     ("diabetes", "Diabetes"),
     ("celiaco", "Celiaco / Sin gluten"),
     ("lactosa", "Intolerancia a la lactosa"),
@@ -42,6 +42,8 @@ CONDICIONES_MEDICAS = [
     ("alergia_mani", "Alergia al maní / cacahuate"),
     ("alergia_mariscos", "Alergia a mariscos"),
     ("alergia_huevo", "Alergia al huevo"),
+    ("vegetariano", "Vegetariano"),
+    ("vegano", "Vegano"),
 ]
 
 
@@ -49,11 +51,7 @@ class FormularioNutricionForm(forms.ModelForm):
     """
     ModelForm conectado directamente con el modelo FormularioNutricionGuardado.
     IMC y % grasa se calculan automáticamente en el modelo.
-
-    Cambios:
-    - Se eliminó tipo_dieta (vegano, keto, etc.)
-    - Se agregó condicion_medica: excluye ingredientes automáticamente
-    - Se renombró restricciones_alimentarias -> ingredientes_excluidos
+    ✅ condicion_medica ahora es MultipleChoiceField (checkboxes) — una o varias enfermedades.
     """
 
     comidas_preferidas = forms.MultipleChoiceField(
@@ -63,12 +61,13 @@ class FormularioNutricionForm(forms.ModelForm):
         required=False
     )
 
-    condicion_medica = forms.ChoiceField(
+    # ✅ CAMBIO: de ChoiceField (radio) → MultipleChoiceField (checkboxes)
+    condiciones_medicas = forms.MultipleChoiceField(
         label="Condición médica o alergia",
         choices=CONDICIONES_MEDICAS,
         required=False,
-        widget=forms.Select(attrs={"class": "form-control"}),
-        help_text="Si tienes una condición, excluiremos automáticamente los ingredientes no recomendados."
+        widget=forms.CheckboxSelectMultiple(),
+        help_text="Puedes seleccionar una o más condiciones. Se excluirán automáticamente los ingredientes no recomendados."
     )
 
     class Meta:

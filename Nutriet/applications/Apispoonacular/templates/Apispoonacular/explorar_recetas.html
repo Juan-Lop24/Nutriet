@@ -771,12 +771,20 @@ body::after {
   <div class="hero-inner">
     <h1>Explora <span>Recetas</span><br>hechas para ti</h1>
     <p class="hero-sub">Filtradas automáticamente según tu perfil nutricional y condiciones de salud.</p>
-    {% if restricciones_con_labels %}
-    <div>
-      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">🛡️ Filtros activos por tu perfil:</small><br>
+    {% if condiciones_con_labels or restricciones_con_labels %}
+    <div style="margin-top:10px;">
+      {% if condiciones_con_labels %}
+      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">🏥 Condiciones médicas aplicadas:</small><br>
+      {% for item in condiciones_con_labels %}
+        <span class="restriccion-pill" style="background:rgba(100,180,255,.18);border-color:rgba(100,180,255,.35);color:#90caf9;">🏥 {{ item.label }}</span>
+      {% endfor %}
+      {% endif %}
+      {% if restricciones_con_labels %}
+      <small style="color:rgba(255,255,255,.5);font-weight:600;font-size:.74rem;">🛡️ Ingredientes excluidos:</small><br>
       {% for item in restricciones_con_labels %}
         <span class="restriccion-pill">🚫 {{ item.label }}</span>
       {% endfor %}
+      {% endif %}
     </div>
     {% endif %}
   </div>
@@ -814,9 +822,9 @@ body::after {
   <div class="stat-chip">
     <strong>{{ total_recetas }}</strong> recetas aptas para ti
   </div>
-  {% if restricciones_con_labels %}
+  {% if condiciones_con_labels or restricciones_con_labels %}
   <div class="stat-chip">
-    🛡️ <strong>{{ restricciones_con_labels|length }}</strong> filtros aplicados
+    🛡️ <strong>{{ condiciones_con_labels|length }}</strong> condicion{{ condiciones_con_labels|length|pluralize:"","es" }} • <strong>{{ restricciones_con_labels|length }}</strong> filtro{{ restricciones_con_labels|length|pluralize:"","s" }} activo{{ restricciones_con_labels|length|pluralize:"","s" }}
   </div>
   {% endif %}
   <div class="stat-chip" style="margin-left:auto;">

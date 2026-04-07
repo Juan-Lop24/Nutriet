@@ -75,11 +75,39 @@ TRADUCCIONES_CATEGORIAS = {
 }
 
 def _parsear_restricciones_combinadas(formulario):
+    """
+    ✅ Soporta múltiples condiciones médicas.
+    Primero lee condiciones_medicas_json (lista), luego el campo legado condicion_medica.
+    """
     restricciones = set()
-    condicion = getattr(formulario, 'condicion_medica', '') or ''
-    if condicion in CONDICION_A_RESTRICCION:
-        restricciones.add(CONDICION_A_RESTRICCION[condicion])
+    # Obtener lista de condiciones desde el método del modelo
+    condiciones = []
+    if hasattr(formulario, 'get_condiciones_lista'):
+        condiciones = formulario.get_condiciones_lista()
+    elif getattr(formulario, 'condiciones_medicas_json', None):
+        condiciones = formulario.condiciones_medicas_json
+    else:
+        condicion_legado = getattr(formulario, 'condicion_medica', '') or ''
+        if condicion_legado:
+            condiciones = [condicion_legado]
+
+    for condicion in condiciones:
+        cond = condicion.strip().lower()
+        if cond in CONDICION_A_RESTRICCION:
+            restricciones.add(CONDICION_A_RESTRICCION[cond])
     return list(restricciones)
+
+
+def _parsear_condiciones_dieta(formulario):
+    """
+    ✅ Retorna lista completa de condiciones para aplicar filtros de vegetariano/vegano.
+    """
+    if hasattr(formulario, 'get_condiciones_lista'):
+        return formulario.get_condiciones_lista()
+    if getattr(formulario, 'condiciones_medicas_json', None):
+        return formulario.condiciones_medicas_json
+    condicion = getattr(formulario, 'condicion_medica', '') or ''
+    return [condicion] if condicion else []
 
 
 def _traducir_ingrediente_a_ingles(termino: str) -> list:
@@ -171,14 +199,23 @@ def _aplicar_restricciones(qs, restricciones):
     return qs
 
 
-def _aplicar_condicion_dieta(qs, condicion_medica):
+def _aplicar_condicion_dieta(qs, condiciones):
+    """
+    ✅ Acepta lista de condiciones (o string legado) y aplica filtros vegetariano/vegano.
+    """
     CARNES = ["Beef", "Chicken", "Lamb", "Pork", "Seafood"]
-    if condicion_medica == "vegetariano":
-        qs = qs.exclude(categoria__in=CARNES)
-    elif condicion_medica == "vegano":
-        qs = qs.exclude(categoria__in=CARNES)
-        qs = qs.exclude(clasificacion__intolerancia_lactosa=True)
-        qs = qs.exclude(clasificacion__alergia_huevo=True)
+    # Normalizar: acepta string legado o lista
+    if isinstance(condiciones, str):
+        condiciones = [condiciones] if condiciones else []
+
+    for condicion in condiciones:
+        c = condicion.lower().strip()
+        if c == "vegano":
+            qs = qs.exclude(categoria__in=CARNES)
+            qs = qs.exclude(clasificacion__intolerancia_lactosa=True)
+            qs = qs.exclude(clasificacion__alergia_huevo=True)
+        elif c == "vegetariano":
+            qs = qs.exclude(categoria__in=CARNES)
     return qs
 
 
@@ -231,7 +268,7 @@ def generador_dieta(request):
         })
 
     formulario             = dieta.formulario
-    condicion_medica       = getattr(formulario, 'condicion_medica', '') or ''
+    condiciones_dieta      = _parsear_condiciones_dieta(formulario)
     ingredientes_excluidos = getattr(formulario, 'ingredientes_excluidos', '') or ''
     restricciones          = _parsear_restricciones_combinadas(formulario)
     objetivo               = dieta.objetivo
@@ -253,7 +290,7 @@ def generador_dieta(request):
 
             qs = _qs_base()
             qs = _aplicar_restricciones(qs, restricciones)
-            qs = _aplicar_condicion_dieta(qs, condicion_medica)
+            qs = _aplicar_condicion_dieta(qs, condiciones_dieta)
             qs = _aplicar_ingredientes_excluidos(qs, ingredientes_excluidos)
 
             if cals:
@@ -272,7 +309,7 @@ def generador_dieta(request):
             if not recetas_qs:
                 qs2 = _qs_base()
                 qs2 = _aplicar_restricciones(qs2, restricciones)
-                qs2 = _aplicar_condicion_dieta(qs2, condicion_medica)
+                qs2 = _aplicar_condicion_dieta(qs2, condiciones_dieta)
                 qs2 = _aplicar_ingredientes_excluidos(qs2, ingredientes_excluidos)
                 recetas_qs = _shuffle_qs(qs2, 6)
 
@@ -286,7 +323,7 @@ def generador_dieta(request):
 
         qs = _qs_base()
         qs = _aplicar_restricciones(qs, restricciones)
-        qs = _aplicar_condicion_dieta(qs, condicion_medica)
+        qs = _aplicar_condicion_dieta(qs, condiciones_dieta)
         qs = _aplicar_ingredientes_excluidos(qs, ingredientes_excluidos)
 
         if cals_c:
@@ -311,6 +348,20 @@ def generador_dieta(request):
         for r in restricciones
     ]
 
+    CONDICION_LABELS = {
+        "diabetes": "Diabetes", "celiaco": "Celiaco / Sin gluten",
+        "lactosa": "Intolerancia a la lactosa", "hipertension": "Hipertensión",
+        "colesterol": "Colesterol alto", "dislipidemia": "Dislipidemias",
+        "indigestion": "Indigestión / Gastritis", "hipertiroidismo": "Hipertiroidismo",
+        "anemia": "Anemia ferropénica", "gota": "Gota",
+        "alergia_mani": "Alergia al maní", "alergia_mariscos": "Alergia a mariscos",
+        "alergia_huevo": "Alergia al huevo", "vegetariano": "Vegetariano", "vegano": "Vegano",
+    }
+    condiciones_con_labels = [
+        {"key": c, "label": CONDICION_LABELS.get(c, c.replace("_", " ").capitalize())}
+        for c in condiciones_dieta
+    ]
+
     return render(request, "Apispoonacular/dieta_generada.html", {
         "datos_dieta":              datos_dieta,
         "dieta":                    dieta,
@@ -320,6 +371,8 @@ def generador_dieta(request):
         "objetivo":                 objetivo,
         "restricciones_aplicadas":  restricciones,
         "restricciones_con_labels": restricciones_con_labels,
+        "condiciones_medicas":      condiciones_dieta,
+        "condiciones_con_labels":   condiciones_con_labels,
         "favoritos_ids":            favoritos_ids,
     })
 
@@ -337,7 +390,7 @@ def explorar_recetas(request):
     ).last()
 
     restricciones          = _parsear_restricciones_combinadas(formulario) if formulario else []
-    condicion_medica       = (getattr(formulario, 'condicion_medica', '') or '') if formulario else ''
+    condiciones_dieta      = _parsear_condiciones_dieta(formulario) if formulario else []
     ingredientes_excluidos = (getattr(formulario, 'ingredientes_excluidos', '') or '') if formulario else ''
 
     busqueda  = request.GET.get("q", "").strip()
@@ -348,7 +401,7 @@ def explorar_recetas(request):
 
     qs = _qs_base()
     qs = _aplicar_restricciones(qs, restricciones)
-    qs = _aplicar_condicion_dieta(qs, condicion_medica)
+    qs = _aplicar_condicion_dieta(qs, condiciones_dieta)
     qs = _aplicar_ingredientes_excluidos(qs, ingredientes_excluidos)
 
     if busqueda:
@@ -415,6 +468,20 @@ def explorar_recetas(request):
         for r in restricciones
     ]
 
+    CONDICION_LABELS = {
+        "diabetes": "Diabetes", "celiaco": "Celiaco / Sin gluten",
+        "lactosa": "Intolerancia a la lactosa", "hipertension": "Hipertensión",
+        "colesterol": "Colesterol alto", "dislipidemia": "Dislipidemias",
+        "indigestion": "Indigestión / Gastritis", "hipertiroidismo": "Hipertiroidismo",
+        "anemia": "Anemia ferropénica", "gota": "Gota",
+        "alergia_mani": "Alergia al maní", "alergia_mariscos": "Alergia a mariscos",
+        "alergia_huevo": "Alergia al huevo", "vegetariano": "Vegetariano", "vegano": "Vegano",
+    }
+    condiciones_con_labels = [
+        {"key": c, "label": CONDICION_LABELS.get(c, c.replace("_", " ").capitalize())}
+        for c in condiciones_dieta
+    ]
+
     return render(request, "Apispoonacular/explorar_recetas.html", {
         "recetas":                  recetas,
         "total_recetas":            total,
@@ -424,6 +491,8 @@ def explorar_recetas(request):
         "ordenar":                  ordenar,
         "restricciones_aplicadas":  restricciones,
         "restricciones_con_labels": restricciones_con_labels,
+        "condiciones_medicas":      condiciones_dieta,
+        "condiciones_con_labels":   condiciones_con_labels,
         "categorias_disponibles": categorias_traducidas,
         "total_bd":                 RecetaMealDB.objects.filter(clasificado=True).count(),
         "favoritos_ids":            list(favoritos_ids),

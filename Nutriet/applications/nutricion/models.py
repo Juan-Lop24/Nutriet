@@ -1,12 +1,13 @@
 from django.db import models
 from django.conf import settings
 
+
 class RestriccionAlimentaria(models.Model):
     nombre = models.CharField(max_length=100)
     intolerancias = models.TextField(blank=True, null=True)
     alergias = models.TextField(blank=True, null=True)
-    objetivos = models.TextField(blank=True, null=True)   # bajar de peso, subir masa, tonificar, etc.
-    enfermedades = models.TextField(blank=True, null=True) # opcional
+    objetivos = models.TextField(blank=True, null=True)
+    enfermedades = models.TextField(blank=True, null=True)
     creado = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -29,8 +30,8 @@ class FormularioNutricionGuardado(models.Model):
         ("muy_intenso", "Muy intenso"),
     ]
 
+    # Lista canónica de condiciones (usada en forms.py y views.py también)
     CONDICION_CHOICES = [
-        ("", "Sin condición médica"),
         ("diabetes", "Diabetes"),
         ("celiaco", "Celiaco / Sin gluten"),
         ("lactosa", "Intolerancia a la lactosa"),
@@ -59,58 +60,66 @@ class FormularioNutricionGuardado(models.Model):
         related_name="formularios_nutricion"
     )
 
-    # 🔹 Datos personales
-    sexo = models.CharField(
-    max_length=1,
-    choices=SEXO_CHOICES,
-    null=True,
-    blank=True)
+    # Datos personales
+    sexo = models.CharField(max_length=1, choices=SEXO_CHOICES, null=True, blank=True)
     edad = models.IntegerField()
     peso = models.FloatField(help_text="Peso actual en kg")
     altura = models.FloatField(help_text="Altura en cm")
 
-    # 🔹 Composición corporal (AUTO)
+    # Composición corporal (AUTO)
     imc = models.FloatField(editable=False, null=True)
     porcentaje_grasa = models.FloatField(editable=False, null=True)
 
-    # 🔹 Objetivos
+    # Objetivos
     objetivo = models.CharField(max_length=20, choices=OBJETIVO_CHOICES)
     peso_objetivo = models.FloatField(help_text="Peso deseado en kg")
     plazo_meses = models.IntegerField(help_text="Tiempo para alcanzar el objetivo en meses")
 
-    # 🔹 Hábitos
+    # Hábitos
     comidas_preferidas = models.CharField(max_length=200)
     nivel_actividad = models.CharField(max_length=20, choices=ACTIVIDAD_CHOICES)
 
-    # Condición médica o alergia (genera exclusiones automáticas en recetas)
+    # ✅ CAMBIO: ahora almacena MÚLTIPLES condiciones médicas como JSON list
+    # Ej: ["diabetes", "hipertension"]  — campo legado condicion_medica se mantiene para compatibilidad
     condicion_medica = models.CharField(
-        max_length=30, choices=CONDICION_CHOICES, blank=True, default=""
+        max_length=30, blank=True, default=""
+    )
+    # Nuevo campo: lista de condiciones como JSON
+    condiciones_medicas_json = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Lista de condiciones médicas seleccionadas"
     )
 
-    # Ingredientes que el usuario NO quiere ver en sus recetas (por gusto personal u otra razón)
+    # Ingredientes que el usuario NO quiere ver en sus recetas
     ingredientes_excluidos = models.TextField(
         blank=True, null=True,
         help_text="Lista de ingredientes separados por coma que el usuario no quiere en recetas"
     )
 
-    # 🔹 Metadata
+    # Metadata
     creado_en = models.DateTimeField(auto_now_add=True)
     actualizado_en = models.DateTimeField(auto_now=True)
+
+    def get_condiciones_lista(self):
+        """Retorna siempre una lista de condiciones médicas activas."""
+        if self.condiciones_medicas_json:
+            return self.condiciones_medicas_json
+        # fallback al campo legado
+        if self.condicion_medica:
+            return [self.condicion_medica]
+        return []
 
     def save(self, *args, **kwargs):
         """Calcula IMC y porcentaje de grasa automáticamente"""
         if self.peso and self.altura:
             altura_m = self.altura / 100
             self.imc = round(self.peso / (altura_m ** 2), 2)
-
-            # Cálculo porcentaje de grasa (Deurenberg)
             if self.sexo == "M":
                 grasa = (1.20 * self.imc) + (0.23 * self.edad) - 16.2
             else:
                 grasa = (1.20 * self.imc) + (0.23 * self.edad) - 5.4
-
             self.porcentaje_grasa = round(grasa, 2)
-
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -120,10 +129,6 @@ class FormularioNutricionGuardado(models.Model):
         verbose_name = "Formulario de Nutrición"
         verbose_name_plural = "Formularios de Nutrición"
         ordering = ['-creado_en']
-
-
-from django.db import models
-from django.conf import settings
 
 
 class DietaGenerada(models.Model):
@@ -146,26 +151,20 @@ class DietaGenerada(models.Model):
 
     imc = models.FloatField(null=True, blank=True)
     porcentaje_grasa = models.FloatField(null=True, blank=True)
-
     tmb = models.FloatField(null=True, blank=True)
     tdee = models.FloatField(null=True, blank=True)
-
     calorias_diarias = models.IntegerField(null=True, blank=True)
-
     proteinas_gramos = models.IntegerField(null=True, blank=True)
     grasas_gramos = models.IntegerField(null=True, blank=True)
     carbohidratos_gramos = models.IntegerField(null=True, blank=True)
-
     contenido_dieta = models.JSONField()
-    
-    # Distribución de macros por comida para Spoonacular
-    # Estructura: {"desayuno": {...}, "almuerzo": {...}, ...}
+
     distribucion_macros_comidas = models.JSONField(
         null=True,
         blank=True,
         help_text="Distribución de calorías y macros por cada comida"
     )
-    
+
     objetivo = models.CharField(
         max_length=50,
         help_text="Objetivo nutricional (definido por el usuario)"
@@ -174,7 +173,6 @@ class DietaGenerada(models.Model):
     plazo_meses = models.PositiveIntegerField(
         help_text="Plazo estimado del objetivo en meses"
     )
-
 
     creado_en = models.DateTimeField(auto_now_add=True)
 
