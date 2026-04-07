@@ -1158,7 +1158,7 @@
                   <div class="row">
                     {% for receta in favoritas %}
                       <div class="col-md-4 mb-3">
-                        <a href="{% url 'receta_detalle' receta.recipe_id %}"
+                        <a href="{% url 'recetas_favoritas' %}"
                           class="receta-widget text-decoration-none">
                           <div class="widget-card">
                             <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
