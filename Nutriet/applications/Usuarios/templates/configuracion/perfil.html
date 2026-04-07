@@ -32,6 +32,11 @@
   --shadow-pink: 0 6px 24px rgba(245,0,87,.18);
   --shadow-lt:   rgba(0,0,0,.08);
   --shadow-md2:  rgba(0,0,0,.12);
+
+  /* aliases usados en el sidebar del main */
+  --primary-pink: #f50057;
+  --shadow-light:  rgba(0,0,0,.08);
+  --shadow-medium: rgba(0,0,0,.12);
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
@@ -65,103 +70,254 @@ body::after {
 }
 
 /* ══════════════════════════════════════════
-   SIDEBAR — idéntico al resto del proyecto
+   SIDEBAR — copiado exacto del main
 ══════════════════════════════════════════ */
 .sidebar {
-  position:fixed; top:0; left:0;
-  height:100vh; width:80px;
-  background:linear-gradient(180deg,var(--soft-yellow) 0%,#fff8dc 100%);
-  transition:all .3s cubic-bezier(.4,0,.2,1);
-  overflow:hidden;
-  box-shadow:4px 0 20px var(--shadow-lt);
-  z-index:1000;
-  border-right:2px solid rgba(245,0,87,.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 80px;
+  background: linear-gradient(180deg, var(--soft-yellow) 0%, #fff8dc 100%);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  box-shadow: 4px 0 20px var(--shadow-light);
+  z-index: 1000;
+  border-right: 2px solid rgba(245, 0, 87, 0.1);
 }
-.sidebar:hover { width:260px; box-shadow:6px 0 30px var(--shadow-md2); }
+
+.sidebar:hover {
+  width: 260px;
+  box-shadow: 6px 0 30px var(--shadow-medium);
+}
+
 .sidebar::before {
-  content:''; position:absolute; inset:0;
-  background:linear-gradient(180deg,transparent 0%,rgba(245,0,87,.02) 100%);
-  pointer-events:none;
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, transparent 0%, rgba(245, 0, 87, 0.02) 100%);
+  pointer-events: none;
 }
+
 .sidebar .logo {
-  width:55px; margin:25px auto 50px; display:block;
-  transition:all .3s ease;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,.1));
+  width: 55px;
+  margin: 25px auto 50px;
+  display: block;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
-.sidebar:hover .logo { transform:scale(1.1); filter:drop-shadow(0 6px 12px rgba(245,0,87,.3)); }
-.menu { list-style:none; padding:0; margin:10px; }
+
+.sidebar:hover .logo {
+  transform: scale(1.1);
+  filter: drop-shadow(0 6px 12px rgba(245, 0, 87, 0.3));
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 10px;
+}
+
 .menu li {
-  display:flex; align-items:center;
-  margin-bottom:8px; border-radius:12px;
-  overflow:hidden; position:relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
 }
+
 .menu li::before {
-  content:''; position:absolute; left:0; top:0; height:100%; width:0;
-  background:linear-gradient(90deg,var(--pink),rgba(245,0,87,.7));
-  transition:width .3s ease; border-radius:12px;
+  content: '';
+  position: absolute;
+  left: 0; top: 0;
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--primary-pink), rgba(245, 0, 87, 0.7));
+  transition: width 0.3s ease;
+  border-radius: 12px;
 }
-.menu li:hover::before { width:4px; }
-.menu li:hover { background:transparent; transform:translateX(4px); }
+
+.menu li:hover::before { width: 4px; }
+.menu li:hover {
+  background: var(--hover-yellow);
+  transform: translateX(4px);
+}
+
 .menu a {
-  display:flex; align-items:center; gap:18px;
-  padding:16px 22px; text-decoration:none; width:100%;
-  color:var(--pink); transition:all .2s ease; position:relative; z-index:1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 22px;
+  text-decoration: none;
+  width: 100%;
+  color: var(--primary-pink);
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
-.menu i { font-size:22px; min-width:28px; text-align:center; transition:all .3s ease; color:var(--pink); }
-.menu li:hover i { transform:scale(1.15); filter:drop-shadow(0 2px 4px rgba(245,0,87,.3)); }
+
+.menu i {
+  font-size: 22px;
+  min-width: 28px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.menu li:hover i {
+  transform: scale(1.15);
+  filter: drop-shadow(0 2px 4px rgba(245, 0, 87, 0.3));
+}
+
 .menu span {
-  font-size:15px; font-weight:600; color:var(--text-dark);
-  white-space:nowrap; opacity:0; transform:translateX(-10px); transition:all .3s ease;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
 }
-.sidebar:hover .menu span { opacity:1; transform:translateX(0); }
-.logout { position:absolute; bottom:25px; width:100%; padding:0 10px; }
+
+.sidebar:hover .menu span {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.logout {
+  position: absolute;
+  bottom: 25px;
+  width: 100%;
+  padding: 0 10px;
+}
+
 .logout button {
-  all:unset; width:100%; display:flex; align-items:center;
-  gap:18px; padding:16px 22px; cursor:pointer;
-  border-radius:12px; transition:all .3s ease; position:relative; overflow:hidden;
+  all: unset;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 22px;
+  cursor: pointer;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+
 .logout button::before {
-  content:''; position:absolute; top:50%; left:50%; width:0; height:0;
-  background:radial-gradient(circle,rgba(245,0,87,.2),transparent);
-  transform:translate(-50%,-50%); transition:width .4s,height .4s; border-radius:50%;
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: radial-gradient(circle, rgba(245, 0, 87, 0.2), transparent);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  border-radius: 50%;
 }
-.logout button:hover::before { width:300px; height:300px; }
-.logout button:hover { background:linear-gradient(135deg,#ffe0e0,#ffcdd2); transform:translateX(4px); }
-.logout i { font-size:22px; color:var(--pink); min-width:28px; text-align:center; transition:all .3s ease; position:relative; z-index:1; }
-.logout button:hover i { transform:rotate(15deg) scale(1.1); }
-.logout span { font-weight:600; color:var(--text-dark); opacity:0; transform:translateX(-10px); transition:all .3s ease; position:relative; z-index:1; }
-.sidebar:hover .logout span { opacity:1; transform:translateX(0); }
+
+.logout button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.logout button:hover {
+  background: linear-gradient(135deg, #ffe0e0 0%, #ffcdd2 100%);
+  transform: translateX(4px);
+}
+
+.logout i {
+  font-size: 22px;
+  color: var(--primary-pink);
+  min-width: 28px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.logout button:hover i { transform: rotate(15deg) scale(1.1); }
+
+.logout span {
+  font-weight: 600;
+  color: var(--text-dark);
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar:hover .logout span {
+  opacity: 1;
+  transform: translateX(0);
+}
 
 /* ── SIDEBAR RESPONSIVE ── */
 .sidebar-toggle {
-  display:none;
-  position:fixed; top:14px; left:14px;
-  z-index:1100;
-  background:linear-gradient(135deg,var(--pink),var(--pink-light));
-  border:none; border-radius:12px;
-  width:44px; height:44px;
-  cursor:pointer; align-items:center; justify-content:center;
-  box-shadow:0 4px 14px var(--pink-glow); transition:transform .2s;
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1100;
+  background: linear-gradient(135deg, var(--primary-pink), var(--pink-light));
+  border: none;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(245, 0, 87, 0.35);
+  transition: transform .2s;
 }
-.sidebar-toggle:hover { transform:scale(1.08); }
-.sidebar-toggle i { font-size:20px; color:#fff; }
-.sidebar-backdrop {
-  display:none; position:fixed; inset:0;
-  background:rgba(26,16,37,.55); backdrop-filter:blur(3px); z-index:999;
-}
-.sidebar-backdrop.open { display:block; }
+.sidebar-toggle:hover { transform: scale(1.08); }
+.sidebar-toggle i { font-size: 20px; color: #fff; }
 
-@media (max-width:768px) {
-  .sidebar-toggle { display:flex; }
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 16, 37, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 999;
+}
+.sidebar-backdrop.open { display: block; }
+
+@media (max-width: 768px) {
+  .sidebar-toggle { display: flex; }
+
   .sidebar {
-    transform:translateX(-100%);
-    width:260px !important;
-    transition:transform .3s cubic-bezier(.4,0,.2,1);
+    transform: translateX(-100%);
+    width: 260px !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: 100vh !important;
   }
-  .sidebar:hover { width:260px; }
-  .sidebar.open { transform:translateX(0); }
+  .sidebar:hover { width: 260px; }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
   .sidebar.open .menu span,
-  .sidebar.open .logout span { opacity:1; transform:translateX(0); }
+  .sidebar.open .logout span {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .logout {
+    position: relative !important;
+    bottom: auto !important;
+    margin-top: auto !important;
+    width: 100% !important;
+    padding: 16px 10px 40px !important;
+    flex-shrink: 0 !important;
+  }
+
   .page-wrap { margin-left:0 !important; padding:70px 16px 48px !important; }
 }
 
@@ -663,8 +819,9 @@ body::after {
 <body>
 
 <!-- ══════════════════════════════════════════
-     SIDEBAR — igual al resto del proyecto
+     SIDEBAR — copiado exacto del main
 ══════════════════════════════════════════ -->
+
 <!-- Botón hamburguesa (solo móvil) -->
 <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
   <i class="fas fa-bars" id="toggleIcon"></i>
@@ -675,18 +832,40 @@ body::after {
 
 <aside class="sidebar">
   <img src="{% static 'images/logo.png' %}" class="logo" alt="Nutriet">
+
   <ul class="menu">
-    <li><a href="{% url 'main' %}">
-      <i class="fas fa-home"></i><span>Inicio</span></a></li>
-    <li><a href="{% url 'explorar_recetas' %}">
-      <i class="fas fa-apple-alt"></i><span>Recetas</span></a></li>
-    <li><a href="{% url 'seguimiento:seguimiento' %}">
-      <i class="fas fa-chart-line"></i><span>Seguimiento</span></a></li>
-    <li><a href="{% url 'calendario' %}">
-      <i class="fas fa-calendar-alt"></i><span>Calendario</span></a></li>
-    <li><a href="{% url 'perfil' %}">
-      <i class="fas fa-cog"></i><span>Configuración</span></a></li>
+    <li>
+      <a href="{% url 'main' %}">
+        <i class="fas fa-home"></i>
+        <span>Inicio</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'explorar_recetas' %}">
+        <i class="fas fa-apple-alt"></i>
+        <span>Recetas</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'seguimiento:seguimiento' %}">
+        <i class="fas fa-chart-line"></i>
+        <span>Seguimiento</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'calendario' %}">
+        <i class="fas fa-calendar-alt"></i>
+        <span>Calendario</span>
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'perfil' %}">
+        <i class="fas fa-cog"></i>
+        <span>Configuración</span>
+      </a>
+    </li>
   </ul>
+
   <div class="logout">
     <form method="post" action="{% url 'logout' %}">
       {% csrf_token %}
@@ -1130,10 +1309,6 @@ body::after {
 <script>
 /* ══════════════════════════════════════════
    TAB SYSTEM
-   Lee el tab desde:
-   1. active_tab inyectado por Django tras POST con error
-   2. hash de la URL (#seguridad, #cuenta)
-   3. Por defecto: perfil
 ══════════════════════════════════════════ */
 const tabTitles = {
   perfil:    { title:'Mi <em>Perfil</em>',    sub:'Actualiza tu información personal y foto' },
@@ -1155,12 +1330,10 @@ function activateTab(tab) {
   history.replaceState(null, '', '#' + tab);
 }
 
-// active_tab lo inyecta la view de Django cuando hay error en un POST
 const djangoTab = '{{ active_tab|default:"" }}';
 const hashTab   = location.hash.replace('#', '');
 activateTab(djangoTab || hashTab || 'perfil');
 
-// Scroll al primer error si existe
 const firstErr = document.querySelector('.alert-msg.error');
 if (firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
 
@@ -1173,8 +1346,6 @@ document.querySelectorAll('.tab-link').forEach(link =>
 
 /* ══════════════════════════════════════════
    UPLOAD DE FOTO
-   id_foto_perfil → id real generado por Django
-   para el campo foto_perfil del PerfilForm
 ══════════════════════════════════════════ */
 const uploadTrigger = document.getElementById('upload-trigger');
 const fileInput     = document.getElementById('id_foto_perfil');
@@ -1186,12 +1357,10 @@ if (uploadTrigger && fileInput) {
   fileInput.addEventListener('change', function () {
     if (!this.files || !this.files[0]) return;
 
-    // Preview inmediato antes de subir
     const reader = new FileReader();
     reader.onload = e => { imageDisplay.src = e.target.result; };
     reader.readAsDataURL(this.files[0]);
 
-    // Agregar campo oculto guardar_foto y enviar
     const form = document.getElementById('form-foto-perfil');
     let hidden = form.querySelector('input[name="guardar_foto"]');
     if (!hidden) {
@@ -1220,7 +1389,7 @@ document.querySelectorAll('.toggle-pw').forEach(icon => {
 });
 
 /* ══════════════════════════════════════════
-   ANTI-CACHÉ (igual al resto del proyecto)
+   ANTI-CACHÉ
 ══════════════════════════════════════════ */
 window.addEventListener('pageshow', function (event) {
   if (event.persisted ||
@@ -1229,17 +1398,35 @@ window.addEventListener('pageshow', function (event) {
   }
 });
 </script>
+
 <script>
-  const sidebar  = document.querySelector('.sidebar');
-  const toggle   = document.getElementById('sidebarToggle');
-  const backdrop = document.getElementById('sidebarBackdrop');
-  const icon     = document.getElementById('toggleIcon');
-  function openSidebar()  { sidebar.classList.add('open'); backdrop.classList.add('open'); icon.className = 'fas fa-times'; document.body.style.overflow = 'hidden'; }
-  function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('open'); icon.className = 'fas fa-bars'; document.body.style.overflow = ''; }
-  toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
-  backdrop.addEventListener('click', closeSidebar);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar(); });
+/* ══════════════════════════════════════════
+   SIDEBAR TOGGLE — copiado exacto del main
+══════════════════════════════════════════ */
+const sidebar  = document.querySelector('.sidebar');
+const toggle   = document.getElementById('sidebarToggle');
+const backdrop = document.getElementById('sidebarBackdrop');
+const icon     = document.getElementById('toggleIcon');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  backdrop.classList.add('open');
+  icon.className = 'fas fa-times';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  backdrop.classList.remove('open');
+  icon.className = 'fas fa-bars';
+  document.body.style.overflow = '';
+}
+
+toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+backdrop.addEventListener('click', closeSidebar);
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar(); });
 </script>
+
 <script>
 /* ══════════════════════════════════════════
    MODALES ELIMINAR CUENTA
@@ -1255,22 +1442,18 @@ function cerrarModalConfirmar() {
 }
 
 function confirmarEliminacion() {
-  // Ocultar modal de confirmación y mostrar el de "eliminada"
   document.getElementById('modal-confirmar').classList.remove('open');
   document.getElementById('modal-eliminada').classList.add('open');
 
-  // Esperar un momento para que el usuario vea el mensaje y luego enviar el form
   setTimeout(function () {
     document.getElementById('form-eliminar-cuenta').submit();
   }, 2200);
 }
 
-// Cerrar modal al hacer clic fuera
 document.getElementById('modal-confirmar').addEventListener('click', function (e) {
   if (e.target === this) cerrarModalConfirmar();
 });
 
-// Cerrar con Escape
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') cerrarModalConfirmar();
 });
@@ -1279,7 +1462,6 @@ document.addEventListener('keydown', function (e) {
 <script>
 /* ══════════════════════════════════════════
    VALIDACIÓN TELÉFONO COLOMBIANO
-   Solo números, exactamente 10 dígitos
 ══════════════════════════════════════════ */
 (function () {
   const telInput = document.getElementById('id_telefono');
@@ -1288,14 +1470,12 @@ document.addEventListener('keydown', function (e) {
 
   if (!telInput) return;
 
-  // Bloquear letras y caracteres no numéricos al escribir
   telInput.addEventListener('keypress', function (e) {
     if (!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
       e.preventDefault();
     }
   });
 
-  // Bloquear pegado de texto no numérico
   telInput.addEventListener('paste', function (e) {
     e.preventDefault();
     const pasted = (e.clipboardData || window.clipboardData).getData('text');
@@ -1308,7 +1488,6 @@ document.addEventListener('keydown', function (e) {
     this.dispatchEvent(new Event('input'));
   });
 
-  // Limpiar si escriben +57 o espacios (el prefijo ya se muestra visualmente)
   telInput.addEventListener('input', function () {
     this.value = this.value.replace(/\D/g, '').slice(0, 10);
     validarTelefono();
@@ -1346,7 +1525,6 @@ document.addEventListener('keydown', function (e) {
 
 /* ══════════════════════════════════════════
    VALIDACIÓN CONTRASEÑA
-   Mín 8 chars, minúscula, mayúscula, número, especial
 ══════════════════════════════════════════ */
 (function () {
   const pwInput   = document.getElementById('id_password_new');
@@ -1403,7 +1581,7 @@ document.addEventListener('keydown', function (e) {
   if (pwForm) {
     pwForm.addEventListener('submit', function (e) {
       const val = pwInput.value;
-      if (val.length === 0) return; // Django maneja campo vacío
+      if (val.length === 0) return;
 
       const ok = evaluar(val);
       if (!ok) {
@@ -1419,7 +1597,6 @@ document.addEventListener('keydown', function (e) {
         e.preventDefault();
         pwConfirm.style.borderColor = '#dc3545';
         pwConfirm.focus();
-        // Mostrar error bajo confirmación si no existe
         let errConfirm = pwConfirm.parentElement.nextElementSibling;
         if (!errConfirm || !errConfirm.classList.contains('field-error')) {
           errConfirm = document.createElement('span');

@@ -4,1623 +4,1587 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Perfil — Nutriet</title>
+  <title>Main - Nutriet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
   <style>
-/* ══════════════════════════════════════════
-   VARIABLES
-══════════════════════════════════════════ */
-:root {
-  --pink:        #f50057;
-  --pink-light:  #ff4081;
-  --pink-soft:   rgba(245,0,87,.10);
-  --pink-subtle: rgba(245,0,87,.05);
-  --pink-glow:   rgba(245,0,87,.22);
-  --soft-yellow: rgb(255,249,230);
-  --hover-yellow:#fff1c1;
-  --bg:          linear-gradient(135deg,#fff9f0 0%,#fef0f5 55%,#f5f0ff 100%);
-  --white:       #ffffff;
-  --card-bg:     rgba(255,255,255,.92);
-  --text-dark:   #1a1a2e;
-  --text-muted:  #6c757d;
-  --border:      rgba(245,0,87,.10);
-  --shadow-sm:   0 4px 16px rgba(0,0,0,.06);
-  --shadow-md:   0 10px 40px rgba(0,0,0,.09);
-  --shadow-pink: 0 6px 24px rgba(245,0,87,.18);
-  --shadow-lt:   rgba(0,0,0,.08);
-  --shadow-md2:  rgba(0,0,0,.12);
+    :root {
+      --primary-pink: #f50057;
+      --pink-light: #ff4081;
+      --soft-yellow: rgb(255, 249, 230);
+      --hover-yellow: #fff1c1;
+      --white: #ffffff;
+      --text-dark: #1a1a2e;
+      --text-muted: #6c757d;
+      --shadow-light: rgba(0, 0, 0, 0.08);
+      --shadow-medium: rgba(0, 0, 0, 0.12);
+      --shadow-heavy: rgba(0, 0, 0, 0.15);
+      --danger-red: #dc3545;
+      --success-green: #4CAF50;
+      --warning-orange: #FF7043;
+      --bg-gradient: linear-gradient(135deg, #fff9f0 0%, #fef0f5 50%, #f0f5ff 100%);
+    }
 
-  /* aliases usados en el sidebar del main */
-  --primary-pink: #f50057;
-  --shadow-light:  rgba(0,0,0,.08);
-  --shadow-medium: rgba(0,0,0,.12);
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-gradient);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-body {
-  font-family:'Montserrat',sans-serif;
-  background: var(--bg);
-  color: var(--text-dark);
-  min-height:100vh;
-  overflow-x:hidden;
-}
+    /* Fondo decorativo animado */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -20%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(245, 0, 87, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatBg 8s ease-in-out infinite;
+      z-index: 0;
+    }
 
-/* Orbes de fondo */
-body::before {
-  content:''; position:fixed; top:-100px; right:-100px;
-  width:480px; height:480px;
-  background:radial-gradient(circle,rgba(245,0,87,.07) 0%,transparent 68%);
-  border-radius:50%; pointer-events:none; z-index:0;
-  animation:floatOrb 10s ease-in-out infinite;
-}
-body::after {
-  content:''; position:fixed; bottom:-80px; left:60px;
-  width:360px; height:360px;
-  background:radial-gradient(circle,rgba(255,112,67,.05) 0%,transparent 65%);
-  border-radius:50%; pointer-events:none; z-index:0;
-  animation:floatOrb 13s ease-in-out infinite reverse;
-}
-@keyframes floatOrb {
-  0%,100% { transform:translateY(0) scale(1); }
-  50%     { transform:translateY(-25px) scale(1.04); }
-}
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      left: 5%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 112, 67, 0.06) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatBg 10s ease-in-out infinite reverse;
+      z-index: 0;
+    }
 
-/* ══════════════════════════════════════════
-   SIDEBAR — copiado exacto del main
-══════════════════════════════════════════ */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 80px;
-  background: linear-gradient(180deg, var(--soft-yellow) 0%, #fff8dc 100%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-  box-shadow: 4px 0 20px var(--shadow-light);
-  z-index: 1000;
-  border-right: 2px solid rgba(245, 0, 87, 0.1);
-}
+    @keyframes floatBg {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-40px) scale(1.05); }
+    }
 
-.sidebar:hover {
-  width: 260px;
-  box-shadow: 6px 0 30px var(--shadow-medium);
-}
+    /* ============================================
+      SIDEBAR
+      ============================================ */
 
-.sidebar::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(180deg, transparent 0%, rgba(245, 0, 87, 0.02) 100%);
-  pointer-events: none;
-}
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 80px;
+      background: linear-gradient(180deg, var(--soft-yellow) 0%, #fff8dc 100%);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      box-shadow: 4px 0 20px var(--shadow-light);
+      z-index: 1000;
+      border-right: 2px solid rgba(245, 0, 87, 0.1);
+    }
 
-.sidebar .logo {
-  width: 55px;
-  margin: 25px auto 50px;
-  display: block;
-  transition: all 0.3s ease;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-}
+    .sidebar:hover {
+      width: 260px;
+      box-shadow: 6px 0 30px var(--shadow-medium);
+    }
 
-.sidebar:hover .logo {
-  transform: scale(1.1);
-  filter: drop-shadow(0 6px 12px rgba(245, 0, 87, 0.3));
-}
+    .sidebar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(180deg, transparent 0%, rgba(245, 0, 87, 0.02) 100%);
+      pointer-events: none;
+    }
 
-.menu {
-  list-style: none;
-  padding: 0;
-  margin: 10px;
-}
+    .sidebar .logo {
+      width: 55px;
+      margin: 25px auto 50px;
+      display: block;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
 
-.menu li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-}
+    .sidebar:hover .logo {
+      transform: scale(1.1);
+      filter: drop-shadow(0 6px 12px rgba(245, 0, 87, 0.3));
+    }
 
-.menu li::before {
-  content: '';
-  position: absolute;
-  left: 0; top: 0;
-  height: 100%; width: 0;
-  background: linear-gradient(90deg, var(--primary-pink), rgba(245, 0, 87, 0.7));
-  transition: width 0.3s ease;
-  border-radius: 12px;
-}
+    .menu {
+      list-style: none;
+      padding: 0;
+      margin: 10px;
+    }
 
-.menu li:hover::before { width: 4px; }
-.menu li:hover {
-  background: var(--hover-yellow);
-  transform: translateX(4px);
-}
+    .menu li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
 
-.menu a {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 16px 22px;
-  text-decoration: none;
-  width: 100%;
-  color: var(--primary-pink);
-  transition: all 0.2s ease;
-  position: relative;
-  z-index: 1;
-}
+    .menu li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0;
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--primary-pink), rgba(245, 0, 87, 0.7));
+      transition: width 0.3s ease;
+      border-radius: 12px;
+    }
 
-.menu i {
-  font-size: 22px;
-  min-width: 28px;
-  text-align: center;
-  transition: all 0.3s ease;
-}
+    .menu li:hover::before { width: 4px; }
+    .menu li:hover {
+      background: var(--hover-yellow);
+      transform: translateX(4px);
+    }
 
-.menu li:hover i {
-  transform: scale(1.15);
-  filter: drop-shadow(0 2px 4px rgba(245, 0, 87, 0.3));
-}
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 22px;
+      text-decoration: none;
+      width: 100%;
+      color: var(--primary-pink);
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 1;
+    }
 
-.menu span {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-dark);
-  white-space: nowrap;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
-}
+    .menu i {
+      font-size: 22px;
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
 
-.sidebar:hover .menu span {
-  opacity: 1;
-  transform: translateX(0);
-}
+    .menu li:hover i {
+      transform: scale(1.15);
+      filter: drop-shadow(0 2px 4px rgba(245, 0, 87, 0.3));
+    }
 
-.logout {
-  position: absolute;
-  bottom: 25px;
-  width: 100%;
-  padding: 0 10px;
-}
+    .menu span {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
 
-.logout button {
-  all: unset;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 16px 22px;
-  cursor: pointer;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
+    .sidebar:hover .menu span {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
-.logout button::before {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  width: 0; height: 0;
-  background: radial-gradient(circle, rgba(245, 0, 87, 0.2), transparent);
-  transform: translate(-50%, -50%);
-  transition: width 0.4s ease, height 0.4s ease;
-  border-radius: 50%;
-}
+    .logout {
+      position: absolute;
+      bottom: 25px;
+      width: 100%;
+      padding: 0 10px;
+    }
 
-.logout button:hover::before {
-  width: 300px;
-  height: 300px;
-}
+    .logout button {
+      all: unset;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 22px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
 
-.logout button:hover {
-  background: linear-gradient(135deg, #ffe0e0 0%, #ffcdd2 100%);
-  transform: translateX(4px);
-}
+    .logout button::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
+      background: radial-gradient(circle, rgba(245, 0, 87, 0.2), transparent);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+      border-radius: 50%;
+    }
 
-.logout i {
-  font-size: 22px;
-  color: var(--primary-pink);
-  min-width: 28px;
-  text-align: center;
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
+    .logout button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
 
-.logout button:hover i { transform: rotate(15deg) scale(1.1); }
+    .logout button:hover {
+      background: linear-gradient(135deg, #ffe0e0 0%, #ffcdd2 100%);
+      transform: translateX(4px);
+    }
 
-.logout span {
-  font-weight: 600;
-  color: var(--text-dark);
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
-  position: relative;
-  z-index: 1;
-}
+    .logout i {
+      font-size: 22px;
+      color: var(--primary-pink);
+      min-width: 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
 
-.sidebar:hover .logout span {
-  opacity: 1;
-  transform: translateX(0);
-}
+    .logout button:hover i { transform: rotate(15deg) scale(1.1); }
 
-/* ── SIDEBAR RESPONSIVE ── */
-.sidebar-toggle {
-  display: none;
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 1100;
-  background: linear-gradient(135deg, var(--primary-pink), var(--pink-light));
-  border: none;
-  border-radius: 12px;
-  width: 44px;
-  height: 44px;
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(245, 0, 87, 0.35);
-  transition: transform .2s;
-}
-.sidebar-toggle:hover { transform: scale(1.08); }
-.sidebar-toggle i { font-size: 20px; color: #fff; }
+    .logout span {
+      font-weight: 600;
+      color: var(--text-dark);
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 1;
+    }
 
-.sidebar-backdrop {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(26, 16, 37, 0.55);
-  backdrop-filter: blur(3px);
-  z-index: 999;
-}
-.sidebar-backdrop.open { display: block; }
+    .sidebar:hover .logout span {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
-@media (max-width: 768px) {
-  .sidebar-toggle { display: flex; }
+    /* ── SIDEBAR RESPONSIVE ── */
+    .sidebar-toggle {
+      display: none;
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      z-index: 1100;
+      background: linear-gradient(135deg, var(--primary-pink), var(--pink-light));
+      border: none;
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(245, 0, 87, 0.35);
+      transition: transform .2s;
+    }
+    .sidebar-toggle:hover { transform: scale(1.08); }
+    .sidebar-toggle i { font-size: 20px; color: #fff; }
 
-  .sidebar {
-    transform: translateX(-100%);
-    width: 260px !important;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex !important;
-    flex-direction: column !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    height: 100vh !important;
-  }
-  .sidebar:hover { width: 260px; }
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 16, 37, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 999;
+    }
+    .sidebar-backdrop.open { display: block; }
 
-  .sidebar.open {
-    transform: translateX(0);
-  }
+    @media (max-width: 768px) {
+      .sidebar-toggle { display: flex; }
 
-  .sidebar.open .menu span,
-  .sidebar.open .logout span {
-    opacity: 1;
-    transform: translateX(0);
-  }
+      .sidebar {
+        transform: translateX(-100%);
+        width: 260px !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .sidebar:hover { width: 260px; }
 
-  .logout {
-    position: relative !important;
-    bottom: auto !important;
-    margin-top: auto !important;
-    width: 100% !important;
-    padding: 16px 10px 40px !important;
-    flex-shrink: 0 !important;
-  }
+      .sidebar.open {
+        transform: translateX(0);
+      }
 
-  .page-wrap { margin-left:0 !important; padding:70px 16px 48px !important; }
-}
+      .sidebar.open .menu span,
+      .sidebar.open .logout span {
+        opacity: 1;
+        transform: translateX(0);
+      }
 
-/* ══════════════════════════════════════════
-   LAYOUT PRINCIPAL
-══════════════════════════════════════════ */
-.page-wrap {
-  margin-left:100px;
-  padding:40px 40px 72px;
-  min-height:100vh;
-  position:relative; z-index:1;
-  max-width:1100px;
-}
+      main {
+        margin-left: 0 !important;
+        padding-top: 70px !important;
+      }
+    }
 
-/* ══════════════════════════════════════════
-   HEADER DE PERFIL
-══════════════════════════════════════════ */
-.profile-header-bar {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:var(--white);
-  border-radius:24px;
-  padding:24px 30px;
-  margin-bottom:22px;
-  box-shadow:var(--shadow-md);
-  border:1px solid var(--border);
-  position:relative; overflow:hidden;
-  flex-wrap:wrap; gap:20px;
-  animation:fadeUp .5s cubic-bezier(.22,1,.36,1) both;
-}
-.profile-header-bar::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:4px;
-  background:linear-gradient(90deg,var(--pink),#ff7043,var(--pink));
-  background-size:200% 100%;
-  animation:gradShift 4s ease infinite;
-}
-@keyframes gradShift {
-  0%,100% { background-position:0% 50%; }
-  50%     { background-position:100% 50%; }
-}
+    /* ============================================
+      MAIN CONTENT
+      ============================================ */
 
-.profile-header-avatar { display:flex; align-items:center; gap:20px; }
-.avatar-info { text-align:left; }
+    main {
+      margin-left: 100px;
+      padding: 40px 30px 60px;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
 
-.avatar-wrap {
-  position:relative; width:80px; height:80px; flex-shrink:0;
-}
-.avatar-wrap img {
-  width:100%; height:100%; border-radius:50%; object-fit:cover;
-  border:3px solid var(--white);
-  box-shadow:0 0 0 3px var(--pink), var(--shadow-pink);
-  transition:transform .3s ease;
-}
-.avatar-wrap:hover img { transform:scale(1.04); }
-.avatar-upload-btn {
-  position:absolute; bottom:0; right:0;
-  width:26px; height:26px;
-  background:linear-gradient(135deg,var(--pink),#ff4081);
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; box-shadow:0 2px 8px var(--pink-glow);
-  transition:all .25s ease; border:2px solid var(--white);
-}
-.avatar-upload-btn:hover { transform:scale(1.15); }
-.avatar-upload-btn i { color:#fff; font-size:.6rem; }
+    /* ============================================
+      PAGE HEADER
+      ============================================ */
 
-.profile-username { font-weight:800; font-size:1rem; color:var(--pink); margin-bottom:2px; }
-.profile-email    { font-size:.78rem; color:var(--text-muted); font-weight:500; margin-bottom:6px; }
-.plan-badge {
-  display:inline-flex; align-items:center; gap:5px;
-  background:var(--pink-soft); color:var(--pink);
-  font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-  padding:4px 10px; border-radius:100px; border:1px solid rgba(245,0,87,.18);
-}
+    .page-header {
+      margin-bottom: 40px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(245, 0, 87, 0.1);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
 
-/* Stats rápidas */
-.header-quick-stats { display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
-.qs-item { text-align:center; }
-.qs-val {
-  display:block; font-size:1.2rem; font-weight:800;
-  background:linear-gradient(135deg,var(--pink),#ff7043);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  background-clip:text; line-height:1; margin-bottom:3px;
-}
-.qs-lbl { font-size:.68rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; }
-.qs-divider { width:1px; height:36px; background:var(--border); }
+    .page-header-left .greeting-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 0, 87, 0.08);
+      color: var(--primary-pink);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid rgba(245, 0, 87, 0.2);
+      margin-bottom: 12px;
+    }
 
-/* ══════════════════════════════════════════
-   TABS HORIZONTALES
-══════════════════════════════════════════ */
-.settings-tabs {
-  display:flex; gap:8px; margin-bottom:28px;
-  background:var(--white); border-radius:16px; padding:8px;
-  box-shadow:var(--shadow-sm); border:1px solid var(--border);
-  width:fit-content;
-  animation:fadeUp .5s .06s cubic-bezier(.22,1,.36,1) both;
-}
-.tab-link {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:10px 22px; border-radius:10px; text-decoration:none;
-  font-size:.83rem; font-weight:700; color:var(--text-muted);
-  transition:all .22s ease; white-space:nowrap;
-}
-.tab-link i { font-size:.8rem; }
-.tab-link:hover { background:var(--pink-soft); color:var(--pink); }
-.tab-link.active {
-  background:linear-gradient(135deg,var(--pink),#ff4081);
-  color:#fff;
-  box-shadow:0 4px 14px rgba(245,0,87,.28);
-}
+    .page-header-left .greeting-tag .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--primary-pink);
+      border-radius: 50%;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
 
-/* ══════════════════════════════════════════
-   CONTENIDO / TAB PANELS
-══════════════════════════════════════════ */
-.right-col { animation:fadeUp .55s .1s cubic-bezier(.22,1,.36,1) both; }
-.tab-panel { display:none; }
-.tab-panel.active { display:block; }
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
 
-/* ── Page heading dinámico ── */
-.page-heading { margin-bottom:22px; }
-.page-label {
-  display:inline-flex; align-items:center; gap:8px;
-  background:var(--pink-soft); color:var(--pink);
-  font-size:.7rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
-  padding:5px 13px; border-radius:100px; border:1px solid rgba(245,0,87,.18);
-  margin-bottom:10px;
-}
-.page-label .dot {
-  width:5px; height:5px; background:var(--pink); border-radius:50%;
-  animation:pulseDot 2s ease-in-out infinite;
-}
-@keyframes pulseDot {
-  0%,100% { opacity:1; transform:scale(1); }
-  50%     { opacity:.35; transform:scale(.55); }
-}
-.page-title {
-  font-family:'Playfair Display',serif;
-  font-size:2.1rem; font-weight:700; color:var(--text-dark); line-height:1.1;
-}
-.page-title em {
-  font-style:italic;
-  background:linear-gradient(135deg,var(--pink),#ff7043);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-}
-.page-subtitle { margin-top:6px; font-size:.84rem; color:var(--text-muted); font-weight:500; }
+    .page-header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.15;
+      margin: 0;
+    }
 
-/* ── Form blocks ── */
-.form-block {
-  background:var(--white); border-radius:22px; padding:28px 30px;
-  margin-bottom:20px; box-shadow:var(--shadow-sm); border:1px solid var(--border);
-  position:relative; overflow:hidden;
-  transition:box-shadow .3s ease;
-}
-.form-block:hover { box-shadow:var(--shadow-md); }
-.form-block::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg,var(--pink),#ff7043,var(--pink));
-  background-size:200% 100%; animation:gradShift 4s ease infinite;
-}
+    .page-header-left h1 em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--primary-pink), #ff7043);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-.form-block-title { display:flex; align-items:center; gap:12px; margin-bottom:22px; }
-.form-block-icon {
-  width:36px; height:36px;
-  background:linear-gradient(135deg,var(--pink),#ff4081);
-  border-radius:10px; display:flex; align-items:center; justify-content:center;
-  color:#fff; font-size:.85rem; flex-shrink:0;
-  box-shadow:0 4px 12px var(--pink-glow);
-}
-.form-block-title h3 { font-size:1rem; font-weight:700; color:var(--text-dark); margin:0; }
-.form-block-title p  { font-size:.78rem; color:var(--text-muted); margin:2px 0 0; font-weight:500; }
+    .page-header-left .subtitle {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
 
-/* Form grid */
-.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-.form-group { display:flex; flex-direction:column; gap:7px; }
-.form-group label {
-  font-size:.72rem; font-weight:700; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--text-muted);
-}
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width:100%; padding:12px 16px;
-  background:rgba(245,0,87,.03); border:1.5px solid var(--border);
-  border-radius:13px; font-family:'Montserrat',sans-serif;
-  font-size:.88rem; font-weight:500; color:var(--text-dark);
-  transition:all .25s ease; outline:none;
-}
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color:var(--pink); background:var(--pink-subtle);
-  box-shadow:0 0 0 3px rgba(245,0,87,.1);
-}
-.form-group input::placeholder { color:rgba(108,117,125,.45); }
+    .header-stats {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
 
-/* Input con icono ojo */
-.input-icon-wrap { position:relative; }
-.input-icon-wrap i {
-  position:absolute; right:14px; top:50%; transform:translateY(-50%);
-  color:var(--text-muted); font-size:.8rem; cursor:pointer; transition:color .2s;
-}
-.input-icon-wrap i:hover { color:var(--pink); }
-.input-icon-wrap input { padding-right:42px; }
+    .stat-pill {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 12px 20px;
+      box-shadow: 0 4px 16px var(--shadow-light);
+      border: 1px solid rgba(245, 0, 87, 0.08);
+      text-align: center;
+      transition: all 0.3s ease;
+      min-width: 90px;
+    }
 
-/* Error de campo */
-.field-error {
-  font-size:.72rem; font-weight:600; color:#dc3545;
-  display:flex; align-items:center; gap:4px;
-}
-.field-error::before { content:'⚠ '; }
+    .stat-pill:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px var(--shadow-medium);
+      border-color: rgba(245, 0, 87, 0.2);
+    }
 
-/* Toggle switch */
-.toggle-row {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:14px 0; border-bottom:1px solid rgba(0,0,0,.05);
-}
-.toggle-row:last-child { border-bottom:none; }
-.toggle-info .toggle-title { font-size:.88rem; font-weight:700; color:var(--text-dark); margin-bottom:3px; }
-.toggle-info .toggle-desc  { font-size:.78rem; color:var(--text-muted); font-weight:500; }
-.switch { position:relative; display:inline-block; width:46px; height:25px; flex-shrink:0; }
-.switch input { opacity:0; width:0; height:0; }
-.switch .slider {
-  position:absolute; inset:0; background:#e0e0e0; border-radius:100px;
-  cursor:pointer; transition:all .3s ease;
-}
-.switch .slider::before {
-  content:''; position:absolute; width:18px; height:18px;
-  left:4px; top:3.5px; background:#fff; border-radius:50%;
-  transition:transform .3s ease; box-shadow:0 2px 6px rgba(0,0,0,.15);
-}
-.switch input:checked + .slider { background:linear-gradient(135deg,var(--pink),#ff4081); box-shadow:0 3px 10px var(--pink-glow); }
-.switch input:checked + .slider::before { transform:translateX(20px); }
+    .stat-pill .stat-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary-pink), #ff7043);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
 
-/* Stat cards */
-.stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
-.stat-card {
-  background:var(--white); border-radius:18px; padding:20px; text-align:center;
-  box-shadow:var(--shadow-sm); border:1px solid var(--border); transition:all .3s ease;
-}
-.stat-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
-.sc-value {
-  font-size:1.6rem; font-weight:800;
-  background:linear-gradient(135deg,var(--pink),#ff7043);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  background-clip:text; line-height:1; margin-bottom:4px;
-}
-.sc-label { font-size:.72rem; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; }
+    .stat-pill .stat-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
 
-/* Danger block */
-.danger-block {
-  background:rgba(220,53,69,.04);
-  border:1.5px solid rgba(220,53,69,.15);
-}
-.danger-block::before { background:linear-gradient(90deg,#dc3545,#ff6b6b,#dc3545) !important; }
-.danger-action {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:14px 0; border-bottom:1px solid rgba(220,53,69,.08);
-}
-.danger-action:last-child { border-bottom:none; }
-.danger-action .da-title { font-size:.88rem; font-weight:700; color:#dc3545; margin-bottom:3px; }
-.danger-action .da-desc  { font-size:.78rem; color:var(--text-muted); font-weight:500; }
+    /* ============================================
+      SECTION TITLES
+      ============================================ */
 
-/* Botones */
-.btn-save {
-  display:inline-flex; align-items:center; gap:8px;
-  background:linear-gradient(135deg,var(--pink),#ff4081);
-  color:#fff; border:none; border-radius:13px;
-  padding:12px 26px; font-family:'Montserrat',sans-serif;
-  font-size:.85rem; font-weight:700; cursor:pointer;
-  transition:all .25s ease; box-shadow:var(--shadow-pink);
-  margin-top:6px; letter-spacing:.02em; position:relative; overflow:hidden;
-}
-.btn-save:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(245,0,87,.28); filter:brightness(1.06); }
-.btn-save::after {
-  content:''; position:absolute; top:50%; left:50%; width:0; height:0;
-  background:rgba(255,255,255,.2); border-radius:50%;
-  transform:translate(-50%,-50%); transition:width .5s,height .5s;
-}
-.btn-save:active::after { width:200px; height:200px; }
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
 
-.btn-outline {
-  display:inline-flex; align-items:center; gap:8px;
-  background:transparent; color:var(--pink);
-  border:1.5px solid rgba(245,0,87,.3); border-radius:13px;
-  padding:11px 22px; font-family:'Montserrat',sans-serif;
-  font-size:.85rem; font-weight:700; cursor:pointer; transition:all .25s ease;
-}
-.btn-outline:hover { background:var(--pink-soft); border-color:var(--pink); transform:translateY(-2px); }
+    .section-label .section-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary-pink), #ff4081);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(245, 0, 87, 0.3);
+    }
 
-.btn-danger {
-  display:inline-flex; align-items:center; gap:8px;
-  background:transparent; color:#dc3545;
-  border:1.5px solid rgba(220,53,69,.25); border-radius:13px;
-  padding:10px 20px; font-family:'Montserrat',sans-serif;
-  font-size:.82rem; font-weight:700; cursor:pointer; transition:all .25s ease;
-}
-.btn-danger:hover { background:rgba(220,53,69,.08); border-color:#dc3545; transform:translateY(-2px); }
+    .section-label h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin: 0;
+    }
 
-/* Mensajes de Django */
-.alert-msg {
-  padding:14px 18px; border-radius:13px; margin-bottom:16px;
-  font-size:.85rem; font-weight:600;
-  display:flex; align-items:center; gap:10px;
-}
-.alert-msg.success { background:rgba(76,175,80,.1); border:1px solid rgba(76,175,80,.25); color:#2e7d32; }
-.alert-msg.error   { background:rgba(220,53,69,.08); border:1px solid rgba(220,53,69,.2);  color:#dc3545; }
-.alert-msg.warning { background:rgba(255,152,0,.08); border:1px solid rgba(255,152,0,.2);  color:#e65100; }
+    .section-label .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(245, 0, 87, 0.2), transparent);
+    }
 
-/* ══════════════════════════════════════════
-   ANIMACIONES / SCROLLBAR
-══════════════════════════════════════════ */
-@keyframes fadeUp {
-  from { opacity:0; transform:translateY(22px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-::-webkit-scrollbar { width:8px; }
-::-webkit-scrollbar-track { background:#f5f5f5; border-radius:10px; }
-::-webkit-scrollbar-thumb { background:linear-gradient(180deg,var(--pink),#ff4081); border-radius:10px; }
+    /* ============================================
+      DASHBOARD GRID — LAYOUT 3 ZONAS
+      ============================================ */
 
-/* ══════════════════════════════════════════
-   MODALES DE ELIMINACIÓN
-══════════════════════════════════════════ */
-.modal-overlay {
-  display:none;
-  position:fixed; inset:0; z-index:9000;
-  background:rgba(26,16,37,.6);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
-  align-items:center; justify-content:center;
-  padding:20px;
-}
-.modal-overlay.open { display:flex; animation:modalFadeIn .22s ease both; }
-@keyframes modalFadeIn {
-  from { opacity:0; }
-  to   { opacity:1; }
-}
-.modal-card {
-  background:var(--white);
-  border-radius:24px;
-  padding:36px 32px 30px;
-  max-width:420px; width:100%;
-  text-align:center;
-  box-shadow:0 24px 64px rgba(0,0,0,.18);
-  border:1px solid var(--border);
-  position:relative; overflow:hidden;
-  animation:modalSlideUp .28s cubic-bezier(.22,1,.36,1) both;
-}
-@keyframes modalSlideUp {
-  from { opacity:0; transform:translateY(30px) scale(.97); }
-  to   { opacity:1; transform:translateY(0)    scale(1); }
-}
-.modal-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:4px;
-  background:linear-gradient(90deg,#dc3545,#ff6b6b,#dc3545);
-  background-size:200% 100%; animation:gradShift 4s ease infinite;
-}
-.modal-card--success::before {
-  background:linear-gradient(90deg,var(--pink),#ff7043,var(--pink));
-}
-.modal-icon {
-  width:64px; height:64px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.6rem; margin:0 auto 18px;
-}
-.modal-icon--danger {
-  background:linear-gradient(135deg,rgba(220,53,69,.12),rgba(255,107,107,.12));
-  color:#dc3545;
-  border:2px solid rgba(220,53,69,.2);
-  animation:pulseWarning 2s ease-in-out infinite;
-}
-@keyframes pulseWarning {
-  0%,100% { box-shadow:0 0 0 0 rgba(220,53,69,.25); }
-  50%     { box-shadow:0 0 0 10px rgba(220,53,69,.0); }
-}
-.modal-icon--bye {
-  background:linear-gradient(135deg,rgba(245,0,87,.1),rgba(255,64,129,.1));
-  color:var(--pink);
-  border:2px solid rgba(245,0,87,.18);
-}
-.modal-title {
-  font-family:'Playfair Display',serif;
-  font-size:1.45rem; font-weight:700;
-  color:var(--text-dark); margin-bottom:12px;
-}
-.modal-body {
-  font-size:.87rem; font-weight:500; color:var(--text-muted);
-  line-height:1.6; margin-bottom:10px;
-}
-.modal-body strong { color:var(--text-dark); }
-.modal-body em { color:#dc3545; font-style:normal; font-weight:700; }
-.modal-body--warning {
-  background:rgba(220,53,69,.06);
-  border:1px solid rgba(220,53,69,.14);
-  border-radius:12px; padding:10px 14px;
-  font-size:.8rem; color:#c0392b;
-  display:flex; align-items:center; justify-content:center; gap:6px;
-  margin-bottom:24px !important;
-}
-.modal-actions {
-  display:flex; gap:12px; margin-top:8px;
-  justify-content:center; flex-wrap:wrap;
-}
-.modal-btn {
-  display:inline-flex; align-items:center; gap:8px;
-  padding:12px 24px; border-radius:13px;
-  font-family:'Montserrat',sans-serif;
-  font-size:.84rem; font-weight:700;
-  cursor:pointer; border:none;
-  transition:all .22s ease; letter-spacing:.02em;
-}
-.modal-btn--cancel {
-  background:transparent;
-  color:var(--text-muted);
-  border:1.5px solid rgba(108,117,125,.25);
-}
-.modal-btn--cancel:hover { background:rgba(108,117,125,.08); transform:translateY(-2px); }
-.modal-btn--confirm {
-  background:linear-gradient(135deg,#dc3545,#ff6b6b);
-  color:#fff;
-  box-shadow:0 6px 20px rgba(220,53,69,.28);
-}
-.modal-btn--confirm:hover { transform:translateY(-2px); filter:brightness(1.06); box-shadow:0 10px 28px rgba(220,53,69,.35); }
+    /* Fila superior: Calendario | Gráficas — altura fija igual para ambas */
+    .dashboard-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-auto-rows: auto;
+      gap: 30px;
+      margin-bottom: 30px;
+      align-items: stretch;
+    }
 
-/* ══════════════════════════════════════════
-   TELÉFONO COLOMBIANO
-══════════════════════════════════════════ */
-.phone-input-wrap {
-  display:flex; align-items:center;
-  background:rgba(245,0,87,.03); border:1.5px solid var(--border);
-  border-radius:13px; overflow:hidden;
-  transition:all .25s ease;
-}
-.phone-input-wrap:focus-within {
-  border-color:var(--pink); background:var(--pink-subtle);
-  box-shadow:0 0 0 3px rgba(245,0,87,.1);
-}
-.phone-prefix {
-  padding:12px 12px 12px 14px;
-  font-size:.82rem; font-weight:700; color:var(--pink);
-  white-space:nowrap; border-right:1.5px solid var(--border);
-  background:rgba(245,0,87,.05); user-select:none;
-  flex-shrink:0;
-}
-.phone-input-wrap input {
-  border:none !important; border-radius:0 !important;
-  background:transparent !important; box-shadow:none !important;
-  flex:1;
-}
-.phone-input-wrap input:focus {
-  border:none !important; box-shadow:none !important; background:transparent !important;
-}
-.field-hint {
-  font-size:.68rem; color:var(--text-muted); font-weight:500;
-  display:flex; align-items:center; gap:4px;
-}
-.field-hint i { color:var(--pink); font-size:.65rem; }
+    /* Fila inferior: Favoritas | Explorar */
+    .dashboard-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
 
-/* ══════════════════════════════════════════
-   MEDIDOR DE FORTALEZA CONTRASEÑA
-══════════════════════════════════════════ */
-.pw-strength-bar {
-  display:flex; gap:4px; margin-top:6px;
-}
-.pw-strength-bar span {
-  flex:1; height:4px; border-radius:100px;
-  background:#e0e0e0; transition:background .3s ease;
-}
-.pw-strength-label {
-  font-size:.68rem; font-weight:700; margin-top:4px;
-  transition:color .3s;
-}
-.pw-rules {
-  margin-top:8px; display:flex; flex-direction:column; gap:3px;
-}
-.pw-rule {
-  font-size:.68rem; font-weight:600;
-  display:flex; align-items:center; gap:6px;
-  color:var(--text-muted); transition:color .25s;
-}
-.pw-rule i { font-size:.62rem; width:12px; }
-.pw-rule.ok { color:#4CAF50; }
-.pw-rule.fail { color:#dc3545; }
+    .grid-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 0;
+    }
 
-@media (max-width:1024px) {
-  .profile-header-bar { flex-direction:column; align-items:flex-start; }
-  .header-quick-stats { width:100%; }
-}
-@media (max-width:768px) {
-  .page-wrap { margin-left:90px; padding:20px 18px 48px; }
-  .form-grid { grid-template-columns:1fr; }
-  .stat-grid { grid-template-columns:1fr 1fr; }
-  .page-title { font-size:1.75rem; }
-  .settings-tabs { flex-wrap:wrap; }
-  .tab-link { padding:9px 14px; font-size:.78rem; }
-}
+    .grid-section .section-label { flex-shrink: 0; }
+
+    /* Calendario llena el espacio restante de su columna */
+    .dashboard-top .grid-section:first-child #calendar {
+      flex: 1;
+      min-height: 0;
+    }
+
+    /* Seguimiento llena el espacio restante de su columna */
+    .dashboard-top .grid-section:last-child .seguimiento-resumen {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-top .grid-section:last-child .seguimiento-card {
+      flex: 1;
+      min-height: 0;
+      overflow-y: visible;
+    }
+
+    /* Fila inferior: cards se estiran igual */
+    .dashboard-bottom .grid-section .recetas-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-bottom .grid-section .recetas-wrapper .card {
+      flex: 1;
+    }
+    .dashboard-bottom .grid-section > a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .dashboard-bottom .grid-section > a .explorar-card {
+      flex: 1;
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    /* Limpiar max-width heredados */
+    #calendar,
+    .seguimiento-resumen,
+    .recetas-wrapper {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-top  { grid-template-columns: 1fr; grid-auto-rows: auto; }
+      .dashboard-bottom { grid-template-columns: 1fr; }
+      main { margin-left: 100px; }
+      .dashboard-top .grid-section:first-child #calendar { flex: none; min-height: 400px; }
+      .dashboard-top .grid-section:last-child .seguimiento-card { overflow-y: visible; }
+    }
+
+    /* ============================================
+      CALENDARIO
+      ============================================ */
+
+    #calendar {
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      background: var(--white);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: 0 10px 40px var(--shadow-light);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(245, 0, 87, 0.1);
+      box-sizing: border-box;
+    }
+
+    #calendar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--primary-pink), #ff4081, var(--primary-pink));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    #calendar:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px var(--shadow-medium);
+    }
+
+    .fc { font-family: 'Montserrat', sans-serif; }
+
+    .fc-toolbar-title {
+      font-size: 1.5rem !important;
+      font-weight: 700 !important;
+      color: var(--primary-pink) !important;
+      text-transform: capitalize;
+    }
+
+    .fc-button {
+      background: linear-gradient(135deg, var(--primary-pink), #ff4081) !important;
+      border: none !important;
+      border-radius: 10px !important;
+      padding: 8px 16px !important;
+      font-weight: 600 !important;
+      transition: all 0.3s ease !important;
+      box-shadow: 0 4px 12px rgba(245, 0, 87, 0.3) !important;
+    }
+
+    .fc-button:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 20px rgba(245, 0, 87, 0.4) !important;
+    }
+
+    .fc-day-today {
+      background: rgba(245, 0, 87, 0.1) !important;
+      border: 2px solid var(--primary-pink) !important;
+    }
+
+    .fc-daygrid-day:hover {
+      background: rgba(245, 0, 87, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    /* ============================================
+      SEGUIMIENTO CARD
+      ============================================ */
+
+    .seguimiento-resumen { width: 100%; display: flex; flex-direction: column; flex: 1; }
+
+    .seguimiento-card {
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+      border-radius: 25px;
+      padding: 20px !important;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 10px 40px var(--shadow-light);
+      position: relative;
+      overflow: visible;
+      border: 1px solid rgba(245, 0, 87, 0.1);
+    }
+
+    .seguimiento-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--danger-red), #ff5252, var(--danger-red));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    .seguimiento-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px var(--shadow-heavy);
+    }
+
+    .seguimiento-card h4 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--danger-red), #ff4081);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .seguimiento-card p {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .progress {
+      height: 24px;
+      border-radius: 12px;
+      background: #e9ecef;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      background: linear-gradient(90deg, #dc3545, #ff4081) !important;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    .mini-chart {
+      width: 100%;
+      margin-top: 15px;
+      flex: none;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mini-chart > div {
+      background: var(--white);
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px var(--shadow-light);
+      transition: all 0.3s ease;
+      flex: none;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      height: 200px;
+    }
+
+    .mini-chart > div:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px var(--shadow-medium);
+    }
+
+    .mini-chart h6 {
+      font-weight: 700;
+      color: var(--text-dark);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    .mini-chart canvas {
+      width: 100% !important;
+      height: 100% !important;
+      max-height:200px;
+    }
+
+    /* ============================================
+      RECETAS CARDS
+      ============================================ */
+
+    .recetas-wrapper { max-width: 100%; width: 100%; display: flex; flex-direction: column; flex: 1; }
+
+    .recetas-wrapper .card,
+    .explorar-card {
+      background: var(--white);
+      border-radius: 25px;
+      box-shadow: 0 10px 40px var(--shadow-light);
+      border: 1px solid rgba(245, 0, 87, 0.1);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      position: relative;
+      flex: 1;
+      padding: 28px !important;
+    }
+
+    .recetas-wrapper .card::before,
+    .explorar-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 4px;
+      background: linear-gradient(90deg, var(--primary-pink), var(--warning-orange), var(--success-green));
+      background-size: 200% 100%;
+      animation: gradientShift 3s ease infinite;
+    }
+
+    .recetas-wrapper .card:hover,
+    .explorar-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 50px var(--shadow-medium);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 25px;
+      position: relative;
+      padding-bottom: 12px;
+    }
+
+    .card-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--primary-pink), transparent);
+      border-radius: 2px;
+    }
+
+    .widget-card {
+      background: var(--white);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 20px var(--shadow-light);
+      height: 100%;
+      position: relative;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .widget-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(180deg, transparent 0%, rgba(245, 0, 87, 0.03) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .widget-card:hover::before { opacity: 1; }
+
+    .widget-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      transition: all 0.4s ease;
+      filter: brightness(0.95);
+    }
+
+    .widget-card:hover img {
+      transform: scale(1.1);
+      filter: brightness(1.05);
+    }
+
+    .widget-content {
+      padding: 18px;
+      text-align: center;
+      background: var(--white);
+      position: relative;
+      z-index: 1;
+    }
+
+    .widget-content h6 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0;
+      -webkit-line-clamp: 2;  
+      -webkit-box-orient: vertical;
+      transition: color 0.3s ease;
+      line-height: 1.4;
+    }
+
+    .widget-card:hover .widget-content h6 { color: var(--primary-pink); }
+
+    .widget-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 15px 40px var(--shadow-heavy);
+    }
+
+    .receta-widget {
+      display: block;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .widget-card::after {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+      opacity: 0;
+    }
+
+    .widget-card:hover::after {
+      animation: shine 1.5s ease;
+    }
+
+    @keyframes shine {
+      0% { top: -50%; left: -50%; opacity: 0; }
+      50% { opacity: 1; }
+      100% { top: 150%; left: 150%; opacity: 0; }
+    }
+
+    /* ============================================
+      EXPLORAR RECETAS
+      ============================================ */
+
+    .explorar-card {
+      width: 100%;
+      max-width: 100% !important;
+      padding: 30px;
+    }
+
+    .explorar-card h5 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 25px;
+      position: relative;
+      padding-bottom: 12px;
+    }
+
+    .explorar-card h5::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 80px; height: 3px;
+      background: linear-gradient(90deg, var(--primary-pink), var(--warning-orange));
+      border-radius: 2px;
+    }
+
+    /* ============================================
+      ANIMACIONES DE ENTRADA
+      ============================================ */
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInLeft {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .page-header { animation: fadeInUp 0.5s ease backwards; }
+
+    .dashboard-top .grid-section > * { animation: fadeInUp 0.6s ease backwards; }
+    .dashboard-top .grid-section:nth-child(1) > *:nth-child(1) { animation-delay: 0.1s; }
+    .dashboard-top .grid-section:nth-child(1) > *:nth-child(2) { animation-delay: 0.2s; }
+    .dashboard-top .grid-section:nth-child(2) > *:nth-child(1) { animation-delay: 0.15s; }
+    .dashboard-top .grid-section:nth-child(2) > *:nth-child(2) { animation-delay: 0.25s; }
+
+    .dashboard-bottom .grid-section > * { animation: fadeInUp 0.6s ease backwards; }
+    .dashboard-bottom .grid-section:nth-child(1) > *:nth-child(1) { animation-delay: 0.2s; }
+    .dashboard-bottom .grid-section:nth-child(1) > *:nth-child(2) { animation-delay: 0.3s; }
+    .dashboard-bottom .grid-section:nth-child(2) > *:nth-child(1) { animation-delay: 0.25s; }
+    .dashboard-bottom .grid-section:nth-child(2) > *:nth-child(2) { animation-delay: 0.35s; }
+
+    /* ============================================
+      SCROLLBAR
+      ============================================ */
+
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--primary-pink), #ff4081);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #ff4081, var(--primary-pink));
+    }
+
+    /* ============================================
+      RESPONSIVE
+      ============================================ */
+
+    @media (max-width: 768px) {
+      main { margin-left: 90px; padding: 20px; }
+      #calendar, .seguimiento-card, .explorar-card, .recetas-wrapper { max-width: 100%; }
+      .dashboard-top, .dashboard-bottom { gap: 20px; }
+      .page-header-left h1 { font-size: 1.9rem; }
+      .header-stats { display: none; }
+
+      /* En móvil las gráficas vuelven a altura fija para no estirarse */
+      .seguimiento-card {
+        display: block;
+        height: auto;
+      }
+      .mini-chart {
+        display: block;
+        flex: none;
+        height: auto;
+      }
+      .mini-chart > div {
+        flex: none;
+        height: 250px;
+        margin-bottom: 16px;
+      }
+      .mini-chart canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+    }
+
+    /* Transiciones globales suaves */
+    * { transition: background-color 0.3s ease, color 0.3s ease; }
   </style>
+  <!-- OneSignal Web Push SDK v16 -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     SIDEBAR — copiado exacto del main
-══════════════════════════════════════════ -->
+  <main>
 
-<!-- Botón hamburguesa (solo móvil) -->
-<button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
-  <i class="fas fa-bars" id="toggleIcon"></i>
-</button>
+    <header class="page-header">
+      <div class="page-header-left">
+        <div class="greeting-tag">
+          <span class="dot"></span>
+          Panel principal
+        </div>
+        <h1>Tu <em>nutrición</em>,<br>bajo control.</h1>
+        <p class="subtitle">Revisa tu progreso, recetas y agenda del día</p>
+      </div>
 
-<!-- Backdrop -->
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+      <div class="header-stats">
+        <div class="stat-pill">
+          <div class="stat-value">{{ dias_registrados }}</div>
+          <div class="stat-label">Días</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-value">{{ progreso }}%</div>
+          <div class="stat-label">Progreso</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-value">{{ favoritas|length }}</div>
+          <div class="stat-label">Favoritas</div>
+        </div>
+      </div>
+    </header>
 
-<aside class="sidebar">
-  <img src="{% static 'images/logo.png' %}" class="logo" alt="Nutriet">
+    <!-- FILA SUPERIOR: Calendario | Gráficas -->
+    <div class="dashboard-top">
 
-  <ul class="menu">
-    <li>
-      <a href="{% url 'main' %}">
-        <i class="fas fa-home"></i>
-        <span>Inicio</span>
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'explorar_recetas' %}">
-        <i class="fas fa-apple-alt"></i>
-        <span>Recetas</span>
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'seguimiento:seguimiento' %}">
-        <i class="fas fa-chart-line"></i>
-        <span>Seguimiento</span>
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'calendario' %}">
-        <i class="fas fa-calendar-alt"></i>
-        <span>Calendario</span>
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'perfil' %}">
-        <i class="fas fa-cog"></i>
-        <span>Configuración</span>
-      </a>
-    </li>
-  </ul>
+      <!-- COLUMNA IZQUIERDA: Agenda -->
+      <div class="grid-section">
+        <div class="section-label">
+          <div class="section-icon"><i class="fas fa-calendar-alt"></i></div>
+          <h2>Mi agenda</h2>
+          <div class="section-line"></div>
+        </div>
+        <div id="calendar"></div>
+      </div>
 
-  <div class="logout">
-    <form method="post" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit">
-        <i class="fas fa-right-from-bracket"></i>
-        <span>Cerrar sesión</span>
-      </button>
-    </form>
-  </div>
-</aside>
+      <!-- COLUMNA DERECHA: Progreso + Gráficas -->
+      <div class="grid-section">
+        <div class="section-label">
+          <div class="section-icon" style="background: linear-gradient(135deg,#dc3545,#ff5252);">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h2>Mi progreso</h2>
+          <div class="section-line"></div>
+        </div>
 
-<!-- ══════════════════════════════════════════
-     PÁGINA
-══════════════════════════════════════════ -->
-<div class="page-wrap">
+        <div class="seguimiento-resumen">
+          <div class="card shadow-sm p-4 seguimiento-card"
+               onclick="window.location.href='{% url 'seguimiento:seguimiento' %}'">
 
-  <!-- ── HEADER PERFIL ── -->
-  <div class="profile-header-bar">
+            <h4 class="fw-bold text-center text-danger"></h4>
 
-    <div class="profile-header-avatar">
-      <!-- Foto + upload (form separado para no mezclar con datos) -->
-      <form method="POST" action="{% url 'perfil' %}"
-            enctype="multipart/form-data" id="form-foto-perfil">
+            <p class="text-center text-muted">
+              {{ dias_registrados }} de {{ objetivo_dias|default:"30" }} días registrados
+            </p>
+
+            <br>
+
+            <div class="progress mb-3">
+              <div class="progress-bar bg-danger"
+                   style="width: {{ progreso }}%;">
+                {{ progreso }}%
+              </div>
+            </div>
+
+            <div class="mini-chart mt-3">
+
+              <div class="mb-4">
+                <h6 class="fw-bold text-center mb-2">Evolución del peso</h6>
+                <canvas id="graficaPeso"></canvas>
+                <p id="sinPeso" class="text-center text-muted mt-2" style="display:none;">
+                  Aún no hay datos de peso
+                </p>
+              </div>
+
+              <div>
+                <h6 class="fw-bold text-center mb-2">Grasa corporal</h6>
+                <canvas id="graficaGrasa"></canvas>
+                <p id="sinGrasa" class="text-center text-muted mt-2" style="display:none;">
+                  Aún no hay datos de grasa corporal
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILA INFERIOR: Favoritas | Explorar -->
+    <div class="dashboard-bottom">
+
+      <!-- FAVORITAS -->
+       
+      <div class="grid-section">
+        <div class="section-label">
+          <div class="section-icon" style="background: linear-gradient(135deg,#ff4081,#ff7043);">
+            <i class="fas fa-heart"></i>
+          </div>
+          <h2>Mis favoritas</h2>
+          <div class="section-line"></div>
+        </div>
+        <a href="{% url 'recetas_favoritas' %}" class="text-decoration-none text-dark">
+
+          <div class="recetas-wrapper">
+            <div class="card shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title mb-4"></h5>
+
+                {% if favoritas %}
+                  <div class="row">
+                    {% for receta in favoritas %}
+                      <div class="col-md-4 mb-3">
+                        <a href="{% url 'receta_detalle' receta.recipe_id %}"
+                          class="receta-widget text-decoration-none">
+                          <div class="widget-card">
+                            <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
+                            <div class="widget-content">
+                              <h6>{{ receta.titulo }}</h6>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="text-muted">No tienes recetas favoritas aún.</p>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- EXPLORAR RECETAS -->
+      <div class="grid-section">
+        <div class="section-label">
+          <div class="section-icon" style="background: linear-gradient(135deg,#4CAF50,#26a69a);">
+            <i class="fas fa-compass"></i>
+          </div>
+          <h2>Explorar recetas</h2>
+          <div class="section-line"></div>
+        </div>
+
+        <a href="{% url 'explorar_recetas' %}" class="text-decoration-none text-dark">
+          <div class="card shadow-sm p-4 explorar-card clickable-card">
+            <h5 class="fw-bold mb-4 text-center"></h5>
+
+            {% if recetas_random %}
+              <div class="row">
+                {% for receta in recetas_random %}
+                  <div class="col-md-4">
+                    <div class="receta-widget">
+                      <div class="widget-card">
+                        <img src="{{ receta.imagen }}" alt="{{ receta.titulo }}">
+                        <div class="widget-content">
+                          <h6>{{ receta.titulo }}</h6>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              <p class="text-muted text-center">No hay recetas disponibles</p>
+            {% endif %}
+
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Botón hamburguesa (solo móvil) -->
+  <button class="sidebar-toggle" id="sidebarToggle" aria-label="Menú">
+    <i class="fas fa-bars" id="toggleIcon"></i>
+  </button>
+
+  <!-- Backdrop -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <img src="{% static 'images/logo.png' %}" class="logo" alt="Nutriet">
+
+    <ul class="menu">
+      <li>
+        <a href="{% url 'main' %}">
+          <i class="fas fa-home"></i>
+          <span>Inicio</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'explorar_recetas' %}">
+          <i class="fas fa-apple-alt"></i>
+          <span>Recetas</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'seguimiento:seguimiento' %}">
+          <i class="fas fa-chart-line"></i>
+          <span>Seguimiento</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'calendario' %}">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Calendario</span>
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'perfil' %}">
+          <i class="fas fa-cog"></i>
+          <span>Configuración</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="logout">
+      <form method="post" action="{% url 'logout' %}">
         {% csrf_token %}
-        <div class="avatar-wrap">
-          <img
-            src="{% if usuario.foto_perfil %}{{ usuario.foto_perfil.url }}{% else %}{% static 'images/logo.png' %}{% endif %}"
-            alt="Foto de perfil" id="profile-image-display">
-          <div class="avatar-upload-btn" id="upload-trigger" title="Cambiar foto">
-            <i class="fas fa-camera"></i>
-          </div>
-        </div>
-        {# campo de archivo oculto; lo renderiza Django con su id real: id_foto_perfil #}
-        <div style="display:none;">{{ perfil_form.foto_perfil }}</div>
+        <button type="submit">
+          <i class="fas fa-right-from-bracket"></i>
+          <span>Cerrar sesión</span>
+        </button>
       </form>
-
-      <div class="avatar-info">
-        <p class="profile-username">@{{ usuario.username }}</p>
-        <p class="profile-email">{{ usuario.email }}</p>
-        <div class="plan-badge">
-          <i class="fas fa-star" style="font-size:.6rem;"></i>
-          {{ usuario.plan|default:'Plan Básico' }}
-        </div>
-      </div>
     </div>
+  </aside>
 
-    <!-- Stats rápidas (datos reales desde la view) -->
-    <div class="header-quick-stats">
-      <div class="qs-item">
-        <span class="qs-val">{{ usuario.date_joined|date:'M Y' }}</span>
-        <span class="qs-lbl">Miembro desde</span>
-      </div>
-      <div class="qs-divider"></div>
-      <div class="qs-item">
-        <span class="qs-val">{{ dias_registrados }}</span>
-        <span class="qs-lbl">Días activos</span>
-      </div>
-      <div class="qs-divider"></div>
-      <div class="qs-item">
-        <span class="qs-val">{{ favoritas|length }}</span>
-        <span class="qs-lbl">Recetas fav.</span>
-      </div>
-    </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
 
-  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const calendarEl = document.getElementById('calendar');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        events: '/calendario/eventos/',
+        editable: false,
+        selectable: false,
+        expandRows: true,
+        height: '100%',
+      });
+      calendar.render();
+      calendarEl.addEventListener('click', () => {
+        window.location.href = '/calendario/';
+      });
+    });
+  </script>
 
-  <!-- ── TABS ── -->
-  <div class="settings-tabs">
-    <a href="#" class="tab-link active" data-tab="perfil">
-      <i class="fas fa-user"></i> Perfil
-    </a>
-    <a href="#" class="tab-link" data-tab="seguridad">
-      <i class="fas fa-shield-alt"></i> Seguridad
-    </a>
-    <a href="#" class="tab-link" data-tab="cuenta">
-      <i class="fas fa-sliders-h"></i> Cuenta
-    </a>
-  </div>
-
-  <!-- ── CONTENIDO ── -->
-  <div class="right-col">
-
-    <!-- Heading dinámico -->
-    <div class="page-heading">
-      <div class="page-label"><span class="dot"></span> Configuración</div>
-      <h1 class="page-title" id="page-title-text">Mi <em>Perfil</em></h1>
-      <p class="page-subtitle" id="page-subtitle-text">Actualiza tu información personal y foto</p>
-    </div>
-
-    <!-- Mensajes de Django -->
-    {% if messages %}
-      {% for message in messages %}
-        <div class="alert-msg {% if message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}success{% endif %}">
-          <i class="fas {% if message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
-          {{ message }}
-        </div>
-      {% endfor %}
-    {% endif %}
-
-    <!-- ════════════════════
-         TAB: PERFIL
-    ════════════════════ -->
-    <div class="tab-panel active" id="tab-perfil">
-
-      <form method="POST" action="{% url 'perfil' %}">
-        {% csrf_token %}
-        <div class="form-block">
-          <div class="form-block-title">
-            <div class="form-block-icon"><i class="fas fa-user"></i></div>
-            <div>
-              <h3>Datos personales</h3>
-              <p>Tu nombre, correo y teléfono de contacto</p>
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group">
-              {{ perfil_form.first_name.label_tag }}
-              {{ perfil_form.first_name }}
-              {% if perfil_form.first_name.errors %}
-                <span class="field-error">{{ perfil_form.first_name.errors.0 }}</span>
-              {% endif %}
-            </div>
-            <div class="form-group">
-              {{ perfil_form.last_name.label_tag }}
-              {{ perfil_form.last_name }}
-              {% if perfil_form.last_name.errors %}
-                <span class="field-error">{{ perfil_form.last_name.errors.0 }}</span>
-              {% endif %}
-            </div>
-            <div class="form-group">
-              {{ perfil_form.email.label_tag }}
-              {{ perfil_form.email }}
-              {% if perfil_form.email.errors %}
-                <span class="field-error">{{ perfil_form.email.errors.0 }}</span>
-              {% endif %}
-            </div>
-            <div class="form-group">
-              {{ perfil_form.telefono.label_tag }}
-              <div class="phone-input-wrap">
-                <span class="phone-prefix">🇨🇴 +57</span>
-                {{ perfil_form.telefono }}
-              </div>
-              <span class="field-hint"><i class="fas fa-info-circle"></i> 10 dígitos sin espacios (ej: 3001234567)</span>
-              {% if perfil_form.telefono.errors %}
-                <span class="field-error">{{ perfil_form.telefono.errors.0 }}</span>
-              {% endif %}
-              <span class="field-error" id="telefono-error" style="display:none;"></span>
-            </div>
-          </div>
-
-          <button type="submit" name="guardar_datos" class="btn-save">
-            <i class="fas fa-check"></i> Guardar cambios
-          </button>
-        </div>
-      </form>
-
-    </div>
-
-    <!-- ════════════════════
-         TAB: SEGURIDAD
-    ════════════════════ -->
-    <div class="tab-panel" id="tab-seguridad">
-
-      <!-- Cambiar contraseña -->
-      <form method="POST" action="{% url 'perfil' %}">
-        {% csrf_token %}
-        {# hidden para que tras error vuelva al tab seguridad #}
-        <input type="hidden" name="active_tab" value="seguridad">
-        <div class="form-block">
-          <div class="form-block-title">
-            <div class="form-block-icon"
-                 style="background:linear-gradient(135deg,#ff7043,#ffab40);">
-              <i class="fas fa-lock"></i>
-            </div>
-            <div>
-              <h3>Cambiar contraseña</h3>
-              <p>Usa una contraseña fuerte y única</p>
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="form-group" style="grid-column:1/-1;">
-              {{ password_form.password_old.label_tag }}
-              <div class="input-icon-wrap">
-                {{ password_form.password_old }}
-                <i class="fas fa-eye toggle-pw" data-target="id_password_old"></i>
-              </div>
-              {% if password_form.password_old.errors %}
-                <span class="field-error">{{ password_form.password_old.errors.0 }}</span>
-              {% endif %}
-            </div>
-            <div class="form-group">
-              {{ password_form.password_new.label_tag }}
-              <div class="input-icon-wrap">
-                {{ password_form.password_new }}
-                <i class="fas fa-eye toggle-pw" data-target="id_password_new"></i>
-              </div>
-              <!-- Medidor de fortaleza -->
-              <div class="pw-strength-bar" id="pw-strength-bar">
-                <span id="pwb1"></span><span id="pwb2"></span>
-                <span id="pwb3"></span><span id="pwb4"></span><span id="pwb5"></span>
-              </div>
-              <div class="pw-strength-label" id="pw-strength-label" style="color:var(--text-muted);">Escribe tu nueva contraseña</div>
-              <div class="pw-rules" id="pw-rules">
-                <div class="pw-rule" id="rule-len"><i class="fas fa-circle"></i> Mínimo 8 caracteres</div>
-                <div class="pw-rule" id="rule-lower"><i class="fas fa-circle"></i> Una letra minúscula</div>
-                <div class="pw-rule" id="rule-upper"><i class="fas fa-circle"></i> Una letra mayúscula</div>
-                <div class="pw-rule" id="rule-num"><i class="fas fa-circle"></i> Un número</div>
-                <div class="pw-rule" id="rule-special"><i class="fas fa-circle"></i> Un carácter especial (!@#$%^&*...)</div>
-              </div>
-              {% if password_form.password_new.errors %}
-                <span class="field-error">{{ password_form.password_new.errors.0 }}</span>
-              {% endif %}
-            </div>
-            <div class="form-group">
-              {{ password_form.password_confirm.label_tag }}
-              <div class="input-icon-wrap">
-                {{ password_form.password_confirm }}
-                <i class="fas fa-eye toggle-pw" data-target="id_password_confirm"></i>
-              </div>
-              {% if password_form.password_confirm.errors %}
-                <span class="field-error">{{ password_form.password_confirm.errors.0 }}</span>
-              {% endif %}
-            </div>
-          </div>
-
-          <button type="submit" name="guardar_password" class="btn-save"
-                  style="background:linear-gradient(135deg,#ff7043,#ffab40);
-                         box-shadow:0 6px 24px rgba(255,112,67,.3);">
-            <i class="fas fa-lock"></i> Actualizar contraseña
-          </button>
-        </div>
-      </form>
-
-      <!-- Sesión activa — visual informativo -->
-      <div class="form-block">
-        <div class="form-block-title">
-          <div class="form-block-icon"
-               style="background:linear-gradient(135deg,#4CAF50,#66bb6a);">
-            <i class="fas fa-desktop"></i>
-          </div>
-          <div>
-            <h3>Sesión activa</h3>
-            <p>Dispositivos con acceso a tu cuenta ahora mismo</p>
-          </div>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-title">
-              <i class="fas fa-laptop"
-                 style="color:var(--pink);margin-right:6px;font-size:.8rem;"></i>
-              Este dispositivo
-            </div>
-            <div class="toggle-desc">Sesión actual · Activa ahora</div>
-          </div>
-          <span style="font-size:.72rem;font-weight:700;color:#4CAF50;
-                       background:rgba(76,175,80,.1);padding:4px 10px;
-                       border-radius:100px;">Activa</span>
-        </div>
-        <div style="margin-top:16px;">
-          <form method="POST" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn-danger">
-              <i class="fas fa-sign-out-alt"></i> Cerrar sesión en todos los dispositivos
-            </button>
-          </form>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ════════════════════
-         TAB: CUENTA
-    ════════════════════ -->
-    <div class="tab-panel" id="tab-cuenta">
-
-      <!-- Stats reales del usuario -->
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="sc-value">{{ dias_registrados }}</div>
-          <div class="sc-label">Días activos</div>
-        </div>
-        <div class="stat-card">
-          <div class="sc-value">{{ favoritas|length }}</div>
-          <div class="sc-label">Recetas favoritas</div>
-        </div>
-        <div class="stat-card">
-          <div class="sc-value">{{ progreso }}%</div>
-          <div class="sc-label">Progreso</div>
-        </div>
-      </div>
-
-      <!-- Plan actual -->
-      <div class="form-block">
-        <div class="form-block-title">
-          <div class="form-block-icon"
-               style="background:linear-gradient(135deg,#ff7043,#ffd54f);">
-            <i class="fas fa-crown"></i>
-          </div>
-          <div>
-            <h3>Plan actual</h3>
-            <p>Gestiona tu suscripción a Nutriet</p>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;
-                    flex-wrap:wrap;gap:16px;padding:10px 0;">
-          <div>
-            <div style="font-size:1.1rem;font-weight:800;color:var(--text-dark);">
-              {{ usuario.plan|default:'Plan Básico' }}
-            </div>
-            <div style="font-size:.8rem;color:var(--text-muted);margin-top:4px;">
-              Acceso a todas las funciones esenciales de seguimiento
-            </div>
-          </div>
-          <button class="btn-outline">
-            <i class="fas fa-arrow-up"></i> Mejorar plan
-          </button>
-        </div>
-      </div>
-
-      <!-- Notificaciones — visual (sin backend aún) -->
-      <div class="form-block">
-        <div class="form-block-title">
-          <div class="form-block-icon"
-               style="background:linear-gradient(135deg,#2196F3,#64b5f6);">
-            <i class="fas fa-bell"></i>
-          </div>
-          <div>
-            <h3>Notificaciones</h3>
-            <p>Elige qué quieres recibir</p>
-          </div>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-title">Recordatorios de comidas</div>
-            <div class="toggle-desc">Te avisamos a la hora de cada comida del plan</div>
-          </div>
-          <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-title">Nuevas recetas recomendadas</div>
-            <div class="toggle-desc">Cuando hay recetas adaptadas a tu perfil</div>
-          </div>
-          <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
-        </div>
-        <div class="toggle-row">
-          <div class="toggle-info">
-            <div class="toggle-title">Resumen semanal</div>
-            <div class="toggle-desc">Un resumen de tu progreso cada semana</div>
-          </div>
-          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
-        </div>
-      </div>
-
-      <!-- Zona de peligro -->
-      <div class="form-block danger-block">
-        <div class="form-block-title">
-          <div class="form-block-icon"
-               style="background:linear-gradient(135deg,#dc3545,#ff6b6b);">
-            <i class="fas fa-exclamation-triangle"></i>
-          </div>
-          <div>
-            <h3 style="color:#dc3545;">Zona de peligro</h3>
-            <p>Estas acciones son permanentes e irreversibles</p>
-          </div>
-        </div>
-
-        <div class="danger-action">
-          <div>
-            <div class="da-title">Eliminar mi cuenta</div>
-            <div class="da-desc">
-              Elimina permanentemente tu cuenta, mediciones, favoritas y todos tus datos
-            </div>
-          </div>
-          <!-- El form real, oculto; se envía desde el modal -->
-          <form id="form-eliminar-cuenta" method="POST" action="{% url 'perfil' %}" style="margin:0;display:none;">
-            {% csrf_token %}
-            <input type="hidden" name="eliminar_cuenta" value="1">
-          </form>
-          <button type="button" class="btn-danger" onclick="abrirModalEliminar()">
-            <i class="fas fa-trash-alt"></i> Eliminar cuenta
-          </button>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div><!-- /.right-col -->
-</div><!-- /.page-wrap -->
-
-<!-- ══════════════════════════════════════════
-     MODALES — fuera del page-wrap para que
-     position:fixed cubra toda la pantalla
-══════════════════════════════════════════ -->
-
-<!-- ══ MODAL 1: CONFIRMACIÓN ══ -->
-<div id="modal-confirmar" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-confirmar-title">
-  <div class="modal-card">
-    <div class="modal-icon modal-icon--danger">
-      <i class="fas fa-exclamation-triangle"></i>
-    </div>
-    <h2 class="modal-title" id="modal-confirmar-title">¿Eliminar tu cuenta?</h2>
-    <p class="modal-body">
-      Esta acción es <strong>permanente e irreversible</strong>. Se borrarán
-      tu perfil, mediciones, recetas favoritas y <em>todos</em> tus datos de Nutriet.
-    </p>
-    <p class="modal-body modal-body--warning">
-      <i class="fas fa-shield-alt"></i>&nbsp; No podrás recuperar tu cuenta después de confirmar.
-    </p>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn--cancel" onclick="cerrarModalConfirmar()">
-        <i class="fas fa-arrow-left"></i> Cancelar
-      </button>
-      <button class="modal-btn modal-btn--confirm" onclick="confirmarEliminacion()">
-        <i class="fas fa-trash-alt"></i> Sí, eliminar
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ MODAL 2: CUENTA ELIMINADA ══ -->
-<div id="modal-eliminada" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-eliminada-title">
-  <div class="modal-card modal-card--success">
-    <div class="modal-icon modal-icon--bye">
-      <i class="fas fa-heart-broken"></i>
-    </div>
-    <h2 class="modal-title" id="modal-eliminada-title">Cuenta eliminada</h2>
-    <p class="modal-body">
-      Tu cuenta ha sido <strong>eliminada permanentemente</strong>. Todos tus datos
-      han sido borrados de nuestros servidores.
-    </p>
-    <p class="modal-body" style="font-size:.82rem;color:var(--text-muted);">
-      Esperamos verte de nuevo pronto. 💔
-    </p>
-  </div>
-</div>
-
-<script>
-/* ══════════════════════════════════════════
-   TAB SYSTEM
-══════════════════════════════════════════ */
-const tabTitles = {
-  perfil:    { title:'Mi <em>Perfil</em>',    sub:'Actualiza tu información personal y foto' },
-  seguridad: { title:'Mi <em>Seguridad</em>', sub:'Contraseña, sesiones y autenticación' },
-  cuenta:    { title:'Mi <em>Cuenta</em>',    sub:'Plan, notificaciones y configuración general' },
-};
-
-function activateTab(tab) {
-  if (!tabTitles[tab]) tab = 'perfil';
-
-  document.querySelectorAll('.tab-link').forEach(l =>
-    l.classList.toggle('active', l.dataset.tab === tab));
-  document.querySelectorAll('.tab-panel').forEach(p =>
-    p.classList.toggle('active', p.id === 'tab-' + tab));
-
-  document.getElementById('page-title-text').innerHTML  = tabTitles[tab].title;
-  document.getElementById('page-subtitle-text').textContent = tabTitles[tab].sub;
-
-  history.replaceState(null, '', '#' + tab);
-}
-
-const djangoTab = '{{ active_tab|default:"" }}';
-const hashTab   = location.hash.replace('#', '');
-activateTab(djangoTab || hashTab || 'perfil');
-
-const firstErr = document.querySelector('.alert-msg.error');
-if (firstErr) firstErr.scrollIntoView({ behavior:'smooth', block:'center' });
-
-document.querySelectorAll('.tab-link').forEach(link =>
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    activateTab(link.dataset.tab);
-  })
-);
-
-/* ══════════════════════════════════════════
-   UPLOAD DE FOTO
-══════════════════════════════════════════ */
-const uploadTrigger = document.getElementById('upload-trigger');
-const fileInput     = document.getElementById('id_foto_perfil');
-const imageDisplay  = document.getElementById('profile-image-display');
-
-if (uploadTrigger && fileInput) {
-  uploadTrigger.addEventListener('click', () => fileInput.click());
-
-  fileInput.addEventListener('change', function () {
-    if (!this.files || !this.files[0]) return;
-
-    const reader = new FileReader();
-    reader.onload = e => { imageDisplay.src = e.target.result; };
-    reader.readAsDataURL(this.files[0]);
-
-    const form = document.getElementById('form-foto-perfil');
-    let hidden = form.querySelector('input[name="guardar_foto"]');
-    if (!hidden) {
-      hidden = document.createElement('input');
-      hidden.type  = 'hidden';
-      hidden.name  = 'guardar_foto';
-      hidden.value = '1';
-      form.appendChild(hidden);
-    }
-    form.submit();
-  });
-}
-
-/* ══════════════════════════════════════════
-   TOGGLE VISIBILIDAD CONTRASEÑA
-══════════════════════════════════════════ */
-document.querySelectorAll('.toggle-pw').forEach(icon => {
-  icon.addEventListener('click', function () {
-    const input = document.getElementById(this.dataset.target);
-    if (!input) return;
-    const showing = input.type === 'text';
-    input.type = showing ? 'password' : 'text';
-    this.classList.toggle('fa-eye',       showing);
-    this.classList.toggle('fa-eye-slash', !showing);
-  });
-});
-
-/* ══════════════════════════════════════════
-   ANTI-CACHÉ
-══════════════════════════════════════════ */
-window.addEventListener('pageshow', function (event) {
-  if (event.persisted ||
-      performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
-    window.location.reload();
-  }
-});
-</script>
-
-<script>
-/* ══════════════════════════════════════════
-   SIDEBAR TOGGLE — copiado exacto del main
-══════════════════════════════════════════ */
-const sidebar  = document.querySelector('.sidebar');
-const toggle   = document.getElementById('sidebarToggle');
-const backdrop = document.getElementById('sidebarBackdrop');
-const icon     = document.getElementById('toggleIcon');
-
-function openSidebar() {
-  sidebar.classList.add('open');
-  backdrop.classList.add('open');
-  icon.className = 'fas fa-times';
-  document.body.style.overflow = 'hidden';
-}
-
-function closeSidebar() {
-  sidebar.classList.remove('open');
-  backdrop.classList.remove('open');
-  icon.className = 'fas fa-bars';
-  document.body.style.overflow = '';
-}
-
-toggle.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
-backdrop.addEventListener('click', closeSidebar);
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar(); });
-</script>
-
-<script>
-/* ══════════════════════════════════════════
-   MODALES ELIMINAR CUENTA
-══════════════════════════════════════════ */
-function abrirModalEliminar() {
-  document.getElementById('modal-confirmar').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function cerrarModalConfirmar() {
-  document.getElementById('modal-confirmar').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function confirmarEliminacion() {
-  document.getElementById('modal-confirmar').classList.remove('open');
-  document.getElementById('modal-eliminada').classList.add('open');
-
-  setTimeout(function () {
-    document.getElementById('form-eliminar-cuenta').submit();
-  }, 2200);
-}
-
-document.getElementById('modal-confirmar').addEventListener('click', function (e) {
-  if (e.target === this) cerrarModalConfirmar();
-});
-
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') cerrarModalConfirmar();
-});
-</script>
-
-<script>
-/* ══════════════════════════════════════════
-   VALIDACIÓN TELÉFONO COLOMBIANO
-══════════════════════════════════════════ */
-(function () {
-  const telInput = document.getElementById('id_telefono');
-  const telError = document.getElementById('telefono-error');
-  const telForm  = telInput ? telInput.closest('form') : null;
-
-  if (!telInput) return;
-
-  telInput.addEventListener('keypress', function (e) {
-    if (!/[0-9]/.test(e.key) && !['Backspace','Delete','ArrowLeft','ArrowRight','Tab'].includes(e.key)) {
-      e.preventDefault();
-    }
-  });
-
-  telInput.addEventListener('paste', function (e) {
-    e.preventDefault();
-    const pasted = (e.clipboardData || window.clipboardData).getData('text');
-    const digits = pasted.replace(/\D/g, '').slice(0, 10);
-    const start  = this.selectionStart;
-    const end    = this.selectionEnd;
-    const current = this.value;
-    const next = (current.slice(0, start) + digits + current.slice(end)).slice(0, 10);
-    this.value = next;
-    this.dispatchEvent(new Event('input'));
-  });
-
-  telInput.addEventListener('input', function () {
-    this.value = this.value.replace(/\D/g, '').slice(0, 10);
-    validarTelefono();
-  });
-
-  function validarTelefono() {
-    const val = telInput.value.trim();
-    if (val.length === 0) {
-      telError.style.display = 'none';
-      telInput.style.borderColor = '';
-      return true;
-    }
-    if (val.length !== 10) {
-      telError.textContent = 'El número debe tener exactamente 10 dígitos.';
-      telError.style.display = 'flex';
-      telInput.style.borderColor = '#dc3545';
-      return false;
-    }
-    telError.style.display = 'none';
-    telInput.style.borderColor = '#4CAF50';
-    return true;
-  }
-
-  telInput.addEventListener('blur', validarTelefono);
-
-  if (telForm) {
-    telForm.addEventListener('submit', function (e) {
-      if (!validarTelefono()) {
-        e.preventDefault();
-        telInput.focus();
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const bar = document.querySelector('.seguimiento-card .progress-bar');
+      if (bar) {
+        const width = bar.style.width;
+        bar.style.width = '0%';
+        setTimeout(() => { bar.style.width = width; }, 200);
       }
     });
-  }
-})();
+  </script>
 
-/* ══════════════════════════════════════════
-   VALIDACIÓN CONTRASEÑA
-══════════════════════════════════════════ */
-(function () {
-  const pwInput   = document.getElementById('id_password_new');
-  const pwConfirm = document.getElementById('id_password_confirm');
-  const pwForm    = pwInput ? pwInput.closest('form') : null;
+  <script>
+    const fechasPeso = {{ fechas_peso|default:"[]"|safe }};
+    const pesos = {{ pesos|default:"[]"|safe }};
+    const fechasGrasa = {{ fechas_grasa|default:"[]"|safe }};
+    const grasas = {{ grasas|default:"[]"|safe }};
 
-  if (!pwInput) return;
+// Función para formatear fechas bonito: "19 mar"
+function formatFecha(fecha) {
+  const d = new Date(fecha);
+  return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+}
 
-  const bars   = [1,2,3,4,5].map(i => document.getElementById('pwb'+i));
-  const label  = document.getElementById('pw-strength-label');
-  const rules  = {
-    len:     { el: document.getElementById('rule-len'),     fn: v => v.length >= 8 },
-    lower:   { el: document.getElementById('rule-lower'),   fn: v => /[a-z]/.test(v) },
-    upper:   { el: document.getElementById('rule-upper'),   fn: v => /[A-Z]/.test(v) },
-    num:     { el: document.getElementById('rule-num'),     fn: v => /[0-9]/.test(v) },
-    special: { el: document.getElementById('rule-special'), fn: v => /[^A-Za-z0-9]/.test(v) },
-  };
-
-  const levels = [
-    { color:'#dc3545', text:'Muy débil 😬' },
-    { color:'#ff7043', text:'Débil' },
-    { color:'#ffb300', text:'Regular' },
-    { color:'#7cb342', text:'Fuerte 💪' },
-    { color:'#4CAF50', text:'Muy fuerte 🔐' },
-  ];
-
-  function evaluar(val) {
-    let score = 0;
-    for (const key in rules) {
-      const ok = rules[key].fn(val);
-      if (ok) score++;
-      if (rules[key].el) {
-        rules[key].el.classList.toggle('ok',   ok);
-        rules[key].el.classList.toggle('fail', val.length > 0 && !ok);
-        const icon = rules[key].el.querySelector('i');
-        if (icon) {
-          icon.className = ok ? 'fas fa-check-circle' : (val.length > 0 ? 'fas fa-times-circle' : 'fas fa-circle');
+if (fechasPeso.length === 0) {
+  document.getElementById('graficaPeso').style.display = 'none';
+  document.getElementById('sinPeso').style.display = 'block';
+} else {
+  new Chart(document.getElementById('graficaPeso'), {
+    type: 'line',
+    data: {
+      labels: fechasPeso.map(formatFecha),   // ← fechas bonitas
+      datasets: [{
+        label: 'Peso (kg)',
+        data: pesos,
+        borderColor: '#4CAF50',
+        backgroundColor: 'rgba(76, 175, 80, 0.15)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#4CAF50',
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        legend: { display: false }          // ← quita leyenda redundante
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        },
+        y: {
+          // Empieza cerca del valor mínimo real
+          min: Math.min(...pesos) - 1,
+          max: Math.max(...pesos) + 1,
+          ticks: {
+            font: { size: 11 },
+            callback: v => v + ' kg'         // ← añade unidad
+          },
+          grid: { color: 'rgba(0,0,0,0.05)' }
         }
       }
     }
-    bars.forEach((b, i) => {
-      if (!b) return;
-      b.style.background = i < score ? levels[score - 1].color : '#e0e0e0';
-    });
-    if (label) {
-      label.textContent  = val.length === 0 ? 'Escribe tu nueva contraseña' : levels[score - 1]?.text || '';
-      label.style.color  = val.length === 0 ? 'var(--text-muted)' : levels[score - 1]?.color || 'var(--text-muted)';
+  });
+}
+
+if (fechasGrasa.length === 0) {
+  document.getElementById('graficaGrasa').style.display = 'none';
+  document.getElementById('sinGrasa').style.display = 'block';
+} else {
+  new Chart(document.getElementById('graficaGrasa'), {
+    type: 'line',
+    data: {
+      labels: fechasGrasa.map(formatFecha),  // ← fechas bonitas
+      datasets: [{
+        label: 'Grasa Corporal (%)',
+        data: grasas,
+        borderColor: '#FF7043',
+        backgroundColor: 'rgba(255, 112, 67, 0.15)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#FF7043',
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        legend: { display: false }          
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        },
+        y: {
+          min: Math.round((Math.min(...grasas) - 0.5) * 10) / 10,
+          max: Math.round((Math.max(...grasas) + 0.5) * 10) / 10,
+          ticks: {
+            font: { size: 11 },
+            callback: v => parseFloat(v.toFixed(1)) + '%'          
+          },
+          grid: { color: 'rgba(0,0,0,0.05)' }
+        }
+      }
     }
-    return score === 5;
-  }
+  });
+}  
+</script>
+  <script>
+    if (window.history.replaceState) {
+      window.history.replaceState(null, null, window.location.href);
+    }
+    window.addEventListener('pageshow', function(event) {
+      if (event.persisted) { window.location.reload(); }
+    });
+  </script>
 
-  pwInput.addEventListener('input', () => evaluar(pwInput.value));
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  if (pwForm) {
-    pwForm.addEventListener('submit', function (e) {
-      const val = pwInput.value;
-      if (val.length === 0) return;
+  {% if messages %}
+    {% for message in messages %}
+      <script>
+        Swal.fire({
+          icon: 'success',
+          title: "{{ message }}",
+          showConfirmButton: false,
+          timer: 2500
+        });
+      </script>
+    {% endfor %}
+  {% endif %}
 
-      const ok = evaluar(val);
-      if (!ok) {
-        e.preventDefault();
-        pwInput.focus();
-        if (label) {
-          label.textContent = '⚠ Corrige los requisitos antes de continuar';
-          label.style.color = '#dc3545';
+  <script src="{% static 'js/onesignal-handler.js' %}"></script>
+  <script>
+    window.ONESIGNAL_APP_ID = "{{ ONESIGNAL_APP_ID }}";
+
+    (async () => {
+      if (window.ONESIGNAL_APP_ID) {
+        await initOneSignal(window.ONESIGNAL_APP_ID);
+      }
+    })();
+
+    const isAuthenticated = {{ user.is_authenticated|lower }};
+
+    async function marcarNotificacionesConfiguradas() {
+      try {
+        await fetch('/usuarios/marcar-notificaciones/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
+        });
+      } catch(e) {}
+    }
+
+    async function requestNotificationSetup() {
+      if (!isAuthenticated) return;
+
+      const yaConfiguradas = {{ notificaciones_configuradas|lower }};
+      if (yaConfiguradas) {
+        if (Notification.permission === 'granted') {
+          await setupNotifications();
         }
         return;
       }
-      if (pwConfirm && pwInput.value !== pwConfirm.value) {
-        e.preventDefault();
-        pwConfirm.style.borderColor = '#dc3545';
-        pwConfirm.focus();
-        let errConfirm = pwConfirm.parentElement.nextElementSibling;
-        if (!errConfirm || !errConfirm.classList.contains('field-error')) {
-          errConfirm = document.createElement('span');
-          errConfirm.className = 'field-error';
-          errConfirm.id = 'confirm-mismatch-err';
-          pwConfirm.parentElement.insertAdjacentElement('afterend', errConfirm);
-        }
-        errConfirm.textContent = 'Las contraseñas no coinciden.';
-      }
-    });
-  }
 
-  if (pwConfirm) {
-    pwConfirm.addEventListener('input', function () {
-      const err = document.getElementById('confirm-mismatch-err');
-      if (this.value === pwInput.value) {
-        this.style.borderColor = '#4CAF50';
-        if (err) err.textContent = '';
+      const urlParams = new URLSearchParams(window.location.search);
+      const shouldSetup = urlParams.get('setup_notifications');
+
+      if (shouldSetup === 'true') {
+        urlParams.delete('setup_notifications');
+        const newUrl = window.location.pathname +
+          (urlParams.toString() ? '?' + urlParams.toString() : '');
+        window.history.replaceState({}, '', newUrl);
+
+        const userConfirmed = await showNotificationPrompt();
+        await marcarNotificacionesConfiguradas();
+
+        if (userConfirmed) {
+          const success = await setupNotifications();
+          if (success) {
+            Swal.fire({
+              icon: 'success',
+              title: '¡Notificaciones activadas!',
+              text: 'Te mantendremos al día con recordatorios y actualizaciones',
+              timer: 2000,
+              showConfirmButton: false
+            });
+          }
+        }
       } else {
-        this.style.borderColor = '#dc3545';
+        if (Notification.permission === 'granted') {
+          await setupNotifications();
+        }
+      }
+    }
+
+    async function showNotificationPrompt() {
+      return new Promise((resolve) => {
+        Swal.fire({
+          title: '🔔 ¡Mantente al día!',
+          html: `
+            <p style="margin-bottom: 15px;">¿Quieres recibir notificaciones sobre:</p>
+            <ul style="text-align: left; margin: 20px auto; max-width: 300px; list-style-position: inside;">
+              <li>📅 Recordatorios de comidas</li>
+              <li>🍽️ Nuevas recetas personalizadas</li>
+              <li>📊 Actualizaciones de tu progreso</li>
+              <li>💡 Consejos nutricionales</li>
+            </ul>
+          `,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, activar notificaciones',
+          cancelButtonText: 'Ahora no',
+          confirmButtonColor: '#ff1660',
+          cancelButtonColor: '#6c757d',
+          allowOutsideClick: false
+        }).then((result) => resolve(result.isConfirmed));
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', requestNotificationSetup);
+    } else {
+      requestNotificationSetup();
+    }
+  </script>
+
+  <!-- ============================================
+    ADVERTENCIA NUTRICIONISTA — solo aparece la primera visita
+    ============================================ -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const KEY = 'nutriet_advertencia_mostrada';
+      if (!localStorage.getItem(KEY)) {
+        Swal.fire({
+          title: '<span style="font-family:\'Playfair Display\',serif; font-size:1.6rem;">⚠️ Aviso importante</span>',
+          html: `
+            <div style="text-align:left; font-family:'Montserrat',sans-serif; line-height:1.7; color:#1a1a2e;">
+              <p style="margin-bottom:12px;">
+                Los <strong style="color:#f50057;">filtros y recetas</strong> de esta plataforma están siendo
+                revisados por un <strong>nutricionista profesional</strong> y aún
+                <strong>no están finalizados al 100%</strong>.
+              </p>
+              <p style="margin-bottom:12px;">
+                Pueden existir imprecisiones en la información nutricional presentada.
+                Te recomendamos usarla como guía orientativa y siempre consultar con un profesional de la salud.
+              </p>
+              <p style="margin:0; padding:12px 16px; background:rgba(245,0,87,0.07); border-left:4px solid #f50057; border-radius:8px; font-size:0.92rem;">
+                📬 Si encuentras algún error o inconsistencia en tu dieta,
+                <strong>por favor repórtalo</strong> a través del apartado de
+                <strong>Contactos</strong> del aplicativo.
+              </p>
+            </div>
+          `,
+          icon: 'warning',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#f50057',
+          allowOutsideClick: false,
+          customClass: {
+            popup: 'swal-nutriet-popup',
+            title: 'swal-nutriet-title',
+          }
+        }).then(() => {
+          localStorage.setItem(KEY, '1');
+        });
       }
     });
-  }
-})();
-</script>
+  </script>
+
+  <script>
+    const sidebar = document.querySelector('.sidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const icon = document.getElementById('toggleIcon');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      backdrop.classList.add('open');
+      icon.className = 'fas fa-times';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('open');
+      icon.className = 'fas fa-bars';
+      document.body.style.overflow = '';
+    }
+
+    toggle.addEventListener('click', () => {
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+
+    backdrop.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && sidebar.classList.contains('open')) closeSidebar();
+    });
+  </script>
 </body>
 </html>
