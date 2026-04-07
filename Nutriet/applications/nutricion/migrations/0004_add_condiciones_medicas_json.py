@@ -17,13 +17,17 @@ class Migration(migrations.Migration):
                 help_text='Lista de condiciones médicas seleccionadas',
             ),
         ),
-        # Migración de datos: poblar condiciones_medicas_json desde condicion_medica legado
+        # ✅ PostgreSQL: jsonb_array_length en lugar de JSON_LENGTH (MySQL)
         migrations.RunSQL(
             sql="""
                 UPDATE nutricion_formularionutricionguardado
-                SET condiciones_medicas_json = JSON_ARRAY(condicion_medica)
-                WHERE condicion_medica IS NOT NULL AND condicion_medica != ''
-                  AND (condiciones_medicas_json IS NULL OR JSON_LENGTH(condiciones_medicas_json) = 0);
+                SET condiciones_medicas_json = json_build_array(condicion_medica)
+                WHERE condicion_medica IS NOT NULL
+                  AND condicion_medica != ''
+                  AND (
+                      condiciones_medicas_json IS NULL
+                      OR jsonb_array_length(condiciones_medicas_json::jsonb) = 0
+                  );
             """,
             reverse_sql=migrations.RunSQL.noop,
         ),
