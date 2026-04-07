@@ -42,8 +42,6 @@ CONDICIONES_MEDICAS = [
     ("alergia_mani", "Alergia al maní / cacahuate"),
     ("alergia_mariscos", "Alergia a mariscos"),
     ("alergia_huevo", "Alergia al huevo"),
-    ("vegetariano", "Vegetariano"),
-    ("vegano", "Vegano"),
 ]
 
 
